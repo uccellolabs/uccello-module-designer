@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "uccello/uccello": "1.*"
+        "uccello/module-designer": "dev-master"
     },
     "autoload": {
         "psr-4": {

@@ -34,10 +34,19 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../public' => public_path('vendor/uccello/module-designer-ui'),
         ], 'module-designer-ui-assets');
+
+        // Publish config
+        $this->publishes([
+            __DIR__.'/../../config/module-designer-ui.php' => config_path('module-designer-ui.php')
+        ], 'module-designer-ui-config');
     }
 
     public function register()
     {
-        //
+        // Config
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/module-designer-ui.php',
+            'module-designer-ui'
+        );
     }
 }

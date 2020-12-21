@@ -1,0 +1,51 @@
+.input-field {
+    small.help {
+        visibility: hidden;
+    }
+
+    &:hover {
+        small.help {
+            visibility: visible;
+        }
+    }
+}
+
+.card {
+    &.fields-list {
+        background-color: #f3f4f6 !important;
+
+        .module-field {
+            background-color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    }
+
+    &.filter, &.widget {
+        .chip {
+            cursor: pointer;
+            padding-left: 30px;
+
+            .close {
+                visibility: hidden;
+            }
+
+            &:hover {
+                .close {
+                    visibility: visible;
+                }
+            }
+        }
+    }
+
+    &.conditions-list {
+        margin-top: 50px;
+        background-color: #f3f4f6 !important;
+    }
+}
+
+.collapsible-body {
+    background-color: #f3f4f6 !important;
+}
