@@ -49,3 +49,56 @@
 .collapsible-body {
     background-color: #f3f4f6 !important;
 }
+
+#block-field {
+    .delete-block {
+        display: none;
+
+        i {
+            line-height: 40px;
+        }
+    }
+
+    &:hover {
+        .delete-block {
+            display: block;
+        }
+    }
+}
+
+#iconsModal {
+    .template {
+        display: none;
+    }
+
+    h5 {
+        padding: 20px 20px 10px 20px;
+    }
+
+    #icons-searchbar {
+        background-color: #f3f4f6;
+        padding: 1px 30px;
+    }
+
+    #icons-container {
+        max-height: 450px;
+        overflow-y: auto;
+        margin-top: 30px;
+
+        .icon {
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+
+            &:hover {
+                background-color: #f3f4f6;
+            }
+
+            i.material-icons {
+                font-size: 30px;
+            }
+        }
+
+    }
+}

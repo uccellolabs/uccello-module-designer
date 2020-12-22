@@ -31,12 +31,20 @@ return [
         'block' => 'Bloc',
         'translation' => 'Traduction',
         'install' => 'Installer',
+        'select_icon' => 'Sélectionnez une icône',
+        'search_icon' => 'Recherchez une icône',
+        'delete_block_title' => 'Êtes-vous sûr ?',
+        'delete_block_message' => 'Voulez-vous vraiment supprimer ce bloc ? Si oui tous les champs créés dans celui-ci seront également supprimés.',
+        'delete_block_ok' => 'Oui',
+        'delete_block_cancel' => 'Annuler',
     ],
     'field' => [
         'module' => [
             'icon' => 'Icône',
             'label' => 'Libellé',
             'name' => 'Nom système',
+            'default_view' => 'Vue par défaut',
+            'custom_route' => 'Route personnalisée',
             'admin' => 'Module d\'administration',
             'visibility' => 'Visibilité',
             'package' => 'Package',
@@ -65,6 +73,8 @@ return [
         'module' => [
             'label' => 'Nom affiché dans le menu (pluriel).',
             'name' => 'Nom utilisé par le système.',
+            'default_view' => 'Nom de la vue sur laquelle pointera le menu.',
+            'custom_route' => 'Nom de la route personnalisée (ex : uccello.list)',
             'admin' => 'Si oui, le module module sera accessible depuis le panneau d\'administration.',
             'visibility' => '<b>Public :</b> Tout le monde voit toutes les données. <b>Privé :</b> Les données dépendent des droits.',
             'package' => 'Permet de définir si le module fera partie d\'un package indépendant.',
@@ -95,6 +105,11 @@ return [
     ],
     'install' => [
         'ready' => 'Prêt à installer ?',
+    ],
+    'view' => [
+        'list' => 'Liste',
+        'index' => 'Index',
+        'other' => 'Autre',
     ],
     'visibility' => [
         'public' => 'Public',

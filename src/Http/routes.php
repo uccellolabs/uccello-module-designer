@@ -22,5 +22,7 @@ Route::middleware('web', 'auth')
     // {domain}/home/my_path => This route forces to use 'home' module and is available in all domains
     // Route::get($domainParam.'/home/my_path', 'MyController@action')->defaults('module', 'home')->name('home.my_path');
 
-    // Put your routes here
+    Route::get($domainParam.'/module-designer', 'ModuleDesigner\IndexController@process')
+        ->defaults('module', 'module-designer')
+        ->name('index');
 });
