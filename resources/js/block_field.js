@@ -1,5 +1,6 @@
 import slugify from 'slugify';
 import Swal from 'sweetalert2';
+import { FieldModal } from './field';
 
 export class BlockFieldTab
 {
@@ -9,6 +10,7 @@ export class BlockFieldTab
         this.blocksCount = 0;
 
         this.initAddBlockClickListener();
+        this.initFieldModal();
         this.bindLabels();
 
         this.addBlock();
@@ -20,6 +22,21 @@ export class BlockFieldTab
     initAddBlockClickListener() {
         $('#add-block-btn').on('click', event => {
             this.addBlock();
+        });
+    }
+
+    /**
+     * Init field modal
+     */
+    initFieldModal() {
+        new FieldModal();
+
+        // Add listener for adding field
+        addEventListener('field.config.generated', event => {
+            let config = event.detail.config;
+
+            let blockEl = $(`.block[data-index="${config.blockIndex}"]`);
+            this.addField(blockEl, config);
         });
     }
 
@@ -44,6 +61,20 @@ export class BlockFieldTab
                     $(blockEl).remove();
                 }
             });
+        });
+    }
+
+    /**
+     * Change data-block-index param into field modal.
+     * It is useful to add the field in the good block.
+     *
+     * @param {Element} blockEl
+     */
+    initAddFieldClickListener(blockEl) {
+        $('a[href="#fieldModal"]', blockEl).on('click', event => {
+            let blockIndex = blockEl.data('index');
+
+            $('#fieldModal').attr('data-block-index', blockIndex);
         });
     }
 
@@ -73,7 +104,8 @@ export class BlockFieldTab
             $('.card-title span.label', blockEl).html(label || '&nbsp;');
 
             // Slugify module label to obtain system name
-            $(`#block${index}_name`, blockEl).val(slugify(label, {lower: true}));
+            let slug = slugify(label, {lower: true, replacement: '_'});
+            $(`#block${index}_name`, blockEl).val(slug);
             $(`label[for="block${index}_name"]`, blockEl).addClass('active');
         });
     }
@@ -114,10 +146,50 @@ export class BlockFieldTab
         // Add event listener for delete
         this.initDeleteBlockClickListener(blockEl);
 
+        // Add event listener for adding field
+        this.initAddFieldClickListener(blockEl);
+
         // Append new block
         $(this.tab).append(blockEl);
 
         // Increment counter
         this.blocksCount++;
+    }
+
+    /**
+     * Adds a field in the related block.
+     *
+     * @param {Element} blockEl
+     * @param {JSON} config
+     */
+    addField(blockEl, config) {
+        let fieldEl = $('.fields-container .template', blockEl).clone();
+        fieldEl.removeClass('template').show();
+
+        // Label
+        $('.module-field .label', fieldEl).text(config.label);
+
+        // Required
+        if (config.required === true) {
+            $('.module-field .required', fieldEl).show();
+        } else {
+            $('.module-field .required', fieldEl).hide();
+        }
+
+        // Icon
+        if (config.icon) {
+            $('.module-field .material-icons', fieldEl).text(config.icon);
+        }
+
+        // Large
+        if (config.large) {
+            fieldEl.removeClass('m6');
+        }
+
+        // Convert config to JSON and add to data-config attribute
+        $(fieldEl).attr('data-config', JSON.stringify(config));
+
+        // Add field
+        $('.fields-container', blockEl).append(fieldEl);
     }
 }

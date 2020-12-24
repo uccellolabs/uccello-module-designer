@@ -31,8 +31,6 @@ return [
         'block' => 'Bloc',
         'translation' => 'Traduction',
         'install' => 'Installer',
-        'select_icon' => 'Sélectionnez une icône',
-        'search_icon' => 'Recherchez une icône',
         'delete_block_title' => 'Êtes-vous sûr ?',
         'delete_block_message' => 'Voulez-vous vraiment supprimer ce bloc ? Si oui tous les champs créés dans celui-ci seront également supprimés.',
         'delete_block_ok' => 'Oui',
@@ -50,9 +48,20 @@ return [
             'package' => 'Package',
         ],
         'block' => [
+            'icon' => 'Icône',
             'label' => 'Libellé',
             'name' => 'Nom système',
+        ],
+        'field' => [
             'icon' => 'Icône',
+            'label' => 'Libellé',
+            'name' => 'Nom système',
+            'column' => 'Colonne',
+            'required' => 'Obligatoire',
+            'uitype' => 'Type de champ',
+            'displaytype' => 'Type d\'affichage',
+            'default' => 'Valeur par défaut',
+            'large' => 'Large',
         ],
         'filter' => [
             'default' => 'Par défaut',
@@ -68,6 +77,43 @@ return [
             'action' => 'Action autorisées',
             'method' => 'Méthode',
         ],
+        'uitype' => [
+            'text' => [
+                'repeated' => 'Confirmer',
+            ],
+            'choice' => [
+                'choices' => 'Options',
+                'multiple' => 'Multiple',
+            ],
+            'entity' => [
+                'module' => 'Module',
+            ],
+            'file' => [
+                'path' => 'Chemin spécifique',
+                'public' => 'Public',
+            ],
+            'image' => [
+                'path' => 'Chemin spécifique',
+            ],
+            'number' => [
+                'repeated' => 'Confirmer',
+                'min' => 'Valeur minimale',
+                'max' => 'Valeur maximale',
+                'step' => 'Écart entre deux valeurs',
+                'module_list' => [
+                    'admin' => 'Afficher modules d\'administration',
+                ],
+            ],
+            'range' => [
+                'repeated' => 'Confirmer',
+                'min' => 'Valeur minimale',
+                'max' => 'Valeur maximale',
+                'step' => 'Écart entre deux valeurs',
+            ],
+            'select' => [
+                'choices' => 'Options',
+            ],
+        ],
     ],
     'info' => [
         'module' => [
@@ -82,7 +128,16 @@ return [
         'block' => [
             'label' => 'Nom affiché dans le formulaire.',
             'name' => 'Nom utilisé par le système.',
-            'icon' => 'Modifier',
+        ],
+        'field' => [
+            'label' => 'Nom affiché dans le formulaire.',
+            'name' => 'Nom utilisé par le système.',
+            'column' => 'Nom de la colonne de la table dans la base de données.',
+            'required' => 'Cocher pour le rendre obligatoire.',
+            'uitype' => 'Le type de champ déterminera la manière dont il sera représenté.',
+            'displaytype' => 'Détermine sur quelles vues le champ sera affiché.',
+            'default' => 'Valeur par défaut lors de l\'ouverture du formulaire de création.',
+            'large' => 'Si oui, le champ sera affiché sur toute la largeur du formulaire.',
         ],
         'relation' => [
             'type' => '<b>1-N</b> et <b>N-N :</b> La relation sera créée dans ce module. <b>N-1 :</b> La relation sera ajoutée au module source.',
@@ -94,6 +149,43 @@ return [
             'action' => 'Actions autorisées depuis la relation. Les boutons correspondants seront affichés.',
             'method' => 'Méthode qui sera utilisée pour retrouver les relations.'
         ],
+        'uitype' => [
+            'text' => [
+                'repeated' => 'Si oui, l\'utilisateur devra confirmer la valeur dans un autre champ.',
+            ],
+            'choice' => [
+                'choices' => 'Une option par ligne.',
+                'multiple' => 'Si oui, l\'utilisateur pourra sélectionner plusieurs valeurs.',
+            ],
+            'entity' => [
+                'module' => 'Module dans lequel l\'utilisateur pourra sélectionner une entité.',
+            ],
+            'file' => [
+                'path' => 'Chemin spécifique dans lequel stocker le fichier.',
+                'public' => 'Si oui, le fichier pourra être accessible via une URL.',
+            ],
+            'image' => [
+                'path' => 'Chemin spécifique dans lequel stocker l\'image.',
+            ],
+            'number' => [
+                'repeated' => 'Si oui, l\'utilisateur devra confirmer la valeur dans un autre champ.',
+                'min' => 'Valeur minimale possible. Laisser vide pour ne pas contraindre.',
+                'max' => 'Valeur maximale possible. Laisser vide pour ne pas contraindre.',
+                'step' => 'Écart entre deux valeurs lorsque l\'utilisateur clique sur les flèches du champ.',
+            ],
+            'module_list' => [
+                'admin' => 'Si oui, les modules d\'administration seront également disponibles dans la liste.',
+            ],
+            'range' => [
+                'repeated' => 'Si oui, l\'utilisateur devra confirmer la valeur dans un autre champ.',
+                'min' => 'Valeur minimale possible. Laisser vide pour ne pas contraindre.',
+                'max' => 'Valeur maximale possible. Laisser vide pour ne pas contraindre.',
+                'step' => 'Écart entre deux valeurs lorsque l\'utilisateur clique sur les flèches du champ.',
+            ],
+            'select' => [
+                'choices' => 'Une option par ligne.',
+            ],
+        ],
     ],
     'translation' => [
         'module' => 'Module',
@@ -102,6 +194,16 @@ return [
         'fields' => 'Champs',
         'filters' => 'Filtres',
         'relations' => 'Relations',
+    ],
+    'modal' => [
+        'icons' => [
+            'select_icon' => 'Sélectionnez une icône',
+            'search_icon' => 'Recherchez une icône',
+        ],
+        'fields' => [
+            'add_field' => 'Ajouter un champ',
+            'editer_field' => 'Modifier un champ',
+        ],
     ],
     'install' => [
         'ready' => 'Prêt à installer ?',
@@ -123,5 +225,43 @@ return [
     'action' => [
         'select' => 'Sélectionner',
         'add' => 'Ajouter',
+    ],
+    'uitype' => [
+        'text' => 'Texte simple',
+        'textarea' => 'Texte multilignes',
+        'hidden' => 'Champ caché',
+        'time' => 'Heure',
+        'date' => 'Date',
+        'datetime' => 'Date et Heure',
+        'integer' => 'Nombre entier',
+        'number' => 'Nombre décimal',
+        'range' => 'Échelle',
+        'entity' => 'Entité',
+        'color' => 'Couleur',
+        'phone' => 'Téléphone',
+        'email' => 'Email',
+        'choice' => 'Sélection multiple',
+        'select' => 'Liste déroulante',
+        'url' => 'URL',
+        'boolean' => 'Booléen',
+        'checkbox' => 'Case à cocher',
+        'password' => 'Mot de passe',
+        'month' => 'Mois',
+        'week' => 'Semaine',
+        'file' => 'Fichier',
+        'image' => 'Image',
+        'assigned_user' => 'Assigné à',
+        'module_list' => 'Liste de modules',
+    ],
+    'displaytype' => [
+        'everywhere' => 'Partout',
+        'create' => 'Création',
+        'edit' => 'Édition',
+        'detail' => 'Détail',
+        'edit_detail' => 'Édition et Détail',
+        'hidden' => 'Caché',
+        'create_edit' => 'Création et Édition',
+        'create_detail' => 'Création et Détail',
+        'list_only' => 'Liste uniquement',
     ],
 ];

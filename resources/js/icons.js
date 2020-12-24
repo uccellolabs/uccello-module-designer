@@ -4,7 +4,7 @@ export class IconsModal {
     constructor() {
         this.modal = $('#iconsModal');
 
-        this.initCloseButtonClickListener();
+        // this.initCloseButtonClickListener();
         this.initIconButtonClickListener();
         this.initIcons();
         this.initSearch();
@@ -13,12 +13,12 @@ export class IconsModal {
     /**
      * Closes the modal when the close button is clicked
      */
-    initCloseButtonClickListener() {
-        $('a.close', this.modal).on('click', event => {
-            event.preventDefault();
-            $(this.modal).modal('close');
-        });
-    }
+    // initCloseButtonClickListener() {
+    //     $('a.close', this.modal).on('click', event => {
+    //         event.preventDefault();
+    //         $(this.modal).modal('close');
+    //     });
+    // }
 
     /**
      * Add custom event listner to open icons modal when needed.

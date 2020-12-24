@@ -2,6 +2,10 @@
 
 @section('page', 'index')
 
+@section('extra-meta')
+<meta name="field-config-url" content="{{ ucroute('module-designer-ui.field.config', $domain, $module, ['uitype' => 'UITYPE']) }}">
+@append
+
 @section('breadcrumb')
 <div class="nav-wrapper">
     <div class="col s12">
@@ -122,7 +126,7 @@
 
                     {{-- For admin --}}
                     <div class="input-field col s12 m6">
-                        <label for="module_admin" class="active">{{ uctrans('field.module.admin', $module) }}</label>
+                        <label class="active">{{ uctrans('field.module.admin', $module) }}</label>
                         <p style="margin-top: 15px; margin-bottom: 15px">
                             <label>
                                 <input type="checkbox" />
@@ -188,15 +192,19 @@
                     <span class="card-title">{{ uctrans('label.fields', $module) }}</span>
 
                     <div class="row fields-container">
-                        <div class="col s12 m6" style="display: none">
-                            <div class="module-field">Nom</div>
+                        <div class="col s12 m6 template" style="display: none">
+                            <div class="module-field">
+                                <i class="material-icons primary-text left"></i>
+                                <span class="red-text required">*</span>
+                                <span class="label">Nom</span>
+                            </div>
                         </div>
                     </div>
 
                     {{-- Add field --}}
                     <div class="row">
                         <div class="col s12">
-                            <a class="btn waves-effect waves-light primary" style="margin-top: 10px"><i class="material-icons white-text left">add</i>{{ uctrans('button.add_field', $module) }}</a>
+                            <a href="#fieldModal" class="modal-trigger btn primary" style="margin-top: 10px"><i class="material-icons white-text left">add</i>{{ uctrans('button.add_field', $module) }}</a>
                         </div>
                     </div>
                 </div>
@@ -602,32 +610,11 @@
 
 {{-- Extra content --}}
 @section('extra-content')
-{{-- Icons modal --}}
-<div id="iconsModal" class="modal">
-    <div>
-        <h5>
-            <i class="material-icons primary-text left">check_circle</i>{{ uctrans('label.select_icon', $module) }}
-            <a href="#" class="btn-flat close right"><i class="material-icons">close</i></a>
-        </h5>
+    {{-- Icons modal --}}
+    @include('module-designer-ui::modules.module-designer.index.modals.icons')
 
-        <div id="icons-searchbar">
-            <div class="input-field">
-                {{-- <i class="material-icons prefix">search</i> --}}
-                <input type="text" placeholder="{{ uctrans('label.search_icon', $module) }}">
-            </div>
-        </div>
-
-        <div id="icons-container" class="row">
-            <div class="template icon-col col s6 m4">
-                <div class="icon center-align">
-                    <i class="material-icons">extension</i><br>
-                    <span class="label">extension</span>
-                </div>
-            </div>
-            {{-- Filled automaticaly by JS --}}
-        </div>
-    </div>
-</div>
+    {{-- Field modal --}}
+    @include('module-designer-ui::modules.module-designer.index.modals.field')
 @endsection
 
 {{-- Script --}}

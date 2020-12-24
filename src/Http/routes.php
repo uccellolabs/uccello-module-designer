@@ -25,4 +25,8 @@ Route::middleware('web', 'auth')
     Route::get($domainParam.'/module-designer', 'ModuleDesigner\IndexController@process')
         ->defaults('module', 'module-designer')
         ->name('index');
+
+    Route::get($domainParam.'/module-designer/field/config', 'ModuleDesigner\IndexController@fieldConfig')
+        ->defaults('module', 'module-designer')
+        ->name('field.config');
 });
