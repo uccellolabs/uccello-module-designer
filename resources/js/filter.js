@@ -278,9 +278,15 @@ export class FilterTab
 
                         // Enabled li from field list
                         // liEl.prop('disabled', false);
+
+                        // Save structure
+                        this.dispatchSaveEvent();
                     })
 
                     $('.displayed-columns', filterEl).append(chipEl);
+
+                    // Save structure
+                    this.dispatchSaveEvent();
                 })
                 dropdownEl.append(liEl);
 
@@ -305,5 +311,36 @@ export class FilterTab
         $('#filter0')
 
         $('.conditions', filterEl).append(conditionEl);
+    }
+
+    /**
+     * Returns filter structure
+     */
+    getFilterStructure() {
+        let structure = {
+            filters: []
+        };
+
+        $('.card.filter:not(.template)', this.tab).each((sequence, el) => {
+            let filterEl = $(el);
+            let filterIndex = filterEl.attr('data-index');
+
+            let filter = {
+                name: $(`#filter${filterIndex}_name`).val(),
+                label: $(`#filter${filterIndex}_label`).val(),
+                columns: [],
+                conditions: [] // TODO: Generate
+            }
+
+            // Add displayed columns
+            $('.displayed-columns .chip:not(.template)').each((index, chipEl) => {
+                filter.columns.push($(chipEl).attr('data-name'));
+            })
+
+            // Add filter
+            structure.filters.push(filter);
+        });
+
+        return structure;
     }
 }

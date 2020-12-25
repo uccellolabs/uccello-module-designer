@@ -128,11 +128,15 @@ export class FieldModal
             displaytype: $('#field_displaytype', this.modal).val(),
             data: {
                 column: $('#field_column', this.modal).val(),
-                required: $('#field_required', this.modal).is(':checked'),
                 default: $('#field_default', this.modal).val(),
                 large: $('#field_large', this.modal).is(':checked'),
             }
         };
+
+        // Required
+        if ($('#field_required', this.modal).is(':checked')) {
+            config.data.rules = "required";
+        }
 
         // Generate custom config
         $('#custom-config :input', this.modal).each((index, el) => {

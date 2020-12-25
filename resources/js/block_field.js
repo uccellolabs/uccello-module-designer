@@ -198,7 +198,7 @@ export class BlockFieldTab
         $('.module-field .label', fieldEl).text(config.label);
 
         // Required
-        if (config.required === true) {
+        if (typeof config.data.rules !== 'undefined' && config.data.rules.match('required')) {
             $('.module-field .required', fieldEl).show();
         } else {
             $('.module-field .required', fieldEl).hide();
@@ -210,7 +210,7 @@ export class BlockFieldTab
         }
 
         // Large
-        if (config.large) {
+        if (config.data.large) {
             fieldEl.removeClass('m6');
         }
 
@@ -263,6 +263,8 @@ export class BlockFieldTab
             // Add all fields in the block
             $('.module-field:visible', blockEl).each((fieldSequence, fieldEl) => {
                 let fieldConfig = $(fieldEl).attr('data-config');
+
+                // TODO: Disapears when a field is adding into filter
 
                 if (fieldConfig) {
                     let field = JSON.parse(fieldConfig);

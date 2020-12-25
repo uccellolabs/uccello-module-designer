@@ -56,10 +56,11 @@ class ModuleDesigner
     saveStructure() {
         let moduleStructure = this.moduleTab.getModuleStructure();
         let blockFieldStructure = this.blockFieldTab.getBlocksAndFieldsStructure();
+        let filterStructure = this.filterTab.getFilterStructure();
 
-        let structure = Object.assign(moduleStructure, blockFieldStructure);
+        let structure = Object.assign(moduleStructure, blockFieldStructure, filterStructure);
 
-        // console.log(structure);
+        console.log(structure);
     }
 }
 
