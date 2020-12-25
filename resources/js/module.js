@@ -9,6 +9,7 @@ export class ModuleTab
         this.bindLabel();
         this.initIconClickListener();
         this.initDefaultViewChangeListener();
+        this.initInputChangeListener();
     }
 
     /**
@@ -52,5 +53,38 @@ export class ModuleTab
                 $('#module_custom_route', this.tab).parents('.input-field:first').hide();
             }
         });
+    }
+
+    /**
+     * Dispatches an event every time an input field is changed.
+     * It will save the new structure.
+     */
+    initInputChangeListener() {
+        $(':input', this.tab).on('change', event => {
+            console.log('save');
+            let customEvent = new CustomEvent('module.structure.save');
+            dispatchEvent(customEvent);
+        })
+    }
+
+    /**
+     * Returns module structure
+     */
+    getModuleStructure() {
+        let structure = {
+            "name": $('#module_name', this.tab).val(),
+            "icon": $('#module_icon i.material-icons', this.tab).text(),
+            // "model": "Uccello\\Crm\\Models\\Account", // TODO: Generate
+            "tableName": $('#module_name', this.tab).val(), // TODO: Add field
+            "tablePrefix": "",
+        }
+
+        if ($('#module_package', this.tab).val()) {
+            structure['data'] = {
+                "package": $('#module_package', this.tab).val()
+            };
+        }
+
+        return structure;
     }
 }

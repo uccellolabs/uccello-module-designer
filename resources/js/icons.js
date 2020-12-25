@@ -1004,6 +1004,9 @@ export class IconsModal {
                 $(`#${this.targetId} i`).text(iconName);
                 $(`#${this.targetId}`).parents('.card:first').find('.card-title i.material-icons:first').text(iconName);
                 $(this.modal).modal('close');
+
+                // Save structure
+                this.dispatchSaveEvent();
             });
         }
     }
@@ -1026,5 +1029,13 @@ export class IconsModal {
         $('#icons-searchbar input', this.modal).on('click', event => {
             $(event.currentTarget).trigger('select');
         })
+    }
+
+    /**
+     * Dispatch custom event to save the complete module stucture.
+     */
+    dispatchSaveEvent() {
+        let customEvent = new CustomEvent('module.structure.save');
+        dispatchEvent(customEvent);
     }
 }

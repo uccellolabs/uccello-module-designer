@@ -51,7 +51,7 @@
             <div class="input-field col s12 m3" data-tooltip="{{ uctrans('info.field.uitype', $module) }}">
                 <select id="field_uitype" data-container="body">
                     @foreach ($uitypes as $uitype)
-                        <option value="{{ $uitype->id }}" @if($uitype->name === 'text')selected="selected"@endif>{{ uctrans('uitype.'.$uitype->name, $module) }}</option>
+                        <option value="{{ $uitype->name }}" @if($uitype->name === 'text')selected="selected"@endif>{{ uctrans('uitype.'.$uitype->name, $module) }}</option>
                     @endforeach
                 </select>
                 <label for="field_uitype" class="required">{{ uctrans('field.field.uitype', $module) }}</label>
@@ -62,7 +62,7 @@
             <div class="input-field col s12 m4" data-tooltip="{{ uctrans('info.field.displaytype', $module) }}">
                 <select id="field_displaytype" data-container="body">
                     @foreach ($displaytypes as $displaytype)
-                        <option value="{{ $displaytype->id }}">{{ uctrans('displaytype.'.$displaytype->name, $module) }}</option>
+                        <option value="{{ $displaytype->name }}">{{ uctrans('displaytype.'.$displaytype->name, $module) }}</option>
                     @endforeach
                 </select>
                 <label for="field_displaytype" class="required">{{ uctrans('field.field.displaytype', $module) }}</label>

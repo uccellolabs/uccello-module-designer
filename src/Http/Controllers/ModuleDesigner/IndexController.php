@@ -52,7 +52,7 @@ class IndexController extends CoreIndexController
         // Pre-process
         $this->preProcess($domain, $module, $request);
 
-        $uitype = Uitype::findOrFail($request->uitype);
+        $uitype = Uitype::where('name', $request->uitype)->first();
 
         // If a special template exists, use it. Else use the generic template
         $uitypeViewName = sprintf('uitypes.module-designer.%s', $uitype->name);

@@ -18,8 +18,8 @@ export class FieldModal
     initConfig() {
         $('input[type="text"]', this.modal).val(''); // Text input
         $('input[type="checkbox"]', this.modal).prop('checked', false); // Checkboxes
-        $('#field_uitype', this.modal).val('1').formSelect().trigger('change'); // Uitype
-        $('#field_displaytype', this.modal).val('1').formSelect(); // Displaytype
+        $('#field_uitype', this.modal).val('text').formSelect().trigger('change'); // Uitype
+        $('#field_displaytype', this.modal).val('everywhere').formSelect(); // Displaytype
         $('#field_icon .material-icons').text(''); // Icon
     }
 
@@ -124,13 +124,14 @@ export class FieldModal
             icon: $('#field_icon i.material-icons', this.modal).text(),
             label: $('#field_label', this.modal).val(),
             name: $('#field_name', this.modal).val(),
-            column: $('#field_column', this.modal).val(),
-            required: $('#field_required', this.modal).is(':checked'),
-            uitype_id: $('#field_uitype', this.modal).val(),
-            displaytype_id: $('#field_displaytype', this.modal).val(),
-            default: $('#field_default', this.modal).val(),
-            large: $('#field_large', this.modal).is(':checked'),
-            custom: {}
+            uitype: $('#field_uitype', this.modal).val(),
+            displaytype: $('#field_displaytype', this.modal).val(),
+            data: {
+                column: $('#field_column', this.modal).val(),
+                required: $('#field_required', this.modal).is(':checked'),
+                default: $('#field_default', this.modal).val(),
+                large: $('#field_large', this.modal).is(':checked'),
+            }
         };
 
         // Generate custom config
@@ -145,7 +146,7 @@ export class FieldModal
 
             // Add config only if value is not empty
             if (value !== '') {
-                config.custom[param] = value;
+                config.data[param] = value;
             }
         });
 

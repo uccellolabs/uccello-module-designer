@@ -18,6 +18,7 @@ return [
         'add_condition' => 'Ajouter une condition',
         'install' => 'Installer le module',
         'add_block' => 'Ajouter un Bloc',
+        'add_filter' => 'Ajouter un Filtre',
     ],
     'label' => [
         'creation' => 'Création',
@@ -25,6 +26,7 @@ return [
         'application' => 'Application',
         'fields' => 'Champs',
         'filter_all' => 'Tout',
+        'filter' => 'Filtre',
         'conditions' => 'Conditions',
         'summary' => 'Widgets de la vue "Résumé"',
         'tab' => 'Onglet',
@@ -35,6 +37,7 @@ return [
         'delete_block_message' => 'Voulez-vous vraiment supprimer ce bloc ? Si oui tous les champs créés dans celui-ci seront également supprimés.',
         'delete_block_ok' => 'Oui',
         'delete_block_cancel' => 'Annuler',
+        'columns_displayed' => 'Colonnes affichées par défaut',
     ],
     'field' => [
         'module' => [
@@ -65,6 +68,8 @@ return [
         ],
         'filter' => [
             'default' => 'Par défaut',
+            'label' => 'Libellé',
+            'name' => 'Nom système',
             'field' => 'Champ',
             'value' => 'Valeur',
         ],
@@ -138,6 +143,10 @@ return [
             'displaytype' => 'Détermine sur quelles vues le champ sera affiché.',
             'default' => 'Valeur par défaut lors de l\'ouverture du formulaire de création.',
             'large' => 'Si oui, le champ sera affiché sur toute la largeur du formulaire.',
+        ],
+        'filter' => [
+            'label' => 'Nom affiché dans la liste de filtres.',
+            'name' => 'Nom utilisé par le système.',
         ],
         'relation' => [
             'type' => '<b>1-N</b> et <b>N-N :</b> La relation sera créée dans ce module. <b>N-1 :</b> La relation sera ajoutée au module source.',

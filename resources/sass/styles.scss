@@ -29,13 +29,14 @@
             cursor: pointer;
             padding-left: 30px;
 
-            .close {
+            a.delete {
                 visibility: hidden;
             }
 
             &:hover {
-                .close {
+                a.delete {
                     visibility: visible;
+                    color: rgba(0,0,0,.6) !important;
                 }
             }
         }
@@ -63,6 +64,19 @@
     &:hover {
         .delete-block {
             display: block;
+        }
+    }
+}
+
+#filter {
+    .displayed-columns {
+        padding: 2px 7px;
+        background-color: #F2F2F2;
+        border-radius: 10px;
+        min-height: 40px;
+
+        .chip {
+            margin-top: 5px;
         }
     }
 }

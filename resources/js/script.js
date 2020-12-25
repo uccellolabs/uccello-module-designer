@@ -1,5 +1,6 @@
 import { ModuleTab } from './module';
 import { BlockFieldTab } from './block_field';
+import { FilterTab } from './filter';
 import { IconsModal } from './icons';
 
 class ModuleDesigner
@@ -7,22 +8,58 @@ class ModuleDesigner
     constructor() {
         this.initModuleTab();
         this.initBlockFieldTab();
+        this.initFilterTab();
         this.initIconsModal();
+        this.initMakeStructureEventListener();
     }
 
-    // Module
+    /**
+     * Inits Module tab.
+     */
     initModuleTab() {
-        new ModuleTab();
+        this.moduleTab = new ModuleTab();
     }
 
-    // Blocks and Fields
+    /**
+     * Inits Blocks and Fields tab.
+     */
     initBlockFieldTab() {
-        new BlockFieldTab();
+        this.blockFieldTab = new BlockFieldTab();
     }
 
-    // Icons modal
+    /**
+     * Inits Filters tab.
+     */
+    initFilterTab() {
+        this.filterTab = new FilterTab();
+    }
+
+    /**
+     * Inits Icons modal.
+     */
     initIconsModal() {
         new IconsModal();
+    }
+
+    /**
+     * Adds event listener and make module structure.
+     */
+    initMakeStructureEventListener() {
+        addEventListener('module.structure.save', event => {
+            this.saveStructure();
+        });
+    }
+
+    /**
+     * Makes module structure with JSON format and save it.
+     */
+    saveStructure() {
+        let moduleStructure = this.moduleTab.getModuleStructure();
+        let blockFieldStructure = this.blockFieldTab.getBlocksAndFieldsStructure();
+
+        let structure = Object.assign(moduleStructure, blockFieldStructure);
+
+        // console.log(structure);
     }
 }
 

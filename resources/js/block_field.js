@@ -21,6 +21,8 @@ export class BlockFieldTab
      */
     initAddBlockClickListener() {
         $('#add-block-btn').on('click', event => {
+            event.preventDefault();
+
             this.addBlock();
         });
     }
@@ -123,6 +125,26 @@ export class BlockFieldTab
     }
 
     /**
+     * Dispatches an event every time an input field is changed.
+     * It will save the new structure.
+     *
+     * @param {Element} blockEl
+     */
+    initInputChangeListener(blockEl) {
+        $(':input', blockEl).on('change', event => {
+            this.dispatchSaveEvent();
+        })
+    }
+
+    /**
+     * Dispatch custom event to save the complete module stucture.
+     */
+    dispatchSaveEvent() {
+        let customEvent = new CustomEvent('module.structure.save');
+        dispatchEvent(customEvent);
+    }
+
+    /**
      * Adds a block and init all event listeners
      */
     addBlock() {
@@ -149,11 +171,17 @@ export class BlockFieldTab
         // Add event listener for adding field
         this.initAddFieldClickListener(blockEl);
 
+        // Add event listener for saving structure
+        this.initInputChangeListener(blockEl);
+
         // Append new block
         $(this.tab).append(blockEl);
 
         // Increment counter
         this.blocksCount++;
+
+        // Save structure
+        this.dispatchSaveEvent();
     }
 
     /**
@@ -187,9 +215,72 @@ export class BlockFieldTab
         }
 
         // Convert config to JSON and add to data-config attribute
-        $(fieldEl).attr('data-config', JSON.stringify(config));
+        let jsonConfig = JSON.stringify(config);
+        $('.module-field', fieldEl).attr('data-config', jsonConfig);
 
         // Add field
         $('.fields-container', blockEl).append(fieldEl);
+
+        // Dispatch custom event (useful for adding field into filter columns and conditions)
+        let customEvent = new CustomEvent('module.field.changed', {
+            detail: {
+                structure: this.getBlocksAndFieldsStructure()
+            }
+        });
+        dispatchEvent(customEvent);
+
+        // Save structure
+        this.dispatchSaveEvent();
+    }
+
+    /**
+     * Returns structure
+     */
+    getBlocksAndFieldsStructure() {
+        let structure = {
+            tabs: []
+        };
+
+        // TODO: Handle multi tabs
+        let tab = {
+            blocks: []
+        };
+
+        // Add all blocks
+        $('.card.block:not(.template)', this.tab).each((blockSequence, blockEl) => {
+            // Block
+            let blockIndex = $(blockEl).attr('data-index');
+
+            let block = {
+                label: 'block.' + $(`#block${blockIndex}_name`, blockEl).val(),
+                labelTranslated: $(`#block${blockIndex}_label`, blockEl).val(),
+                icon: $(`#block${blockIndex}_icon i.material-icons`, blockEl).text(),
+                sequence: blockSequence,
+                data: null,
+                fields: []
+            };
+
+            // Add all fields in the block
+            $('.module-field:visible', blockEl).each((fieldSequence, fieldEl) => {
+                let fieldConfig = $(fieldEl).attr('data-config');
+
+                if (fieldConfig) {
+                    let field = JSON.parse(fieldConfig);
+
+                    if (field) {
+                        field.sequence = fieldSequence;
+                        block.fields.push(field);
+                    }
+                }
+            });
+
+            // Add block into the tab
+            tab.blocks.push(block);
+        });
+
+        // Add tab into the structure
+        structure.tabs.push(tab);
+
+        return structure;
     }
 }
