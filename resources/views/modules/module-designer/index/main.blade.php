@@ -4,6 +4,8 @@
 
 @section('extra-meta')
 <meta name="field-config-url" content="{{ ucroute('module-designer-ui.field.config', $domain, $module, ['uitype' => 'UITYPE']) }}">
+<meta name="save-url" content="{{ ucroute('module-designer-ui.save', $domain, $module) }}">
+<meta name="install-url" content="{{ ucroute('module-designer-ui.install', $domain, $module) }}">
 @append
 
 @section('breadcrumb')
@@ -41,9 +43,9 @@
     {{-- Tab links --}}
     <div class="col s12">
         <ul class="tabs transparent">
-            <li class="tab"><a href="#module">1. {{ uctrans('tab.module', $module) }}</a></li>
+            <li class="tab"><a href="#module" class="active">1. {{ uctrans('tab.module', $module) }}</a></li>
             <li class="tab"><a href="#block-field">2. {{ uctrans('tab.block_field', $module) }}</a></li>
-            <li class="tab"><a href="#filter" class="active">3. {{ uctrans('tab.filter', $module) }}</a></li>
+            <li class="tab"><a href="#filter">3. {{ uctrans('tab.filter', $module) }}</a></li>
             {{-- <li class="tab"><a href="#widget">4. {{ uctrans('tab.widget', $module) }}</a></li> --}}
             <li class="tab"><a href="#relation">4. {{ uctrans('tab.relation', $module) }}</a></li>
             <li class="tab"><a href="#translation">5. {{ uctrans('tab.translation', $module) }}</a></li>
@@ -341,91 +343,98 @@
 
     {{-- Relations --}}
     <div id="relation" class="col s12" style="margin-bottom: 50px">
-        <div class="card">
+        <div class="card relation template" style="display: none">
             <div class="card-content">
                 <span class="card-title">
-                    <i class="material-icons left primary-text">domain</i>Comptes
+                    <i class="material-icons left primary-text">domain</i>
+                    <span class="label">{{ uctrans('label.relation', $module) }}</span>
                     {{-- <small>1-n</small> --}}
                 </span>
 
                 <div class="row">
+                    {{-- Label --}}
+                    <div class="input-field col s12 m6">
+                        <input type="text" id="relation0_label" value="" class="relation-label" autocomplete="off">
+                        <label for="relation0_label">{{ uctrans('field.relation.label', $module) }}</label>
+                        <small class="help primary-text">{{ uctrans('info.relation.label', $module) }}</small>
+                    </div>
+
+                    {{-- Name --}}
+                    <div class="input-field col s12 m6">
+                        <input type="text" id="relation0_name" value="" class="relation-name" autocomplete="off">
+                        <label for="relation0_name">{{ uctrans('field.relation.name', $module) }}</label>
+                        <small class="help primary-text">{{ uctrans('info.relation.name', $module) }}</small>
+                    </div>
+
                     {{-- Type --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_type">
+                        <select id="relation0_type" class="browser-default relation-type">
                             <option value="1-n">{{ uctrans('relation.1_n', $module) }}</option>
-                            <option value="n-1">{{ uctrans('relation.n_1', $module) }}</option>
+                            {{-- <option value="n-1">{{ uctrans('relation.n_1', $module) }}</option> --}}
                             <option value="n-n">{{ uctrans('relation.n_n', $module) }}</option>
                         </select>
-                        <label for="relation1_type">{{ uctrans('field.relation.type', $module) }}</label>
+                        <label for="relation0_type">{{ uctrans('field.relation.type', $module) }}</label>
                         <small class="help primary-text">{!! uctrans('info.relation.type', $module) !!}</small>
                     </div>
 
                     {{-- Display mode --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_display_mode">
+                        <select id="relation0_display_mode" class="browser-default">
                             <option value="tab">{{ uctrans('label.tab', $module) }}</option>
                             <option value="block">{{ uctrans('label.block', $module) }}</option>
                         </select>
-                        <label for="relation1_display_mode">{{ uctrans('field.relation.display_mode', $module) }}</label>
+                        <label for="relation0_display_mode">{{ uctrans('field.relation.display_mode', $module) }}</label>
                         <small class="help primary-text">{!! uctrans('info.relation.display_mode', $module) !!}</small>
                     </div>
 
                     {{-- Source module --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_source_module">
-                            @foreach ($modules as $_module)
-                            <option value="document">Document</option>
-                            @foreach ($modules as $_module)
-                            <option value="{{ $_module->name }}">{{ uctrans($_module->name, $_module) }}</option>
-                            @endforeach
+                        <select id="relation0_source_module" class="browser-default source-module">
+                            <option value="" class="module-name"></option>
+                            @foreach ($crudModules as $_module)
+                            <option value="{{ $_module->name }}">{{ $_module->label }}</option>
                             @endforeach
                         </select>
-                        <label for="relation1_source_module">{{ uctrans('field.relation.source_module', $module) }}</label>
+                        <label for="relation0_source_module">{{ uctrans('field.relation.source_module', $module) }}</label>
                         <small class="help primary-text">{!! uctrans('info.relation.source_module', $module) !!}</small>
                     </div>
 
                     {{-- Target module --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_target_module">
-                            @foreach ($modules as $_module)
-                            <option value="{{ $_module->name }}">{{ uctrans($_module->name, $_module) }}</option>
+                        <select id="relation0_target_module" class="browser-default target-module">
+                            @foreach ($crudModules as $_module)
+                            <option value="{{ $_module->name }}" data-block-fields="{{ json_encode($_module->blocks) }}">{{ $_module->label }}</option>
                             @endforeach
+                            <option value="" class="module-name"></option>
                         </select>
-                        <label for="relation1_target_module">{{ uctrans('field.relation.target_module', $module) }}</label>
+                        <label for="relation0_target_module">{{ uctrans('field.relation.target_module', $module) }}</label>
                         <small class="help primary-text">{!! uctrans('info.relation.target_module', $module) !!}</small>
-                    </div>
-
-                    {{-- Label --}}
-                    <div class="input-field col s12 m6">
-                        <input type="text" id="relation1_label" value="Comptes">
-                        <label for="relation1_label">{{ uctrans('field.module.label', $module) }}</label>
-                        <small class="help primary-text">{{ uctrans('info.relation.label', $module) }}</small>
                     </div>
 
                     {{-- Related field --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_related_field">
-                            <option value="account">Compte</option>
+                        <select id="relation0_related_field" class="browser-default related-field">
+                            {{-- Filled in automaticaly --}}
                         </select>
-                        <label for="relation1_related_field">{{ uctrans('field.relation.related_field', $module) }}</label>
+                        <label for="relation0_related_field">{{ uctrans('field.relation.related_field', $module) }}</label>
                         <small class="help primary-text">{{ uctrans('info.relation.related_field', $module) }}</small>
                     </div>
 
                     {{-- Actions --}}
                     <div class="input-field col s12 m6">
-                        <select id="relation1_action" multiple>
+                        <select id="relation0_action" multiple class="browser-default">
                             <option value="select">{{ uctrans('action.select', $module) }}</option>
                             <option value="add">{{ uctrans('action.add', $module) }}</option>
                         </select>
-                        <label for="relation1_action">{{ uctrans('field.relation.action', $module) }}</label>
+                        <label for="relation0_action">{{ uctrans('field.relation.action', $module) }}</label>
                         <small class="help primary-text">{!! uctrans('info.relation.action', $module) !!}</small>
                     </div>
 
                     {{-- Method --}}
                     @if (config('module-designer-ui.can_choose_relation_method'))
                     <div class="input-field col s12 m6">
-                        <input type="text" id="relation1_method" value="getDependentList">
-                        <label for="relation1_method">{{ uctrans('field.relation.method', $module) }}</label>
+                        <input type="text" id="relation0_method" value="getDependentList" class="relation-method" autocomplete="off">
+                        <label for="relation0_method">{{ uctrans('field.relation.method', $module) }}</label>
                         <small class="help primary-text">{{ uctrans('info.relation.method', $module) }}</small>
                     </div>
                     @endif
@@ -560,7 +569,7 @@
                             {{ uctrans('install.ready', $module) }}
                         </h5>
 
-                        <button class="btn waves-effect waves-light green">
+                        <button id="install_module" class="btn waves-effect waves-light green">
                             <i class="material-icons left">input</i>
                             {{ uctrans('button.install', $module) }}
                         </button>
@@ -587,6 +596,12 @@
                 data-tooltip="{{ uctrans('button.add_filter', $module) }}" data-position="top">
                 <i class="material-icons">add</i>
             </a> --}}
+
+            {{-- Add relation --}}
+            <a id="add-relation-btn" href="#" class="btn-floating btn-large primary"
+                data-tooltip="{{ uctrans('button.add_relation', $module) }}" data-position="top">
+                <i class="material-icons">add</i>
+            </a>
         </div>
         @show
     @endif

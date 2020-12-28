@@ -269,6 +269,9 @@ export class FilterTab
                     // Disabled li from field list
                     // liEl.prop('disabled', true);
 
+                    // Save structure
+                    this.dispatchSaveEvent();
+
                     // Add delete listener
                     $('a.delete', chipEl).on('click', closeEvent => {
                         closeEvent.preventDefault();
@@ -308,7 +311,7 @@ export class FilterTab
         conditionEl.removeClass('template').show();
 
         // Replace ids and attributes
-        $('#filter0')
+        // $('#filter0')
 
         $('.conditions', filterEl).append(conditionEl);
     }
@@ -326,6 +329,7 @@ export class FilterTab
             let filterIndex = filterEl.attr('data-index');
 
             let filter = {
+                id: null,
                 name: $(`#filter${filterIndex}_name`).val(),
                 label: $(`#filter${filterIndex}_label`).val(),
                 columns: [],

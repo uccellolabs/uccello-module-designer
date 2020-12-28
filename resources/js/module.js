@@ -61,7 +61,6 @@ export class ModuleTab
      */
     initInputChangeListener() {
         $(':input', this.tab).on('change', event => {
-            console.log('save');
             let customEvent = new CustomEvent('module.structure.save');
             dispatchEvent(customEvent);
         })

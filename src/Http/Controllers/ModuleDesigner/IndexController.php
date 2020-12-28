@@ -3,7 +3,10 @@
 namespace Uccello\ModuleDesignerUi\Http\Controllers\ModuleDesigner;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use stdClass;
 use Uccello\Core\Facades\Uccello;
 use Uccello\Core\Http\Controllers\Core\IndexController as CoreIndexController;
 use Uccello\Core\Models\Displaytype;
@@ -11,6 +14,8 @@ use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Module;
 use Uccello\Core\Models\Uitype;
 use Uccello\Core\Models\Widget;
+use Uccello\ModuleDesigner\Models\DesignedModule;
+use Uccello\ModuleDesigner\Support\ModuleImport;
 
 class IndexController extends CoreIndexController
 {
@@ -39,14 +44,27 @@ class IndexController extends CoreIndexController
         // Get all displaytypes
         $displaytypes = $this->getDisplaytypes();
 
+        // Get CRUD modules accessible by user
+        $crudModules = $this->getCrudModules();
+
         return $this->autoView(compact(
             'packages',
             'widgets',
             'uitypes',
             'displaytypes',
+            'crudModules',
         ));
     }
 
+    /**
+     * Returns all available config param for a specific uitype.
+     *
+     * @param \Uccello\Core\Models\Domain|null $domain
+     * @param \Uccello\Core\Models\Module $module
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return void
+     */
     public function fieldConfig(?Domain $domain, Module $module, Request $request)
     {
         // Pre-process
@@ -65,6 +83,53 @@ class IndexController extends CoreIndexController
         }
 
         return view()->make($uitypeViewToInclude, compact('domain', 'module', 'uitype'))->render();
+    }
+
+    /**
+     * Save current config for designed module
+     *
+     * @param \Uccello\Core\Models\Domain|null $domain
+     * @param \Uccello\Core\Models\Module $module
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return void
+     */
+    public function save(?Domain $domain, Module $module, Request $request)
+    {
+        $structure = json_decode($request->structure);
+
+        // Search by id (allows to update module name)
+        if (!empty($structure->designed_module_id)) {
+            $designedModule = DesignedModule::find($structure->designed_module_id);
+            $designedModule->name = $structure->name;
+        }
+
+        // Create a new config
+        if (empty($designedModule)) {
+            $designedModule = DesignedModule::firstOrNew([
+                'name' => $structure->name,
+            ]);
+        }
+
+        $designedModule->data = $structure;
+        $designedModule->save();
+
+        return $designedModule;
+    }
+
+    public function install(?Domain $domain, Module $module, Request $request)
+    {
+        $designedModule = DesignedModule::findOrFail($request->id);
+
+        $structure = $designedModule->data;
+        $structure->model = 'App\Employee'; // TODO: auto generate
+
+        $import = new ModuleImport();
+        $import->install($structure);
+
+        Artisan::call('cache:clear');
+
+        return response()->json('installed');
     }
 
     /**
@@ -135,5 +200,45 @@ class IndexController extends CoreIndexController
     protected function getDisplaytypes()
     {
         return Displaytype::all();
+    }
+
+    protected function getCrudModules()
+    {
+        $modules = Module::whereNotNull('model_class')->get();
+
+        $crudModules = collect();
+        foreach ($modules as $module) {
+            if (!Auth::user()->canRetrieve($this->domain, $module)) {
+                continue;
+            }
+
+            $_module = new stdClass();
+            $_module->name = $module->name;
+            $_module->label = uctrans($module->name, $module);
+            $_module->blocks = collect();
+
+            // Get all blocks
+            foreach ($module->blocks->sortBy('sequence') as $block) {
+                $_block = new stdClass();
+                $_block->label = $block->label;
+                $_block->labelTranslated = uctrans($block->label, $module);
+                $_block->fields = collect();
+
+                foreach ($block->fields->where('uitype_id', 10)->sortBy('sequence') as $field) {
+                    $_field = new stdClass();
+                    $_field->name = $field->name;
+                    $_field->label = uctrans('field.'.$field->name, $module);
+                    $_block->fields[] = $_field;
+                }
+
+                if ($_block->fields->count() > 0) {
+                    $_module->blocks[] = $_block;
+                }
+            }
+
+            $crudModules[] = $_module;
+        }
+
+        return $crudModules->sortBy('label');
     }
 }

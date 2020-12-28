@@ -120,6 +120,7 @@ export class FieldModal
 
     generateFieldConfig() {
         let config = {
+            id: null,
             blockIndex: $(this.modal).attr('data-block-index'),
             icon: $('#field_icon i.material-icons', this.modal).text(),
             label: $('#field_label', this.modal).val(),

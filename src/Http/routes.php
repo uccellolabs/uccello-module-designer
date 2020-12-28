@@ -29,4 +29,12 @@ Route::middleware('web', 'auth')
     Route::get($domainParam.'/module-designer/field/config', 'ModuleDesigner\IndexController@fieldConfig')
         ->defaults('module', 'module-designer')
         ->name('field.config');
+
+    Route::post($domainParam.'/module-designer/save', 'ModuleDesigner\IndexController@save')
+        ->defaults('module', 'module-designer')
+        ->name('save');
+
+    Route::get($domainParam.'/module-designer/install_module', 'ModuleDesigner\IndexController@install')
+        ->defaults('module', 'module-designer')
+        ->name('install');
 });

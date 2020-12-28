@@ -243,6 +243,10 @@ export class BlockFieldTab
 
         // TODO: Handle multi tabs
         let tab = {
+            id: null,
+            label: 'tab.main',
+            icon: null,
+            sequence: 0,
             blocks: []
         };
 
@@ -252,6 +256,7 @@ export class BlockFieldTab
             let blockIndex = $(blockEl).attr('data-index');
 
             let block = {
+                id: null,
                 label: 'block.' + $(`#block${blockIndex}_name`, blockEl).val(),
                 labelTranslated: $(`#block${blockIndex}_label`, blockEl).val(),
                 icon: $(`#block${blockIndex}_icon i.material-icons`, blockEl).text(),

@@ -38,6 +38,7 @@ return [
         'delete_block_ok' => 'Oui',
         'delete_block_cancel' => 'Annuler',
         'columns_displayed' => 'Colonnes affichées par défaut',
+        'relation' => 'Relation',
     ],
     'field' => [
         'module' => [
@@ -74,6 +75,8 @@ return [
             'value' => 'Valeur',
         ],
         'relation' => [
+            'label' => 'Libellé',
+            'name' => 'Nom système',
             'type' => 'Type',
             'target_module' => 'Module cible',
             'source_module' => 'Module source',
@@ -149,11 +152,12 @@ return [
             'name' => 'Nom utilisé par le système.',
         ],
         'relation' => [
+            'label' => 'Nom de la relation qui sera affiché.',
+            'name' => 'Nom utilisé par le système.',
             'type' => '<b>1-N</b> et <b>N-N :</b> La relation sera créée dans ce module. <b>N-1 :</b> La relation sera ajoutée au module source.',
             'display_mode' => '<b>Onglet :</b> Présenté sous forme d\'onglet. <b>Bloc :</b> Présenté sous forme de bloc virtuel.',
             'source_module' => 'Module dans lequel sera créée la relation.',
             'target_module' => 'Module vers lequel pointe la relation.',
-            'label' => 'Nom de la relation qui sera affiché.',
             'related_field' => 'Champ qui crée la relation vers le module cible.',
             'action' => 'Actions autorisées depuis la relation. Les boutons correspondants seront affichés.',
             'method' => 'Méthode qui sera utilisée pour retrouver les relations.'
