@@ -108,8 +108,11 @@ export class RelationTab
      */
     initInputChangeListener(relationEl) {
         $(':input', relationEl).on('change', event => {
-            this.dispatchSaveEvent();
-        })
+            // Wait a little (allows other event listeners to be completed)
+            setTimeout(() => {
+                this.dispatchSaveEvent();
+            }, 800);
+        });
     }
 
     /**
@@ -149,34 +152,9 @@ export class RelationTab
      */
     initFieldChangedEventListener(relationEl) {
         addEventListener('module.field.changed', event => {
-            this.structure = event.detail.structure;
+            console.log('RELATION');
 
-
-            // $('.target-module option:first', relationEl).attr('data-block-fields', JSON.stringify(blocks));
-
-            let blockFields = [];
-            for (let block of this.structure.tabs[0].blocks) { // TODO: handle multiple tabs
-                let blockField = {
-                    label: block.label,
-                    labelTranslated: block.labelTranslated,
-                    fields: []
-                };
-
-                for (let field of block.fields) {
-                    if (field.uitype === 'entity') { // Entity
-                        blockField.fields.push({
-                            name: field.name,
-                            label: field.label
-                        });
-                    }
-                }
-
-                if (blockField.fields.length > 0) {
-                    blockFields.push(blockField);
-                }
-            }
-
-            $(`.target-module option[value="${this.moduleName}"]`, relationEl).attr('data-block-fields', JSON.stringify(blockFields));
+            this.setTargetModuleFields(relationEl, event.detail.structure);
         });
     }
 
@@ -194,8 +172,8 @@ export class RelationTab
             // automaticaly select current module from target module
             // and deactivate it
             if (sourceModule !== this.moduleName) {
-                $('.target-module', relationEl).val(this.moduleName);
-                $('.target-module', relationEl).prop('disabled', true).trigger('change');
+                $('.target-module', relationEl).val(this.moduleName).select();
+                $('.target-module', relationEl).prop('disabled', true);
             } else {
                 $('.target-module', relationEl).prop('disabled', false);
             }
@@ -319,10 +297,43 @@ export class RelationTab
         this.displatchJsLibraryEvent(relationEl);
 
         // Increment counter
-        this.filtersCount++;
+        this.relationsCount++;
 
         // Save structure
         this.dispatchSaveEvent();
+    }
+
+    /**
+     *
+     * @param {Element} relationEl
+     * @param {Object} structure
+     */
+    setTargetModuleFields(relationEl, structure) {
+        let blockFields = [];
+        for (let tab of structure.tabs) {
+            for (let block of tab.blocks) {
+                let blockField = {
+                    label: block.label,
+                    labelTranslated: block.labelTranslated,
+                    fields: []
+                };
+
+                for (let field of block.fields) {
+                    if (field.uitype === 'entity') { // Entity
+                        blockField.fields.push({
+                            name: field.name,
+                            label: field.label
+                        });
+                    }
+                }
+
+                if (blockField.fields.length > 0) {
+                    blockFields.push(blockField);
+                }
+            }
+        }
+
+        $(`.target-module option.module-name`, relationEl).attr('data-block-fields', JSON.stringify(blockFields));
     }
 
     /**
@@ -358,5 +369,81 @@ export class RelationTab
         });
 
         return structure;
+    }
+
+    /**
+     * Resumes edition.
+     * @param {Object} structure
+     * @param {String} lang
+     */
+    resume(structure, lang) {
+        if (!structure.relatedlists) {
+            return;
+        }
+
+        this.moduleName = structure.name;
+
+        for (let i=0; i<structure.relatedlists.length; i++) {
+            // Add relation if there are more than one relation
+            this.addRelation();
+
+            // Get filter information
+            let relation = structure.relatedlists[i];
+            let relationIndex = i + 1;
+            let relationEl = $(`.relation[data-index="${relationIndex}"]`, this.tab);
+
+            // Label
+            this.setFieldValue(`#relation${relationIndex}_label`, relation.label);
+
+            // Name
+            this.setFieldValue(`#relation${relationIndex}_name`, relation.name);
+
+            // Type
+            this.setFieldValue(`#relation${relationIndex}_type`, relation.type, false);
+
+            // Display mode
+            let displayMode = relation.tab_id ? 'block' : 'tab';
+            this.setFieldValue(`#relation${relationIndex}_display_mode`, displayMode, false);
+
+            // Source module
+            this.setFieldValue(`#relation${relationIndex}_source_module`, relation.module, false);
+
+            // Target module
+            this.setFieldValue(`#relation${relationIndex}_target_module`, relation.related_module, false);
+
+            // Related field
+            this.setFieldValue(`#relation${relationIndex}_related_field`, relation.related_field, false);
+
+            // Action
+            let actions = relation.data && relation.data.actions ? relation.data.actions : null;
+            this.setFieldValue(`#relation${relationIndex}_action`, actions, false);
+
+            // Method
+            this.setFieldValue(`#relation${relationIndex}_method`, relation.method);
+
+            // Change tab title
+            if (relation.label) {
+                $(`span.label`, relationEl).text(relation.label);
+            }
+
+            this.setTargetModuleFields(relationEl, structure);
+        }
+    }
+
+    /**
+     * Sets field value and add active css class to label if necessary.
+     *
+     * @param {String} selector
+     * @param {any} value
+     * @param {boolean} activateLabel
+     */
+    setFieldValue(selector, value, activateLabel=true) {
+        // Set value
+        $(selector).val(value).trigger('change');
+
+        // Activate label if exists
+        if (activateLabel && value) {
+            $(selector).parents('.input-field:first').find('label[for]').addClass('active');
+        }
     }
 }

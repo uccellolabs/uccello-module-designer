@@ -1,4 +1,4 @@
-import { drop } from 'lodash';
+import { drop, filter } from 'lodash';
 import slugify from 'slugify';
 import Swal from 'sweetalert2';
 
@@ -91,7 +91,10 @@ export class FilterTab
      */
     initInputChangeListener(filterEl) {
         $(':input', filterEl).on('change', event => {
-            this.dispatchSaveEvent();
+            // Wait a little (allows other event listeners to be completed)
+            setTimeout(() => {
+                this.dispatchSaveEvent();
+            }, 800);
         })
     }
 
@@ -134,13 +137,8 @@ export class FilterTab
         addEventListener('module.field.changed', event => {
             this.structure = event.detail.structure;
 
-            // For each filter, update dropdown and condition fields
-            $('.card.filter:not(.template)', this.tab).each((index, el) => {
-                let filterEl = $(el);
-
-                // Add fields
-                this.addFields(filterEl);
-            });
+            // Add fields
+            this.addFields(filterEl);
         });
     }
 
@@ -167,6 +165,7 @@ export class FilterTab
         $('#filter0_icon', filterEl).attr('id', `filter${index}_icon`);
         $('label[for="filter0_label"]', filterEl).attr('for', `filter${index}_label`);
         $('#filter0_label', filterEl).attr('id', `filter${index}_label`);
+        $('#filter0_default', filterEl).attr('id', `filter${index}_default`);
         $('#filter0_name', filterEl).attr('id', `filter${index}_name`);
         $('label[for="filter0_name"]', filterEl).attr('for', `filter${index}_name`);
         $('a[data-target="filter0_dropdown"]', filterEl).attr('data-target', `filter${index}_dropdown`);
@@ -190,7 +189,7 @@ export class FilterTab
         this.initAddConditionClickListener(filterEl);
 
         // Add fields
-        this.addFields(filterEl);
+        // this.addFields(filterEl);
 
         // Append new filter
         $(this.tab).append(filterEl);
@@ -228,82 +227,83 @@ export class FilterTab
         $('optgroup', conditionFieldEl).remove();
 
         // Add fields
-        for (let i=0; i<this.structure.tabs[0].blocks.length; i++) { // TODO: Handle multi tabs
-            let block = this.structure.tabs[0].blocks[i];
+        for (let tab of this.structure.tabs) {
+            for (let i=0; i<tab.blocks.length; i++) {
+                let block = tab.blocks[i];
 
-            // Add a divider to divide each block
-            if (i > 0) {
-                $('<li class="divider" tabindex="-1"></li>').appendTo(dropdownEl);
-            }
-
-            // Add optgroup with block Label
-            $(`<li class="optgroup" tabindex="-1"><span>${block.labelTranslated}</span></li>`).appendTo(dropdownEl);
-
-            // Add an optgroup by block
-            let optgroupEl = $(`<optgroup label="${block.labelTranslated}"></optgroup>`);
-
-            // Add all fields
-            for (let field of block.fields) {
-                if (field.displaytype === 'hidden') { // TODO: Checks instead field.isListable (e.g. with attribute data-listable)
-                    continue;
+                // Add a divider to divide each block
+                if (i > 0) {
+                    $('<li class="divider" tabindex="-1"></li>').appendTo(dropdownEl);
                 }
 
-                // Add field into dropdown
-                let liEl = $('li.template', dropdownEl).clone().removeClass('template').show();
-                $('a', liEl).attr('data-name', field.name).text(field.label);
+                // Add optgroup with block Label
+                $(`<li class="optgroup" tabindex="-1"><span>${block.labelTranslated}</span></li>`).appendTo(dropdownEl);
 
-                // Add click lister to add column in displayed columns lists
-                liEl.on('click', liEvent => {
-                    liEvent.preventDefault();
+                // Add an optgroup by block
+                let optgroupEl = $(`<optgroup label="${block.labelTranslated}"></optgroup>`);
 
-                    // Don't do noting if the field was already added
-                    if ($(`.chip[data-name="${field.name}"]`).length > 0) {
-                        return;
+                // Add all fields
+                for (let field of block.fields) {
+                    if (field.displaytype === 'hidden') { // TODO: Checks instead field.isListable (e.g. with attribute data-listable)
+                        continue;
                     }
 
-                    // Add chip
-                    let chipEl = $('.chip.template', filterEl).clone().removeClass('template').show();
-                    chipEl.attr('data-name', field.name);
-                    $('.label', chipEl).text(field.label);
+                    // Add field into dropdown
+                    let liEl = $('li.template', dropdownEl).clone().removeClass('template').show();
+                    $('a', liEl).attr('data-name', field.name).text(field.label);
 
-                    // Disabled li from field list
-                    // liEl.prop('disabled', true);
+                    // Add click lister to add column in displayed columns lists
+                    liEl.on('click', liEvent => {
+                        liEvent.preventDefault();
 
-                    // Save structure
-                    this.dispatchSaveEvent();
+                        // Don't do noting if the field was already added
+                        if ($(`.chip[data-name="${field.name}"]`).length > 0) {
+                            return;
+                        }
 
-                    // Add delete listener
-                    $('a.delete', chipEl).on('click', closeEvent => {
-                        closeEvent.preventDefault();
-
-                        // Remove chip
-                        chipEl.remove();
-
-                        // Enabled li from field list
-                        // liEl.prop('disabled', false);
-
-                        // Save structure
-                        this.dispatchSaveEvent();
+                        // Add chip
+                        this.addColumn(filterEl, field.name, field.label);
                     })
+                    dropdownEl.append(liEl);
 
-                    $('.displayed-columns', filterEl).append(chipEl);
+                    // Add field into condition fields
+                    //$(`<option value="${field.name}">${field.label}</option>`).appendTo(optgroupEl);
+                    // let optionEl = $('option.template', optgroupel).clone().removeClass('template').show();
+                    // optionEl.prop('value', field.name).text(field.label);
+                }
 
-                    // Save structure
-                    this.dispatchSaveEvent();
-                })
-                dropdownEl.append(liEl);
-
-                // Add field into condition fields
-                //$(`<option value="${field.name}">${field.label}</option>`).appendTo(optgroupEl);
-                // let optionEl = $('option.template', optgroupel).clone().removeClass('template').show();
-                // optionEl.prop('value', field.name).text(field.label);
+                conditionFieldEl.append(optgroupEl);
             }
-
-            conditionFieldEl.append(optgroupEl);
         }
 
         // Reload JS libraries
         this.displatchJsLibraryEvent(filterEl);
+    }
+
+    addColumn(filterEl, name, label) {
+        // Add chip
+        let chipEl = $('.chip.template', filterEl).clone().removeClass('template').show();
+        chipEl.attr('data-name', name);
+        $('.label', chipEl).text(label);
+
+        // Disabled li from field list
+        // liEl.prop('disabled', true);
+
+        // Add delete listener
+        $('a.delete', chipEl).on('click', closeEvent => {
+            closeEvent.preventDefault();
+
+            // Remove chip
+            chipEl.remove();
+
+            // Save structure
+            this.dispatchSaveEvent();
+        })
+
+        $('.displayed-columns', filterEl).append(chipEl);
+
+        // // Save structure
+        this.dispatchSaveEvent();
     }
 
     addCondition(filterEl) {
@@ -332,12 +332,14 @@ export class FilterTab
                 id: null,
                 name: $(`#filter${filterIndex}_name`).val(),
                 label: $(`#filter${filterIndex}_label`).val(),
+                is_default: $(`#filter${filterIndex}_default`).is(':checked'),
                 columns: [],
-                conditions: [] // TODO: Generate
+                conditions: {}, // TODO: Generate,
+                data: {readonly: true}
             }
 
             // Add displayed columns
-            $('.displayed-columns .chip:not(.template)').each((index, chipEl) => {
+            $('.displayed-columns .chip:not(.template)', filterEl).each((index, chipEl) => {
                 filter.columns.push($(chipEl).attr('data-name'));
             })
 
@@ -346,5 +348,86 @@ export class FilterTab
         });
 
         return structure;
+    }
+
+    /**
+     * Resumes edition.
+     * @param {Object} structure
+     * @param {String} lang
+     */
+    resume(structure, lang) {
+        this.structure = structure;
+
+        if (!structure.filters) {
+            return;
+        }
+
+        for (let i=0; i<structure.filters.length; i++) {
+            // Add filter if there are more than one filter
+            if (i > 0) {
+                this.addFilter();
+            }
+
+            // Get filter information
+            let filter = structure.filters[i];
+            let filterIndex = i + 1;
+            let filterEl = $(`.filter[data-index="${filterIndex}"]`, this.tab);
+
+            // Label
+            this.setFieldValue(`#filter${filterIndex}_label`, filter.label);
+
+            // Name
+            this.setFieldValue(`#filter${filterIndex}_name`, filter.name.replace('filter.', ''));
+
+            // Icon
+            if (filter.icon) {
+                $(`#filter${filterIndex}_icon i.material-icons`, filterEl).text(filter.icon);
+            }
+
+            // Change tab title
+            if (filter.labelTranslated) {
+                $(`span.label`, filterEl).text(filter.label);
+            }
+
+            // Change default toggle
+            if (filter.is_default === true) {
+                $(`#filter${filterIndex}_default`).prop('checked', true);
+            } else {
+                $(`#filter${filterIndex}_default`).prop('checked', false);
+            }
+
+            // Add fields into dropdown
+            // this.addFields(filterEl)
+
+            // Add all columns
+            for (let column of filter.columns) {
+                for (let tab of structure.tabs) {
+                    for (let block of tab.blocks) {
+                        for (let field of block.fields) {
+                            if (field.name === column) {
+                                this.addColumn(filterEl, field.name, field.label);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets field value and add active css class to label if necessary.
+     *
+     * @param {String} selector
+     * @param {any} value
+     * @param {boolean} activateLabel
+     */
+    setFieldValue(selector, value, activateLabel=true) {
+        // Set value
+        $(selector, this.tab).val(value).trigger('change');
+
+        // Activate label if exists
+        if (activateLabel && value) {
+            $(selector, this.tab).parents('.input-field:first').find('label[for]').addClass('active');
+        }
     }
 }

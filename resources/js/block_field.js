@@ -132,7 +132,10 @@ export class BlockFieldTab
      */
     initInputChangeListener(blockEl) {
         $(':input', blockEl).on('change', event => {
-            this.dispatchSaveEvent();
+            // Wait a little (allows other event listeners to be completed)
+            setTimeout(() => {
+                this.dispatchSaveEvent();
+            }, 800);
         })
     }
 
@@ -198,7 +201,7 @@ export class BlockFieldTab
         $('.module-field .label', fieldEl).text(config.label);
 
         // Required
-        if (typeof config.data.rules !== 'undefined' && config.data.rules.match('required')) {
+        if (config.data && config.data.rules && config.data.rules.match('required')) {
             $('.module-field .required', fieldEl).show();
         } else {
             $('.module-field .required', fieldEl).hide();
@@ -210,7 +213,7 @@ export class BlockFieldTab
         }
 
         // Large
-        if (config.data.large) {
+        if (config.data && config.data.large) {
             fieldEl.removeClass('m6');
         }
 
@@ -266,7 +269,7 @@ export class BlockFieldTab
             };
 
             // Add all fields in the block
-            $('.module-field:visible', blockEl).each((fieldSequence, fieldEl) => {
+            $('.module-field:not(.template)', blockEl).each((fieldSequence, fieldEl) => {
                 let fieldConfig = $(fieldEl).attr('data-config');
 
                 // TODO: Disapears when a field is adding into filter
@@ -289,5 +292,73 @@ export class BlockFieldTab
         structure.tabs.push(tab);
 
         return structure;
+    }
+
+    /**
+     * Resumes edition.
+     * @param {Object} structure
+     * @param {String} lang
+     */
+    resume(structure, lang) {
+        if (!structure.tabs) {
+            return;
+        }
+
+        for (let tab of structure.tabs) {
+            for (let i=0; i<tab.blocks.length; i++) {
+                // Add block if there are more than one block
+                if (i > 0) {
+                    this.addBlock();
+                }
+
+                // Get block information
+                let block = tab.blocks[i];
+                let blockIndex = i + 1;
+                let blockEl = $(`.block[data-index="${blockIndex}"]`, this.tab);
+
+                // Label
+                this.setFieldValue(`#block${blockIndex}_label`, block.labelTranslated);
+
+                // Name
+                this.setFieldValue(`#block${blockIndex}_name`, block.label.replace('block.', ''));
+
+                // Icon
+                if (block.icon) {
+                    $(`#block${blockIndex}_icon i.material-icons`, blockEl).text(block.icon);
+                }
+
+                // Change tab title
+                if (block.labelTranslated) {
+                    $(`span.label`, blockEl).text(block.labelTranslated);
+                }
+
+                // Change tab icon
+                if (block.icon) {
+                    $(`.card-title i.material-icons:first`, blockEl).text(block.icon);
+                }
+
+                // Create all fields
+                for (let field of block.fields) {
+                    this.addField(blockEl, field);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets field value and add active css class to label if necessary.
+     *
+     * @param {String} selector
+     * @param {any} value
+     * @param {boolean} activateLabel
+     */
+    setFieldValue(selector, value, activateLabel=true) {
+        // Set value
+        $(selector, this.tab).val(value).trigger('change');
+
+        // Activate label if exists
+        if (activateLabel && value) {
+            $(selector, this.tab).parents('.input-field:first').find('label[for]').addClass('active');
+        }
     }
 }

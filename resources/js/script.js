@@ -16,6 +16,8 @@ class ModuleDesigner
         this.initIconsModal();
         this.initMakeStructureEventListener();
         this.initInstallModuleClickListener();
+        this.initResumeDesignedModuleClickListener();
+        this.showResumeModal();
     }
 
     /**
@@ -70,17 +72,26 @@ class ModuleDesigner
      * Makes module structure with JSON format and save it.
      */
     saveStructure() {
+        // Do not save if it is resuming a creation
+        if (this.isResuming === true) {
+            return;
+        }
+
         let moduleStructure = this.moduleTab.getModuleStructure();
-        let blockFieldStructure = this.blockFieldTab.getBlocksAndFieldsStructure();
         let filterStructure = this.filterTab.getFilterStructure();
         let relationStructure = this.relationTab.getRelationStructure();
         let translations = this.translationTab.getTranslations();
+        let blockFieldStructure = this.blockFieldTab.getBlocksAndFieldsStructure();
 
         let structure = Object.assign(moduleStructure, blockFieldStructure, filterStructure, relationStructure, translations);
 
         if (this.designedModuleId) {
             structure.designed_module_id = this.designedModuleId;
         }
+
+        // console.log(structure);
+
+        // return;
 
         let url = $('meta[name="save-url"]').attr('content');
         $.post(url, {
@@ -99,6 +110,65 @@ class ModuleDesigner
                 // Do nothing for the moment
             });
         });
+    }
+
+    initResumeDesignedModuleClickListener() {
+        $('#resumeModal a[data-structure]').on('click', event => {
+            event.preventDefault();
+            let structure = $(event.currentTarget).data('structure');
+            let lang = $('html').attr('lang');
+
+
+        console.log(structure);
+
+            // Resume
+            this.isResuming = true; // To stop saving
+            this.moduleTab.resume(structure, lang);
+            this.blockFieldTab.resume(structure, lang);
+            this.filterTab.resume(structure, lang);
+            this.relationTab.resume(structure, lang);
+
+            // Close resume modal
+            $('#resumeModal').modal('close');
+
+            // Reload JS libraries
+            this.reloadJsLibrairies();
+
+            // Wait a little all was been resumed
+            setTimeout(() => {
+                this.isResuming = false;
+            }, 1000);
+        });
+    }
+
+    /**
+     * Displays resume modal if there are pending designed modules.
+     */
+    showResumeModal() {
+        if ($('#resumeModal').data('count') > 0) {
+            $('#resumeModal').modal('open');
+        }
+    }
+
+    /**
+     * Reload JS libraries used by Uccello Core
+     */
+    reloadJsLibrairies() {
+        // Reload materialize
+        let event = new CustomEvent('js.init.materialize', {
+            detail: {
+                element: $('.content')
+            }
+        });
+        dispatchEvent(event);
+
+        // Reload librairies used for fields
+        event = new CustomEvent('js.init.field.libraries', {
+            detail: {
+                element: $('.content')
+            }
+        });
+        dispatchEvent(event);
     }
 }
 

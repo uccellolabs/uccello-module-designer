@@ -53,17 +53,20 @@
 }
 
 #block-field {
-    .delete-block {
-        display: none;
-
-        i {
-            line-height: 40px;
-        }
-    }
-
-    &:hover {
+    .block {
         .delete-block {
-            display: block;
+            display: none;
+
+            i {
+                line-height: 40px;
+            }
+        }
+
+
+        &:hover {
+            .delete-block {
+                display: block;
+            }
         }
     }
 }

@@ -61,9 +61,12 @@ export class ModuleTab
      */
     initInputChangeListener() {
         $(':input', this.tab).on('change', event => {
-            let customEvent = new CustomEvent('module.structure.save');
-            dispatchEvent(customEvent);
-        })
+            // Wait a little (allows other event listeners to be completed)
+            setTimeout(() => {
+                let customEvent = new CustomEvent('module.structure.save');
+                dispatchEvent(customEvent);
+            }, 800);
+        });
     }
 
     /**
@@ -72,6 +75,7 @@ export class ModuleTab
     getModuleStructure() {
         let structure = {
             "name": $('#module_name', this.tab).val(),
+            "label": $('#module_label', this.tab).val(),
             "icon": $('#module_icon i.material-icons', this.tab).text(),
             // "model": "Uccello\\Crm\\Models\\Account", // TODO: Generate
             "tableName": $('#module_name', this.tab).val(), // TODO: Add field
@@ -85,5 +89,66 @@ export class ModuleTab
         }
 
         return structure;
+    }
+
+    /**
+     * Resumes edition.
+     * @param {Object} structure
+     * @param {String} lang
+     */
+    resume(structure, lang) {
+        // Name
+        this.setFieldValue('#module_name', structure.name);
+
+        // Label
+        this.setFieldValue('#module_label', structure.label);
+
+        // Icon
+        if (structure.icon) {
+            $('#module_icon i.material-icons').text(structure.icon);
+        }
+
+        // Default view
+        let defaultView = structure.data.menu ? structure.data.menu : 'uccello.list';
+        this.setFieldValue('#module_default_view', defaultView, false);
+
+        // Visibility
+        let visibility = structure.data.private === true ? 'private' : 'public';
+        this.setFieldValue('#module_visibility', visibility, false);
+
+        // Package
+        this.setFieldValue('#module_package', structure.data.package, false);
+
+        // Administration
+        if (structure.data.admin === true) {
+            $('#module_admin').prop('checked', true);
+        }
+
+        // Change tab title
+        if (structure.label) {
+            $('span.label', this.tab).text(structure.label);
+        }
+
+        // Change tab icon
+        if (structure.icon) {
+            $('.card-title i.material-icons:first', this.tab).text(structure.icon);
+        }
+    }
+
+    /**
+     * Sets field value and add active css class to label if necessary.
+     *
+     * @param {String} selector
+     * @param {any} value
+     * @param {boolean} activateLabel
+     */
+    setFieldValue(selector, value, activateLabel=true) {
+        // Set value
+        $(selector, this.tab).val(value).trigger('change');
+
+        // Activate label if exists
+        if (activateLabel && value) {
+            $(selector, this.tab).parents('.input-field:first').find('label[for]').addClass('active');
+        }
     }
 }

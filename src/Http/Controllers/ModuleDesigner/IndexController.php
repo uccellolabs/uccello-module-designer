@@ -47,12 +47,16 @@ class IndexController extends CoreIndexController
         // Get CRUD modules accessible by user
         $crudModules = $this->getCrudModules();
 
+        // Get pending designed modules
+        $designedModules = $this->getDesignedModules();
+
         return $this->autoView(compact(
             'packages',
             'widgets',
             'uitypes',
             'displaytypes',
             'crudModules',
+            'designedModules',
         ));
     }
 
@@ -129,7 +133,7 @@ class IndexController extends CoreIndexController
 
         Artisan::call('cache:clear');
 
-        return response()->json('installed');
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -240,5 +244,15 @@ class IndexController extends CoreIndexController
         }
 
         return $crudModules->sortBy('label');
+    }
+
+    /**
+     * Returns all pending designed modules.
+     *
+     * @return Collection|null
+     */
+    protected function getDesignedModules()
+    {
+        return DesignedModule::orderBy('created_at', 'desc')->get();
     }
 }

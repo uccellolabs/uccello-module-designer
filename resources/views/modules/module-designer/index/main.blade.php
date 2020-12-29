@@ -47,7 +47,7 @@
             <li class="tab"><a href="#block-field">2. {{ uctrans('tab.block_field', $module) }}</a></li>
             <li class="tab"><a href="#filter">3. {{ uctrans('tab.filter', $module) }}</a></li>
             {{-- <li class="tab"><a href="#widget">4. {{ uctrans('tab.widget', $module) }}</a></li> --}}
-            <li class="tab"><a href="#relation">4. {{ uctrans('tab.relation', $module) }}</a></li>
+            <li class="tab"><a href="#relation" class="active">4. {{ uctrans('tab.relation', $module) }}</a></li>
             <li class="tab"><a href="#translation">5. {{ uctrans('tab.translation', $module) }}</a></li>
             <li class="tab"><a href="#install">6. {{ uctrans('tab.install', $module) }}</a></li>
         </ul>
@@ -131,7 +131,7 @@
                         <label class="active">{{ uctrans('field.module.admin', $module) }}</label>
                         <p style="margin-top: 15px; margin-bottom: 15px">
                             <label>
-                                <input type="checkbox" />
+                                <input type="checkbox" id="module_admin" />
                                 <span>{{ uctrans('yes', $module) }}</span>
                             </label>
                         </p>
@@ -227,7 +227,7 @@
                     <div class="switch right">
                         <label>
                             {{ uctrans('field.filter.default', $module) }}
-                            <input type="checkbox" checked="checked">
+                            <input type="checkbox" id="filter0_default" checked="checked">
                             <span class="lever"></span>
                         </label>
                     </div>
@@ -617,6 +617,9 @@
 
     {{-- Field modal --}}
     @include('module-designer-ui::modules.module-designer.index.modals.field')
+
+    {{-- Resume modal --}}
+    @include('module-designer-ui::modules.module-designer.index.modals.resume')
 @endsection
 
 {{-- Script --}}
