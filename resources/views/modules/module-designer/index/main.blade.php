@@ -3,9 +3,9 @@
 @section('page', 'index')
 
 @section('extra-meta')
-<meta name="field-config-url" content="{{ ucroute('module-designer-ui.field.config', $domain, $module, ['uitype' => 'UITYPE']) }}">
-<meta name="save-url" content="{{ ucroute('module-designer-ui.save', $domain, $module) }}">
-<meta name="install-url" content="{{ ucroute('module-designer-ui.install', $domain, $module) }}">
+<meta name="field-config-url" content="{{ ucroute('module-designer.field.config', $domain, $module, ['uitype' => 'UITYPE']) }}">
+<meta name="save-url" content="{{ ucroute('module-designer.save', $domain, $module) }}">
+<meta name="install-url" content="{{ ucroute('module-designer.install', $domain, $module) }}">
 @append
 
 @section('breadcrumb')
@@ -83,7 +83,7 @@
                     </div>
 
                     {{-- Default view --}}
-                    @if (config('module-designer-ui.can_choose_default_view'))
+                    @if (config('module-designer.can_choose_default_view'))
                     <div class="input-field col s12 m6">
                         <select id="module_default_view">
                             <option value="uccello.list">{{ uctrans('view.list', $module) }}</option>
@@ -113,7 +113,7 @@
                     </div>
 
                     {{-- Package --}}
-                    @if (config('module-designer-ui.can_choose_package'))
+                    @if (config('module-designer.can_choose_package'))
                     <div class="input-field col s12 m6">
                         <select id="module_package">
                             <option value="app">{{ uctrans('label.application', $module) }}</option>
@@ -431,7 +431,7 @@
                     </div>
 
                     {{-- Method --}}
-                    @if (config('module-designer-ui.can_choose_relation_method'))
+                    @if (config('module-designer.can_choose_relation_method'))
                     <div class="input-field col s12 m6">
                         <input type="text" id="relation0_method" value="getDependentList" class="relation-method" autocomplete="off">
                         <label for="relation0_method">{{ uctrans('field.relation.method', $module) }}</label>
@@ -613,21 +613,21 @@
 {{-- Extra content --}}
 @section('extra-content')
     {{-- Icons modal --}}
-    @include('module-designer-ui::modules.module-designer.index.modals.icons')
+    @include('module-designer::modules.module-designer.index.modals.icons')
 
     {{-- Field modal --}}
-    @include('module-designer-ui::modules.module-designer.index.modals.field')
+    @include('module-designer::modules.module-designer.index.modals.field')
 
     {{-- Resume modal --}}
-    @include('module-designer-ui::modules.module-designer.index.modals.resume')
+    @include('module-designer::modules.module-designer.index.modals.resume')
 @endsection
 
 {{-- Script --}}
 @section('extra-script')
-{{ Html::script(mix('js/script.js', 'vendor/uccello/module-designer-ui')) }}
+{{ Html::script(mix('js/script.js', 'vendor/uccello/module-designer')) }}
 @append
 
 {{-- Styles --}}
 @section('extra-css')
-{{ Html::style(mix('css/styles.css', 'vendor/uccello/module-designer-ui')) }}
+{{ Html::style(mix('css/styles.css', 'vendor/uccello/module-designer')) }}
 @append

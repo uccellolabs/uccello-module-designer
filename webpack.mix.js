@@ -12,4 +12,4 @@ mix.js('./resources/js/script.js', 'public/js')
    .version()
 
 // Copy all compiled files into main project (auto publishing)
-mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer-ui');
+mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Uccello\Core\Models\Module;
 use Uccello\Core\Models\Domain;
 
-class CreateModuleDesignerUiModule extends Migration
+class CreateModuleDesignerModule extends Migration
 {
     /**
      * Run the migrations.
@@ -34,7 +34,7 @@ class CreateModuleDesignerUiModule extends Migration
             'name' => 'module-designer',
             'icon' => 'design_services',
             'model_class' => null,
-            'data' => json_decode('{"package":"uccello\/module-designer-ui","admin":true,"menu":"uccello.index"}')
+            'data' => json_decode('{"package":"uccello\/module-designer","admin":true,"menu":"uccello.index"}')
         ]);
 
         return $module;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Uccello\ModuleDesignerUi\Http\Controllers\ModuleDesigner;
+namespace Uccello\ModuleDesigner\Http\Controllers\ModuleDesigner;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -14,8 +14,8 @@ use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Module;
 use Uccello\Core\Models\Uitype;
 use Uccello\Core\Models\Widget;
-use Uccello\ModuleDesigner\Models\DesignedModule;
-use Uccello\ModuleDesigner\Support\ModuleImport;
+use Uccello\ModuleDesignerCore\Models\DesignedModule;
+use Uccello\ModuleDesignerCore\Support\ModuleImport;
 
 class IndexController extends CoreIndexController
 {
@@ -78,7 +78,7 @@ class IndexController extends CoreIndexController
 
         // If a special template exists, use it. Else use the generic template
         $uitypeViewName = sprintf('uitypes.module-designer.%s', $uitype->name);
-        $uitypeFallbackView = 'module-designer-ui::modules.default.uitypes.module-designer.'.$uitype->name;
+        $uitypeFallbackView = 'module-designer::modules.default.uitypes.module-designer.'.$uitype->name;
         $uitypeViewToInclude = Uccello::view($module->package, $module, $uitypeViewName, $uitypeFallbackView);
 
         // If view does not exist, returns an empty string
@@ -146,7 +146,7 @@ class IndexController extends CoreIndexController
         $packages = [];
 
         // Get packages list from
-        $packagePath = config('module-designer-ui.packages_directory');
+        $packagePath = config('module-designer.packages_directory');
 
         if (is_dir($packagePath)) {
             // First level directories are vendors
@@ -188,7 +188,7 @@ class IndexController extends CoreIndexController
         $uitypes = collect();
 
         foreach (Uitype::all() as $uitype) {
-            $uitype->label = trans('module-designer-ui::module-designer.uitype.'.$uitype->name);
+            $uitype->label = trans('module-designer::module-designer.uitype.'.$uitype->name);
             // TODO: Translation compatible with uitypes from other packages
             $uitypes[] = $uitype;
         };

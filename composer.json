@@ -14,18 +14,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Uccello\\ModuleDesignerUi\\": "src/"
+            "Uccello\\ModuleDesigner\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Uccello\\ModuleDesignerUi\\Tests\\": "tests/"
+            "Uccello\\ModuleDesigner\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Uccello\\ModuleDesignerUi\\Providers\\AppServiceProvider"
+                "Uccello\\ModuleDesigner\\Providers\\AppServiceProvider"
             ]
         }
     },

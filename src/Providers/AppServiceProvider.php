@@ -1,6 +1,6 @@
 <?php
 
-namespace Uccello\ModuleDesignerUi\Providers;
+namespace Uccello\ModuleDesigner\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -19,10 +19,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // Views
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'module-designer-ui');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'module-designer');
 
         // Translations
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'module-designer-ui');
+        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'module-designer');
 
         // Migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
@@ -32,21 +32,21 @@ class AppServiceProvider extends ServiceProvider
 
         // Publish assets
         $this->publishes([
-            __DIR__ . '/../../public' => public_path('vendor/uccello/module-designer-ui'),
-        ], 'module-designer-ui-assets');
+            __DIR__ . '/../../public' => public_path('vendor/uccello/module-designer'),
+        ], 'module-designer-assets');
 
         // Publish config
         $this->publishes([
-            __DIR__.'/../../config/module-designer-ui.php' => config_path('module-designer-ui.php')
-        ], 'module-designer-ui-config');
+            __DIR__.'/../../config/module-designer.php' => config_path('module-designer.php')
+        ], 'module-designer-config');
     }
 
     public function register()
     {
         // Config
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/module-designer-ui.php',
-            'module-designer-ui'
+            __DIR__ . '/../../config/module-designer.php',
+            'module-designer'
         );
     }
 }

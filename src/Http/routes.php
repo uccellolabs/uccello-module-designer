@@ -1,8 +1,8 @@
 <?php
 
 Route::middleware('web', 'auth')
-->namespace('Uccello\ModuleDesignerUi\Http\Controllers')
-->name('module-designer-ui.')
+->namespace('Uccello\ModuleDesigner\Http\Controllers')
+->name('module-designer.')
 ->group(function() {
 
     // This makes it possible to adapt the parameters according to the use or not of the multi domains

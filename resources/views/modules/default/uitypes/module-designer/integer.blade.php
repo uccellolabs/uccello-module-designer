@@ -1,1 +1,1 @@
-@include('module-designer-ui::modules.default.uitypes.module-designer.number')
+@include('module-designer::modules.default.uitypes.module-designer.number')

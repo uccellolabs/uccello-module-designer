@@ -1,6 +1,6 @@
 <?php
 
-namespace Uccello\ModuleDesignerUi\Models;
+namespace Uccello\ModuleDesigner\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Uccello\Core\Database\Eloquent\Model;
@@ -27,9 +27,9 @@ class ModuleDesginer extends Model
 
     protected function initTablePrefix()
     {
-        $this->tablePrefix = 'module-designer-ui_';
+        $this->tablePrefix = 'module-designer_';
     }
- 
+
     /**
     * Returns record label
     *
