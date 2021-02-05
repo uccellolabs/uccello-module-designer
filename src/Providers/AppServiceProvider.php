@@ -2,7 +2,12 @@
 
 namespace Uccello\ModuleDesigner\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Uccello\ModuleDesigner\View\Components\Column;
+use Uccello\ModuleDesigner\View\Components\ColumnTag;
+use Uccello\ModuleDesigner\View\Components\VerticalStepCard;
+use Uccello\ModuleDesigner\View\Components\VerticalStepCardTitle;
 
 /**
  * App Service Provider
@@ -39,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/module-designer.php' => config_path('module-designer.php')
         ], 'module-designer-config');
+
+        // Blade::componentNamespace('Uccello\\ModuleDesigner\\Views\\Components', 'md');
+        Blade::component('vertical-step-card', VerticalStepCard::class, 'md');
+        Blade::component('vertical-step-card-title', VerticalStepCardTitle::class, 'md');
+        Blade::component('column', Column::class, 'md');
+        Blade::component('column-tag', ColumnTag::class, 'md');
     }
 
     public function register()

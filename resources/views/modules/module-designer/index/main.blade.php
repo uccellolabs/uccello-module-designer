@@ -10,30 +10,32 @@
 
 
 @section('content')
-
-    <x-vertical-step-card title="Choisissez le nom de votre modèle de données">
-        {{-- Left column --}}
-        <div class="col-span-2 text-right">
-            <div class="mb-2 text-sm">Icon</div>
-
-        </div>
-        {{-- Right column --}}
-        <div class="col-span-3">
-            <div class="mb-2 text-sm">Nom du modèle de données</div>
-            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default">
+    <x-md-vertical-step-card title="Choisissez le nom de votre modèle de données">
+        <div class="flex p-12">
+            {{-- Left column --}}
+            <div class="w-2/6 mr-4">
+                <div class="mb-2 text-sm text-right">Icon</div>
             </div>
-            <div class="mt-8 mb-2 text-sm">Nom affiché dans l'URL</div>
-            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default">
+            {{-- Right column --}}
+            <div class="w-3/6">
+                <div class="">
+                    <div class="mb-2 text-sm">Nom du modèle de données</div>
+                    <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                        <input type="text" class="w-full px-3 py-2 bg-transparent browser-default">
+                    </div>
+                    <div class="mt-8 mb-2 text-sm">Nom affiché dans l'URL</div>
+                    <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                        <input type="text" class="w-full px-3 py-2 bg-transparent browser-default">
+                    </div>
+                </div>
             </div>
         </div>
-    </x-vertical-step-card>
+    </x-md-vertical-step-card>
 
     <div class="my-10"></div>
 
-    <x-vertical-step-card title="Créez vos colonnes">
-        <div class="col-span-6">
+    <x-md-vertical-step-card title="Créez vos colonnes">
+        <div class="col-span-6 p-12">
             <div class="mb-2 text-sm">Ajoutez vos colonnes</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <div class="grid grid-cols-4 gap-2">
@@ -61,7 +63,7 @@
                         <x-md-column color="bg-purple-200">Fonction</x-md-column>
                     </div>
 
-                    <div class="">
+                    <div>
                         <div class="flex items-center justify-center w-6 h-6 rounded-full primary">
                             <i class="text-base text-white material-icons">view_column</i>
                         </div>
@@ -69,7 +71,13 @@
                 </div>
             </div>
         </div>
-    </x-vertical-step-card>
+
+        <x-slot name="after">
+            <div class="border-t border-gray-200 border-solid justify-self-center">
+                <x-md-vertical-step-card-title title="Configurez vos colonnes" close="true"></x-vertical-step-card-title>
+            </div>
+        </x-slot>
+    </x-md-vertical-step-card>
 @endsection
 
 {{-- Script --}}

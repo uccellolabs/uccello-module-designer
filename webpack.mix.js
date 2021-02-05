@@ -13,9 +13,9 @@ mix.js('./resources/js/script.js', 'public/js')
    ])
 //    .version()
 
-mix.after(() => {
+// mix.after(() => {
     // Copy all compiled files into main project (auto publishing)
     mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer');
-});
+// });
 
 
