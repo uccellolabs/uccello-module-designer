@@ -4,6 +4,8 @@ namespace Uccello\ModuleDesigner\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+use Uccello\ModuleDesigner\Http\Livewire\ModuleDesigner;
 use Uccello\ModuleDesigner\View\Components\Column;
 use Uccello\ModuleDesigner\View\Components\ColumnTag;
 use Uccello\ModuleDesigner\View\Components\DetailedField;
@@ -57,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
             'icon-selector' => IconSelector::class,
             'detailed-field' => DetailedField::class,
         ], 'md');
+
+        Livewire::component('module-designer', ModuleDesigner::class);
     }
 
     public function register()

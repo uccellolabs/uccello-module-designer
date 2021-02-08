@@ -6,16 +6,16 @@ use Illuminate\View\Component;
 
 class Column extends Component
 {
-    public $color;
+    public $field;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($color = null)
+    public function __construct($field = null)
     {
-        $this->color = $color;
+        $this->field = (object) $field;
     }
 
     /**

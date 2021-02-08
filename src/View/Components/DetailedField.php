@@ -6,18 +6,18 @@ use Illuminate\View\Component;
 
 class DetailedField extends Component
 {
-    public $color;
-    public $large;
+    public $field;
+    public $index;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($color = null, $large = false)
+    public function __construct($field = null, $index = -1)
     {
-        $this->color = $color;
-        $this->large = $large;
+        $this->field = (object) $field;
+        $this->index = $index;
     }
 
     /**
