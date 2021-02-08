@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Uccello\ModuleDesigner\View\Components\Column;
 use Uccello\ModuleDesigner\View\Components\ColumnTag;
+use Uccello\ModuleDesigner\View\Components\DetailedField;
+use Uccello\ModuleDesigner\View\Components\FieldConfig;
+use Uccello\ModuleDesigner\View\Components\IconSelector;
 use Uccello\ModuleDesigner\View\Components\VerticalStepCard;
 use Uccello\ModuleDesigner\View\Components\VerticalStepCardTitle;
 
@@ -45,11 +48,15 @@ class AppServiceProvider extends ServiceProvider
             __DIR__.'/../../config/module-designer.php' => config_path('module-designer.php')
         ], 'module-designer-config');
 
-        // Blade::componentNamespace('Uccello\\ModuleDesigner\\Views\\Components', 'md');
-        Blade::component('vertical-step-card', VerticalStepCard::class, 'md');
-        Blade::component('vertical-step-card-title', VerticalStepCardTitle::class, 'md');
-        Blade::component('column', Column::class, 'md');
-        Blade::component('column-tag', ColumnTag::class, 'md');
+        Blade::components([
+            'vertical-step-card' =>  VerticalStepCard::class,
+            'vertical-step-card-title' => VerticalStepCardTitle::class,
+            'column' => Column::class,
+            'column-tag' => ColumnTag::class,
+            'field-config' => FieldConfig::class,
+            'icon-selector' => IconSelector::class,
+            'detailed-field' => DetailedField::class,
+        ], 'md');
     }
 
     public function register()
