@@ -4,10 +4,15 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
+use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 use Uccello\ModuleDesignerCore\Models\DesignedModule;
 
 class ModuleDesigner extends Component
 {
+    use ModuleInstaller;
+    use TableCreator;
+
     public $column = '';
 
     public $designedModule;
@@ -68,6 +73,7 @@ class ModuleDesigner extends Component
             'block_uuid' => null,
             'label' => $this->column,
             'name' => Str::slug($this->column, '_'),
+            'last_name' => null,
             'color' => $this->getColor(),
             'isMandatory' => false,
             'isLarge' => false,
@@ -91,6 +97,12 @@ class ModuleDesigner extends Component
             'icon' => null,
             'sequence' => $this->blocks->count(),
         ]);
+    }
+
+    public function createOrUpdateTableAndModule()
+    {
+        $this->createOrUpdateTable();
+        $this->createOrUpdateModule();
     }
 
     public function toggleLarge($fieldName)
@@ -190,34 +202,12 @@ class ModuleDesigner extends Component
             $designedModule = DesignedModule::create([
                 'name' => Str::uuid(),
                 'data' => [
+                    'id' => '',
                     'label' => '',
                     'name' => '',
                     'icon' => '',
+                    'table' => '',
                     'fields' => [
-                        [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Created at',
-                            'name' => 'created_at',
-                            'color' => $this->colors[0],
-                            'isMandatory' => false,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => true,
-                            'uitype' => 'datetime',
-                            'displaytype' => 'detail',
-                            'sequence' => 0
-                        ],
-                        [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Updated at',
-                            'name' => 'updated_at',
-                            'color' => $this->colors[1],
-                            'isMandatory' => false,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => true,
-                            'uitype' => 'datetime',
-                            'displaytype' => 'detail',
-                            'sequence' => 1
-                        ],
                         [
                             'block_uuid' => $systemBlock['uuid'],
                             'label' => 'Assigned to',
@@ -228,7 +218,7 @@ class ModuleDesigner extends Component
                             'isDisplayedInListView' => true,
                             'uitype' => 'assigned_user',
                             'displaytype' => 'everywhere',
-                            'sequence' => 2
+                            'sequence' => 0
                         ],
                         [
                             'block_uuid' => $systemBlock['uuid'],
@@ -241,6 +231,30 @@ class ModuleDesigner extends Component
                             'uitype' => 'entity',
                             'displaytype' => 'detail',
                             'data' => ['module' => 'domain'],
+                            'sequence' => 1
+                        ],
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Created at',
+                            'name' => 'created_at',
+                            'color' => $this->colors[0],
+                            'isMandatory' => false,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => true,
+                            'uitype' => 'datetime',
+                            'displaytype' => 'detail',
+                            'sequence' => 2
+                        ],
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Updated at',
+                            'name' => 'updated_at',
+                            'color' => $this->colors[1],
+                            'isMandatory' => false,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => true,
+                            'uitype' => 'datetime',
+                            'displaytype' => 'detail',
                             'sequence' => 3
                         ]
                     ],
@@ -253,7 +267,11 @@ class ModuleDesigner extends Component
         }
 
         $this->designedModule = $designedModule;
+        $this->id = $designedModule->data->id;
         $this->name = $designedModule->data->name;
+        $this->lastName = $designedModule->data->name;
+        $this->tableName = $designedModule->data->table;
+        $this->lastTableName = $designedModule->data->table;
         $this->label = $designedModule->data->label;
         $this->icon = $designedModule->data->icon;
         $this->fields = collect($designedModule->data->fields);
@@ -266,9 +284,17 @@ class ModuleDesigner extends Component
         return $this->colors[count($this->fields) % count($this->colors)];
     }
 
-    private function addField($params)
+    private function addField($field)
     {
-        $this->fields[] = $params;
+        if (!empty($field['last_name']) && $field['name'] !== $field['last_name']) {
+            $this->updateColumnInExistingTable($field);
+        } else {
+            $this->createColumnInExistingTable($field);
+        }
+
+        $field['last_name'] = $field['name'];
+
+        $this->fields[] = $field;
     }
 
     private function addBlock($params)
@@ -279,9 +305,11 @@ class ModuleDesigner extends Component
     private function saveDesignedModule()
     {
         $this->designedModule->data = [
+            'id' => $this->id,
             'label' => $this->label,
             'name' => $this->name,
             'icon' => $this->icon,
+            'table' => $this->tableName,
             'fields' => $this->fields,
             'blocks' => $this->blocks,
         ];
