@@ -7,6 +7,7 @@
         <span class="flex-grow text-sm font-semibold">{{ $field->label }}</span>
 
         {{-- Icons --}}
-        <i class="text-base text-gray-600 material-icons" wire:click="toggleLarge({{ $index }})">close</i>
+        {{-- <a class="cursor-pointer text-gray-600" wire:click="toggleLarge('{{ $field->name }}')"><i class="text-base material-icons">home</i></a> --}}
+        <a class="cursor-pointer text-gray-600" wire:click="removeFieldFromBlock('{{ $field->name }}')"><i class="text-base material-icons">close</i></a>
     </div>
 </div>

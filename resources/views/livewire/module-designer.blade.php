@@ -40,13 +40,18 @@
         <div class="col-span-6 p-12">
             <div class="mb-2 text-sm">Ajoutez vos colonnes</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <div class="grid grid-cols-4 gap-2">
-                    @foreach($fields as $field)
+                <ul class="grid grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
+                    @foreach($fields->sortBy('sequence') as $field)
+                    @php ($field = (object) $field)
+                    <li class="outline-none" wire:sortable.item="{{ $field->name }}" wire:key="field-{{ $field->name }}">
                         <x-md-column-tag :field="$field"></x-md-column-tag>
+                    </li>
                     @endforeach
 
-                    <input type="text" wire:model="column" placeholder="Nom de la colonne" class="px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="createField()">
-                </div>
+                    <div>
+                        <input type="text" wire:model="column" placeholder="Nom de la colonne" class="w-full px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="createField()">
+                    </div>
+                </ul>
             </div>
 
             <div class="mb-2 text-sm">Rendu liste</div>
@@ -55,11 +60,12 @@
                     <div class="pt-3">
                         <i class="text-base material-icons">search</i>
                     </div>
-                    <div class="grid flex-grow grid-flow-col gag-4">
-                        @forelse($fields as $field)
+                    <div class="flex flex-row flex-grow overflow-y-auto">
+                        @forelse($fields->sortBy('sequence') as $field)
+                            @continue(!((object) $field)->isDisplayedInListView)
                             <x-md-column :field="$field"></x-md-column>
                         @empty
-                            <x-md-column color="bg-red-200">Colonne 1</x-md-column>
+                            <x-md-column></x-md-column>
                         @endforelse
                     </div>
 
@@ -77,7 +83,7 @@
                 <x-md-vertical-step-card-title title="Configurez vos colonnes" close="true"></x-vertical-step-card-title>
             </div>
             <div class="p-6">
-                @foreach($fields as $index => $field)
+                @foreach($fields->sortBy('sequence') as $index => $field)
                     <x-md-field-config :field="$field" :index="$index"></x-md-field-config>
                 @endforeach
             </div>
@@ -98,20 +104,17 @@
 
     <x-md-vertical-step-card title="Configurez la fiche détaillée">
         <div class="p-6">
-            <div class="p-4 border border-gray-200 border-solid rounded-lg shadow-md">
-                <div class="flex items-center mb-4">
-                    <div class="flex-grow text-sm font-semibold">
-                        Informations générales
-                    </div>
-                    <div>
-                        <i class="float-right text-2xl material-icons">expand_less</i>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    @foreach($fields as $index => $field)
-                        <x-md-detailed-field :field="$field" :index="$index"></x-md-detailed-field>
-                    @endforeach
-                </div>
+            {{-- Block --}}
+            @foreach ($blocks as $block)
+                <x-md-block :block="$block" :fields="$fields" :areAvailableFields="$areAvailableFields"></x-md-block>
+            @endforeach
+
+            {{-- Add block --}}
+            <div class="grid p-4 mt-6 text-center border-2 border-gray-300 border-dashed rounded-lg">
+                <a class="flex items-center px-2 py-1 text-sm text-white rounded-lg cursor-pointer justify-self-center primary" wire:click="createBlock()">
+                    Ajouter un bloc
+                    <i class="ml-1 text-sm material-icons">add</i>
+                </a>
             </div>
         </div>
     </x-md-vertical-step-card>

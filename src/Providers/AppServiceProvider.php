@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Uccello\ModuleDesigner\Http\Livewire\ModuleDesigner;
+use Uccello\ModuleDesigner\View\Components\Block;
 use Uccello\ModuleDesigner\View\Components\Column;
 use Uccello\ModuleDesigner\View\Components\ColumnTag;
 use Uccello\ModuleDesigner\View\Components\DetailedField;
+use Uccello\ModuleDesigner\View\Components\DropdownField;
 use Uccello\ModuleDesigner\View\Components\FieldConfig;
 use Uccello\ModuleDesigner\View\Components\IconSelector;
 use Uccello\ModuleDesigner\View\Components\VerticalStepCard;
@@ -58,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
             'field-config' => FieldConfig::class,
             'icon-selector' => IconSelector::class,
             'detailed-field' => DetailedField::class,
+            'dropdown-field' => DropdownField::class,
+            'block' => Block::class,
         ], 'md');
 
         Livewire::component('module-designer', ModuleDesigner::class);

@@ -4,8 +4,9 @@
         <div class="rounded-full h-3 w-3 mr-2 {{ $field->color }}"></div>
         {{-- Label --}}
         <span class="mr-1 text-sm font-semibold" x-show="!edit">{{ $field->label }}</span>
+        <input type="text" x-show="edit" class="browser-default" @click.away="edit=false">
         {{-- Edit icon --}}
-        <i class="text-base cursor-pointer material-icons">create</i>
+        <i class="text-base cursor-pointer material-icons" x-show="!edit" @click="edit=true">create</i>
         {{-- Line --}}
         <div class="flex-grow h-1 mx-3 border-b border-gray-400 border-solid"></div>
         {{--Less/More icon --}}
@@ -25,9 +26,9 @@
             <div class="mb-2 text-sm">Type de champ</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <select class="h-10 px-3 bg-transparent w-52 browser-default">
-                    <option>Champ texte</option>
-                    <option>Texte multiligne</option>
-                    <option>Case à cocher</option>
+                    <option value="text">Champ texte</option>
+                    <option value="textarea">Texte multiligne</option>
+                    <option value="checkbox">Case à cocher</option>
                 </select>
             </div>
         </div>
@@ -43,7 +44,7 @@
             <div class="mb-2 text-sm">Obligatoire</div>
             <div class="h-10 pt-1 switch">
                 <label>
-                  <input type="checkbox" @if ($field->isMandatory)checked="true"@endif wire:click="toggleMandatory({{ $index }})">
+                  <input type="checkbox" @if ($field->isMandatory)checked="true"@endif wire:click="toggleMandatory('{{ $field->name }}')">
                   <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
                   Oui
                 </label>

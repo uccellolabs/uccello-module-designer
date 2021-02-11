@@ -16,8 +16,9 @@
 {{-- Script --}}
 @section('extra-script')
     {{ Html::script(mix('js/script.js', 'vendor/uccello/module-designer')) }}
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js"></script>
     @livewireScripts
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
 @append
 
 {{-- Styles --}}

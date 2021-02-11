@@ -14,7 +14,9 @@ class ModuleDesigner extends Component
     public $name;
     public $label;
     public $icon;
-    public $fields = [];
+    public $fields;
+    public $blocks;
+    public $areAvailableFields;
 
     private $colors = [
         'bg-red-200',
@@ -33,8 +35,22 @@ class ModuleDesigner extends Component
 
     public function __construct()
     {
+        $this->fields = collect();
+        $this->blocks = collect();
+
         $this->loadLastDesignedModule();
     }
+
+    // public function update()
+    // {
+    //     $this->areAvailableFields = true;
+    //     // foreach ($this->fields as $field) {
+    //     //     if (empty($field['block_uuid'])) {
+    //     //         $this->areAvailableFields = true;
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
 
     public function dehydrate()
     {
@@ -44,30 +60,109 @@ class ModuleDesigner extends Component
     public function updatedLabel()
     {
         $this->name = Str::slug($this->label);
-        // $this->saveDesignedModule();
     }
 
     public function createField()
     {
         $this->addField([
+            'block_uuid' => null,
             'label' => $this->column,
             'name' => Str::slug($this->column, '_'),
             'color' => $this->getColor(),
             'isMandatory' => false,
             'isLarge' => false,
+            'isDisplayedInListView' => true,
+            'uitype' => 'text',
+            'displaytype' => 'everywhere',
+            'sequence' => $this->fields->count()
         ]);
 
         $this->column = '';
+        $this->checkIfThereAreAvailableFields();
     }
 
-    public function toggleLarge($index)
+    public function createBlock()
     {
-        $this->fields[$index]['isLarge'] = !$this->fields[$index]['isLarge'];
+        $index = $this->blocks->count() + 1;
+        $this->addBlock([
+            'uuid' => Str::uuid(),
+            'label' => 'block.block'.$index,
+            'translation' => 'Block '.$index,
+            'icon' => null,
+            'sequence' => $this->blocks->count(),
+        ]);
     }
 
-    public function toggleMandatory($index)
+    public function toggleLarge($fieldName)
     {
-        $this->fields[$index]['isMandatory'] = !$this->fields[$index]['isMandatory'];
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['isLarge'] = !$field['isLarge'];
+            }
+
+            return $field;
+        });
+    }
+
+    public function toggleMandatory($fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['isMandatory'] = !$field['isMandatory'];
+            }
+
+            return $field;
+        });
+    }
+
+    public function toggleIsDisplayedInListView($fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
+            }
+
+            return $field;
+        });
+    }
+
+    public function updateColumnsOrder($sortedFields)
+    {
+        foreach ($sortedFields as $sortedField) {
+            $this->fields = $this->fields->map(function ($field) use ($sortedField) {
+                if ($field['name'] === $sortedField['value']) {
+                    $field['sequence'] = $sortedField['order'] - 1;
+                }
+
+                return $field;
+            });
+        }
+    }
+
+    public function removeFieldFromBlock($fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['block_uuid'] = null;
+            }
+
+            return $field;
+        });
+
+        $this->checkIfThereAreAvailableFields();
+    }
+
+    public function addFieldToBlock($blockUuid, $fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($blockUuid, $fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['block_uuid'] = $blockUuid;
+            }
+
+            return $field;
+        });
+
+        $this->checkIfThereAreAvailableFields();
     }
 
     private function loadLastDesignedModule()
@@ -75,13 +170,84 @@ class ModuleDesigner extends Component
         $designedModule = DesignedModule::orderBy('created_at', 'desc')->first();
 
         if (!$designedModule) {
+            $generalBlock = [
+                'uuid' => Str::uuid(),
+                'label' => 'block.general',
+                'translation' => 'General',
+                'icon' => 'info',
+                'sequence' => 0,
+            ];
+
+            $systemBlock = [
+                'uuid' => Str::uuid(),
+                'label' => 'block.system',
+                'translation' => 'Settings',
+                'icon' => 'settings',
+                'sequence' => 1,
+            ];
+
+
             $designedModule = DesignedModule::create([
                 'name' => Str::uuid(),
                 'data' => [
                     'label' => '',
                     'name' => '',
                     'icon' => '',
-                    'fields' => []
+                    'fields' => [
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Created at',
+                            'name' => 'created_at',
+                            'color' => $this->colors[0],
+                            'isMandatory' => false,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => true,
+                            'uitype' => 'datetime',
+                            'displaytype' => 'detail',
+                            'sequence' => 0
+                        ],
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Updated at',
+                            'name' => 'updated_at',
+                            'color' => $this->colors[1],
+                            'isMandatory' => false,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => true,
+                            'uitype' => 'datetime',
+                            'displaytype' => 'detail',
+                            'sequence' => 1
+                        ],
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Assigned to',
+                            'name' => 'assigned_to',
+                            'color' => $this->colors[2],
+                            'isMandatory' => true,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => true,
+                            'uitype' => 'assigned_user',
+                            'displaytype' => 'everywhere',
+                            'sequence' => 2
+                        ],
+                        [
+                            'block_uuid' => $systemBlock['uuid'],
+                            'label' => 'Domain',
+                            'name' => 'domain',
+                            'color' => $this->colors[3],
+                            'isMandatory' => false,
+                            'isLarge' => false,
+                            'isDisplayedInListView' => false,
+                            'uitype' => 'entity',
+                            'displaytype' => 'detail',
+                            'data' => ['module' => 'domain'],
+                            'sequence' => 3
+                        ]
+                    ],
+                    'blocks' => [
+                        $generalBlock,
+                        $systemBlock,
+                    ]
                 ]
             ]);
         }
@@ -90,18 +256,24 @@ class ModuleDesigner extends Component
         $this->name = $designedModule->data->name;
         $this->label = $designedModule->data->label;
         $this->icon = $designedModule->data->icon;
-        $this->fields = $designedModule->data->fields;
+        $this->fields = collect($designedModule->data->fields);
+        $this->blocks = collect($designedModule->data->blocks);
+        $this->checkIfThereAreAvailableFields();
     }
 
     private function getColor()
     {
-        $fields = $this->fields;
-        return $this->colors[count($fields) % count($this->colors)];
+        return $this->colors[count($this->fields) % count($this->colors)];
     }
 
     private function addField($params)
     {
         $this->fields[] = $params;
+    }
+
+    private function addBlock($params)
+    {
+        $this->blocks[] = $params;
     }
 
     private function saveDesignedModule()
@@ -110,9 +282,21 @@ class ModuleDesigner extends Component
             'label' => $this->label,
             'name' => $this->name,
             'icon' => $this->icon,
-            'fields' => $this->fields
+            'fields' => $this->fields,
+            'blocks' => $this->blocks,
         ];
         $this->designedModule->save();
+    }
+
+    private function checkIfThereAreAvailableFields()
+    {
+        $this->areAvailableFields = false;
+        foreach ($this->fields as $field) {
+            if (empty($field->block_uuid)) {
+                $this->areAvailableFields = true;
+                break;
+            }
+        }
     }
 
     public function render()
