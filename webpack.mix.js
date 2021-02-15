@@ -15,6 +15,7 @@ mix.js('./resources/js/script.js', 'public/js')
 
 // mix.after(() => {
     // Copy all compiled files into main project (auto publishing)
+    mix.copyDirectory('resources/img', 'public/img');
     mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer');
 // });
 

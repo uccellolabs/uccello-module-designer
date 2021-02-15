@@ -7,15 +7,17 @@ use Illuminate\View\Component;
 class ColumnTag extends Component
 {
     public $field;
+    public $index;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($field = null)
+    public function __construct($field = null, $index = null)
     {
         $this->field = (object) $field;
+        $this->index = $index;
     }
 
     /**

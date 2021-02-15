@@ -7,7 +7,7 @@
         <span class="flex-grow text-sm font-semibold">{{ $field->label }}</span>
 
         {{-- Icons --}}
-        {{-- <a class="cursor-pointer text-gray-600" wire:click="toggleLarge('{{ $field->name }}')"><i class="text-base material-icons">home</i></a> --}}
-        <a class="cursor-pointer text-gray-600" wire:click="removeFieldFromBlock('{{ $field->name }}')"><i class="text-base material-icons">close</i></a>
+        {{-- <a class="text-gray-600 cursor-pointer" wire:model="fields.{{ $index }}.isDisplayedInListView"><i class="text-base material-icons">home</i></a> --}}
+        <a class="text-gray-600 cursor-pointer" wire:click="removeFieldFromBlock('{{ $field->name }}')"><i class="text-base material-icons">close</i></a>
     </div>
 </div>

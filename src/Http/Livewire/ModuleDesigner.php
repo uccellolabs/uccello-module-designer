@@ -14,6 +14,8 @@ class ModuleDesigner extends Component
     use TableCreator;
 
     public $column = '';
+    public $step = 2;
+    public $currentUitype;
 
     public $designedModule;
     public $name;
@@ -80,7 +82,8 @@ class ModuleDesigner extends Component
             'isDisplayedInListView' => true,
             'uitype' => 'text',
             'displaytype' => 'everywhere',
-            'sequence' => $this->fields->count()
+            'sequence' => $this->fields->count(),
+            'options' => []
         ]);
 
         $this->column = '';
@@ -105,38 +108,38 @@ class ModuleDesigner extends Component
         $this->createOrUpdateModule();
     }
 
-    public function toggleLarge($fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['isLarge'] = !$field['isLarge'];
-            }
+    // public function toggleLarge($fieldName)
+    // {
+    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+    //         if ($field['name'] === $fieldName) {
+    //             $field['isLarge'] = !$field['isLarge'];
+    //         }
 
-            return $field;
-        });
-    }
+    //         return $field;
+    //     });
+    // }
 
-    public function toggleMandatory($fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['isMandatory'] = !$field['isMandatory'];
-            }
+    // public function toggleMandatory($fieldName)
+    // {
+    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+    //         if ($field['name'] === $fieldName) {
+    //             $field['isMandatory'] = !$field['isMandatory'];
+    //         }
 
-            return $field;
-        });
-    }
+    //         return $field;
+    //     });
+    // }
 
-    public function toggleIsDisplayedInListView($fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
-            }
+    // public function toggleIsDisplayedInListView($fieldName)
+    // {
+    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+    //         if ($field['name'] === $fieldName) {
+    //             $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
+    //         }
 
-            return $field;
-        });
-    }
+    //         return $field;
+    //     });
+    // }
 
     public function updateColumnsOrder($sortedFields)
     {
@@ -175,6 +178,43 @@ class ModuleDesigner extends Component
         });
 
         $this->checkIfThereAreAvailableFields();
+    }
+
+    public function incrementStep()
+    {
+        if ($this->step === 0) {
+            $this->createOrUpdateTableAndModule();
+        }
+
+        $this->step++;
+    }
+
+    public function changeUitype($fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($field['name'] === $fieldName) {
+                $field['options'] = $this->getUitypeFieldOptions($field);
+                $field['data'] = null;
+            }
+
+            return $field;
+        });
+    }
+
+    private function getUitypeFieldOptions($field)
+    {
+        $uitype = uitype($field['uitype']);
+        $options = (new ($uitype->class))->getFieldOptions();
+
+        foreach ($options as $i => $option) {
+            foreach ($option as $j => $value) {
+                if (is_callable($value)) {
+                    $options[$i][$j] = call_user_func($value);
+                }
+            }
+        }
+
+        return $options;
     }
 
     private function loadLastDesignedModule()
@@ -218,7 +258,8 @@ class ModuleDesigner extends Component
                             'isDisplayedInListView' => true,
                             'uitype' => 'assigned_user',
                             'displaytype' => 'everywhere',
-                            'sequence' => 0
+                            'sequence' => 0,
+                            'options' => []
                         ],
                         [
                             'block_uuid' => $systemBlock['uuid'],
@@ -231,7 +272,8 @@ class ModuleDesigner extends Component
                             'uitype' => 'entity',
                             'displaytype' => 'detail',
                             'data' => ['module' => 'domain'],
-                            'sequence' => 1
+                            'sequence' => 1,
+                            'options' => []
                         ],
                         [
                             'block_uuid' => $systemBlock['uuid'],
@@ -243,7 +285,8 @@ class ModuleDesigner extends Component
                             'isDisplayedInListView' => true,
                             'uitype' => 'datetime',
                             'displaytype' => 'detail',
-                            'sequence' => 2
+                            'sequence' => 2,
+                            'options' => []
                         ],
                         [
                             'block_uuid' => $systemBlock['uuid'],
@@ -255,7 +298,8 @@ class ModuleDesigner extends Component
                             'isDisplayedInListView' => true,
                             'uitype' => 'datetime',
                             'displaytype' => 'detail',
-                            'sequence' => 3
+                            'sequence' => 3,
+                            'options' => []
                         ]
                     ],
                     'blocks' => [

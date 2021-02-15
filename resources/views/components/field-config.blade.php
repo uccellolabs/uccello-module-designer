@@ -25,10 +25,10 @@
         <div class="flex flex-col ml-4">
             <div class="mb-2 text-sm">Type de champ</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <select class="h-10 px-3 bg-transparent w-52 browser-default">
-                    <option value="text">Champ texte</option>
-                    <option value="textarea">Texte multiligne</option>
-                    <option value="checkbox">Case à cocher</option>
+                <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')">
+                    @foreach ($uitypes as $uitype)
+                    <option value="{{ $uitype->name }}">{{ $uitype->label }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -44,12 +44,48 @@
             <div class="mb-2 text-sm">Obligatoire</div>
             <div class="h-10 pt-1 switch">
                 <label>
-                  <input type="checkbox" @if ($field->isMandatory)checked="true"@endif wire:click="toggleMandatory('{{ $field->name }}')">
+                  <input type="checkbox" @if ($field->isMandatory)checked="true"@endif wire:model="fields.{{ $index }}.isMandatory">
                   <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
                   Oui
                 </label>
               </div>
         </div>
+    </div>
+    <div class="grid">
+        @foreach ($field->options as $option)
+            @php($option = (object) $option)
+
+            <div class="flex flex-col w-1/3 ml-4">
+            {{-- Input --}}
+            @if (in_array($option->type, ['text', 'email', 'number', 'password']))
+                <div class="mb-2 text-sm">{{ $option->label ?? '' }}</div>
+                <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                    <input type="{{ $option->type }}" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $option->key }}"  wire:model="fields.{{ $index }}.data.{{ $option->key }}">
+                </div>
+            {{-- Boolean --}}
+            @elseif ($option->type === 'boolean')
+                <div class="mb-2 text-sm">{{ $option->label ?? '' }}</div>
+                <div class="h-10 pt-1 switch">
+                    <label>
+                    <input type="checkbox" wire:model="fields.{{ $index }}.data.{{ $option->key }}">
+                    <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
+                    Oui
+                    </label>
+                </div>
+            {{-- Select --}}
+            @elseif ($option->type === 'select')
+                <div class="mb-2 text-sm">{{ $option->label ?? '' }}</div>
+                <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                    <select class="w-full h-10 px-3 bg-transparent browser-default" wire:model="fields.{{ $index }}.data.{{ $option->key }}">
+                        @foreach ($option->choices as $choice)
+                            @php($choice = (object) $choice)
+                            <option value="{{ $choice->key }}">{{ $choice->label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+            </div>
+        @endforeach
     </div>
     <div class="mt-3 mb-6 text-sm text-right underline" x-show="open">
         Paramètres avancées

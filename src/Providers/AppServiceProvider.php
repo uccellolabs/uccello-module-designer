@@ -2,6 +2,7 @@
 
 namespace Uccello\ModuleDesigner\Providers;
 
+use BladeUI\Icons\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -74,5 +75,13 @@ class AppServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/module-designer.php',
             'module-designer'
         );
+
+        // SVG icons
+        $this->callAfterResolving(Factory::class, function (Factory $factory) {
+            $factory->add('mdicons', [
+                'path' => __DIR__ . '/../../resources/svg',
+                'prefix' => 'mdicon',
+            ]);
+        });
     }
 }
