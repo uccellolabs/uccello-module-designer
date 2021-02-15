@@ -60,7 +60,9 @@
             @if (in_array($option->type, ['text', 'email', 'number', 'password']))
                 <div class="mb-2 text-sm">{{ $option->label ?? '' }}</div>
                 <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                    <input type="{{ $option->type }}" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $option->key }}"  wire:model="fields.{{ $index }}.data.{{ $option->key }}">
+                    <input type="{{ $option->type }}"
+                        class="w-full px-3 py-2 bg-transparent browser-default"
+                        wire:model="fields.{{ $index }}.data.{{ $option->key }}">
                 </div>
             {{-- Boolean --}}
             @elseif ($option->type === 'boolean')

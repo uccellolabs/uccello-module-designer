@@ -195,6 +195,12 @@ class ModuleDesigner extends Component
             if ($field['name'] === $fieldName) {
                 $field['options'] = $this->getUitypeFieldOptions($field);
                 $field['data'] = null;
+
+                foreach ($field['options'] as $option) {
+                    if (!empty($option['default'])) {
+                        $field['data'][$option['key']] = $option['default'];
+                    }
+                }
             }
 
             return $field;
@@ -208,7 +214,7 @@ class ModuleDesigner extends Component
 
         foreach ($options as $i => $option) {
             foreach ($option as $j => $value) {
-                if (is_callable($value)) {
+                if ($value instanceof \Closure) {
                     $options[$i][$j] = call_user_func($value);
                 }
             }
