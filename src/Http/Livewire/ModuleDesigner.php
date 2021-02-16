@@ -4,6 +4,7 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
+use stdClass;
 use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
 use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 use Uccello\ModuleDesignerCore\Models\DesignedModule;
@@ -196,9 +197,19 @@ class ModuleDesigner extends Component
                 $field['options'] = $this->getUitypeFieldOptions($field);
                 $field['data'] = null;
 
+                // TODO: factorize
                 foreach ($field['options'] as $option) {
-                    if (!empty($option['default'])) {
+                    if (isset($option['default'])) {
                         $field['data'][$option['key']] = $option['default'];
+                    }
+                    if ($option['type'] === 'array') {
+                        $defaultRow = new stdClass;
+                        $defaultRow->value = '';
+                        $defaultRow->label = '';
+
+                        $field['data'][$option['key']] = [
+                            $defaultRow
+                        ];
                     }
                 }
             }
@@ -207,10 +218,56 @@ class ModuleDesigner extends Component
         });
     }
 
+    public function addRowToFieldOptionArray($fieldName, $optionKey)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey) {
+            if ($field['name'] === $fieldName) {
+                $field['data'][$optionKey][] = ['value' => '', 'label' => ''];
+            }
+
+            return $field;
+        });
+    }
+
+    public function deleteRowFromFieldOptionArray($fieldName, $optionKey, $index)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey, $index) {
+            if ($field['name'] === $fieldName) {
+                unset($field['data'][$optionKey][$index]);
+            }
+
+            return $field;
+        });
+    }
+
+    public function reloadFieldOptions($index)
+    {
+        $field = $this->fields[$index];
+        $field['options'] = $this->getUitypeFieldOptions($field);
+
+        // TODO: factorize
+        foreach ($field['options'] as $option) {
+            if (isset($option['default'])) {
+                $field['data'][$option['key']] = $option['default'];
+            }
+            if ($option['type'] === 'array') {
+                $field['data'][$option['key']] = [
+                    ['value' => '', 'label' => '']
+                ];
+            }
+        }
+
+        $this->fields[$index] = $field;
+    }
+
     private function getUitypeFieldOptions($field)
     {
+        $bundle = new stdClass;
+        $bundle->field = (object) $field;
+        $bundle->inputFields = collect($this->fields);
+
         $uitype = uitype($field['uitype']);
-        $options = (new ($uitype->class))->getFieldOptions();
+        $options = (new ($uitype->class))->getFieldOptions($bundle);
 
         foreach ($options as $i => $option) {
             foreach ($option as $j => $value) {
