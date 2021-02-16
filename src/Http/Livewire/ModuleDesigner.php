@@ -4,42 +4,29 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
-use stdClass;
+use Uccello\ModuleDesigner\Support\Traits\HasField;
+use Uccello\ModuleDesigner\Support\Traits\HasStep;
+use Uccello\ModuleDesigner\Support\Traits\HasUitype;
 use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
 use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 use Uccello\ModuleDesignerCore\Models\DesignedModule;
 
 class ModuleDesigner extends Component
 {
+    use HasField;
+    use HasStep;
+    use HasUitype;
     use ModuleInstaller;
     use TableCreator;
 
     public $column = '';
-    public $step = 2;
+
     public $currentUitype;
 
     public $designedModule;
     public $name;
     public $label;
     public $icon;
-    public $fields;
-    public $blocks;
-    public $areAvailableFields;
-
-    private $colors = [
-        'bg-red-200',
-        'bg-blue-200',
-        'bg-green-200',
-        'bg-purple-200',
-        'bg-yellow-200',
-        'bg-indigo-200',
-        'bg-red-400',
-        'bg-blue-400',
-        'bg-green-400',
-        'bg-purple-400',
-        'bg-yellow-400',
-        'bg-indigo-400',
-    ];
 
     public function __construct()
     {
@@ -70,214 +57,10 @@ class ModuleDesigner extends Component
         $this->name = Str::slug($this->label);
     }
 
-    public function createField()
-    {
-        $this->addField([
-            'block_uuid' => null,
-            'label' => $this->column,
-            'name' => Str::slug($this->column, '_'),
-            'last_name' => null,
-            'color' => $this->getColor(),
-            'isMandatory' => false,
-            'isLarge' => false,
-            'isDisplayedInListView' => true,
-            'uitype' => 'text',
-            'displaytype' => 'everywhere',
-            'sequence' => $this->fields->count(),
-            'options' => []
-        ]);
-
-        $this->column = '';
-        $this->checkIfThereAreAvailableFields();
-    }
-
-    public function createBlock()
-    {
-        $index = $this->blocks->count() + 1;
-        $this->addBlock([
-            'uuid' => Str::uuid(),
-            'label' => 'block.block'.$index,
-            'translation' => 'Block '.$index,
-            'icon' => null,
-            'sequence' => $this->blocks->count(),
-        ]);
-    }
-
     public function createOrUpdateTableAndModule()
     {
         $this->createOrUpdateTable();
         $this->createOrUpdateModule();
-    }
-
-    // public function toggleLarge($fieldName)
-    // {
-    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-    //         if ($field['name'] === $fieldName) {
-    //             $field['isLarge'] = !$field['isLarge'];
-    //         }
-
-    //         return $field;
-    //     });
-    // }
-
-    // public function toggleMandatory($fieldName)
-    // {
-    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-    //         if ($field['name'] === $fieldName) {
-    //             $field['isMandatory'] = !$field['isMandatory'];
-    //         }
-
-    //         return $field;
-    //     });
-    // }
-
-    // public function toggleIsDisplayedInListView($fieldName)
-    // {
-    //     $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-    //         if ($field['name'] === $fieldName) {
-    //             $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
-    //         }
-
-    //         return $field;
-    //     });
-    // }
-
-    public function updateColumnsOrder($sortedFields)
-    {
-        foreach ($sortedFields as $sortedField) {
-            $this->fields = $this->fields->map(function ($field) use ($sortedField) {
-                if ($field['name'] === $sortedField['value']) {
-                    $field['sequence'] = $sortedField['order'] - 1;
-                }
-
-                return $field;
-            });
-        }
-    }
-
-    public function removeFieldFromBlock($fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['block_uuid'] = null;
-            }
-
-            return $field;
-        });
-
-        $this->checkIfThereAreAvailableFields();
-    }
-
-    public function addFieldToBlock($blockUuid, $fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($blockUuid, $fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['block_uuid'] = $blockUuid;
-            }
-
-            return $field;
-        });
-
-        $this->checkIfThereAreAvailableFields();
-    }
-
-    public function incrementStep()
-    {
-        if ($this->step === 0) {
-            $this->createOrUpdateTableAndModule();
-        }
-
-        $this->step++;
-    }
-
-    public function changeUitype($fieldName)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
-            if ($field['name'] === $fieldName) {
-                $field['options'] = $this->getUitypeFieldOptions($field);
-                $field['data'] = null;
-
-                // TODO: factorize
-                foreach ($field['options'] as $option) {
-                    if (isset($option['default'])) {
-                        $field['data'][$option['key']] = $option['default'];
-                    }
-                    if ($option['type'] === 'array') {
-                        $defaultRow = new stdClass;
-                        $defaultRow->value = '';
-                        $defaultRow->label = '';
-
-                        $field['data'][$option['key']] = [
-                            $defaultRow
-                        ];
-                    }
-                }
-            }
-
-            return $field;
-        });
-    }
-
-    public function addRowToFieldOptionArray($fieldName, $optionKey)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey) {
-            if ($field['name'] === $fieldName) {
-                $field['data'][$optionKey][] = ['value' => '', 'label' => ''];
-            }
-
-            return $field;
-        });
-    }
-
-    public function deleteRowFromFieldOptionArray($fieldName, $optionKey, $index)
-    {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey, $index) {
-            if ($field['name'] === $fieldName) {
-                unset($field['data'][$optionKey][$index]);
-            }
-
-            return $field;
-        });
-    }
-
-    public function reloadFieldOptions($index)
-    {
-        $field = $this->fields[$index];
-        $field['options'] = $this->getUitypeFieldOptions($field);
-
-        // TODO: factorize
-        foreach ($field['options'] as $option) {
-            if (isset($option['default'])) {
-                $field['data'][$option['key']] = $option['default'];
-            }
-            if ($option['type'] === 'array') {
-                $field['data'][$option['key']] = [
-                    ['value' => '', 'label' => '']
-                ];
-            }
-        }
-
-        $this->fields[$index] = $field;
-    }
-
-    private function getUitypeFieldOptions($field)
-    {
-        $bundle = new stdClass;
-        $bundle->field = (object) $field;
-        $bundle->inputFields = collect($this->fields);
-
-        $uitype = uitype($field['uitype']);
-        $options = (new ($uitype->class))->getFieldOptions($bundle);
-
-        foreach ($options as $i => $option) {
-            foreach ($option as $j => $value) {
-                if ($value instanceof \Closure) {
-                    $options[$i][$j] = call_user_func($value);
-                }
-            }
-        }
-
-        return $options;
     }
 
     private function loadLastDesignedModule()
@@ -386,29 +169,6 @@ class ModuleDesigner extends Component
         $this->checkIfThereAreAvailableFields();
     }
 
-    private function getColor()
-    {
-        return $this->colors[count($this->fields) % count($this->colors)];
-    }
-
-    private function addField($field)
-    {
-        if (!empty($field['last_name']) && $field['name'] !== $field['last_name']) {
-            $this->updateColumnInExistingTable($field);
-        } else {
-            $this->createColumnInExistingTable($field);
-        }
-
-        $field['last_name'] = $field['name'];
-
-        $this->fields[] = $field;
-    }
-
-    private function addBlock($params)
-    {
-        $this->blocks[] = $params;
-    }
-
     private function saveDesignedModule()
     {
         $this->designedModule->data = [
@@ -421,17 +181,6 @@ class ModuleDesigner extends Component
             'blocks' => $this->blocks,
         ];
         $this->designedModule->save();
-    }
-
-    private function checkIfThereAreAvailableFields()
-    {
-        $this->areAvailableFields = false;
-        foreach ($this->fields as $field) {
-            if (empty($field->block_uuid)) {
-                $this->areAvailableFields = true;
-                break;
-            }
-        }
     }
 
     public function render()
