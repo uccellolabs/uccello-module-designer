@@ -8,8 +8,14 @@ trait HasStep
 
     public function incrementStep()
     {
-        if ($this->step === 0) {
-            $this->createOrUpdateTableAndModule();
+        $this->createOrUpdateTableAndModule();
+
+        if ($this->isConfiguringModuleName()) {
+            //
+        } elseif ($this->isCreatingColumns()) {
+            $this->createOrUpdateFilter();
+        } elseif ($this->isConfiguringFields()) {
+            // $this->updateBlocksAndFields();
         }
 
         $this->step++;
@@ -23,5 +29,15 @@ trait HasStep
     private function isConfiguringModuleName()
     {
         return $this->step === 0;
+    }
+
+    private function isCreatingColumns()
+    {
+        return $this->step === 1;
+    }
+
+    private function isConfiguringFields()
+    {
+        return $this->step === 2;
     }
 }

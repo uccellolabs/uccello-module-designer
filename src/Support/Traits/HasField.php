@@ -28,7 +28,7 @@ trait HasField
     public function createField()
     {
         $this->addField([
-            'block_uuid' => null,
+            'block_uuid' => $this->getFirstBlockUuid(),
             'label' => $this->column,
             'name' => Str::slug($this->column, '_'),
             'lastName' => null,
@@ -57,6 +57,11 @@ trait HasField
             'icon' => null,
             'sequence' => $this->blocks->count(),
         ]);
+    }
+
+    private function getFirstBlockUuid()
+    {
+        return !empty($this->blocks[0]) ? $this->blocks[0]['uuid'] : null;
     }
 
     private function getNexBlockIndex()
@@ -160,6 +165,7 @@ trait HasField
     {
         $this->areAvailableFields = false;
         foreach ($this->fields as $field) {
+            $field = (object) $field;
             if (!$this->isFieldPartOfBlock($field)) {
                 $this->areAvailableFields = true;
                 break;

@@ -4,6 +4,7 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Uccello\ModuleDesigner\Support\Traits\FileCreator;
 use Uccello\ModuleDesigner\Support\Traits\HasField;
 use Uccello\ModuleDesigner\Support\Traits\HasStep;
 use Uccello\ModuleDesigner\Support\Traits\HasUitype;
@@ -20,6 +21,7 @@ class ModuleDesigner extends Component
     use StructureAdapter;
     use ModuleInstaller;
     use TableCreator;
+    use FileCreator;
 
     public $column = '';
 
@@ -78,11 +80,11 @@ class ModuleDesigner extends Component
             $designedModule = DesignedModule::create([
                 'name' => Str::uuid(),
                 'data' => [
-                    'id' => '',
+                    'id' => null,
                     'label' => '',
                     'name' => '',
                     'lastName' => '',
-                    'icon' => '',
+                    'icon' => null,
                     'table' => '',
                     'lastTable' => '',
                     'step' => 0,
