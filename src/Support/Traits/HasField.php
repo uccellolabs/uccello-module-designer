@@ -31,7 +31,7 @@ trait HasField
             'block_uuid' => null,
             'label' => $this->column,
             'name' => Str::slug($this->column, '_'),
-            'last_name' => null,
+            'lastName' => null,
             'color' => $this->getColor(),
             'isMandatory' => false,
             'isLarge' => false,
@@ -146,14 +146,14 @@ trait HasField
 
     private function getFieldWithLastNameUpdated($field)
     {
-        $field['last_name'] = $field['name'];
+        $field['lastName'] = $field['name'];
 
         return $field;
     }
 
     private function wasFieldNameChanged($field)
     {
-        return !empty($field['last_name']) && $field['name'] !== $field['last_name'];
+        return !empty($field['lastName']) && $field['name'] !== $field['lastName'];
     }
 
     private function checkIfThereAreAvailableFields()

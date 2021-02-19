@@ -4,7 +4,7 @@ namespace Uccello\ModuleDesigner\Support\Traits;
 
 trait HasStep
 {
-    public $step = 2;
+    public $step = 0;
 
     public function incrementStep()
     {
@@ -18,5 +18,10 @@ trait HasStep
     public function changeStep($step)
     {
         $this->step === $step;
+    }
+
+    private function isConfiguringModuleName()
+    {
+        return $this->step === 0;
     }
 }

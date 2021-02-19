@@ -8,23 +8,23 @@ use Uccello\Core\Models\Module;
 
 trait ModuleInstaller
 {
-    public $id;
-
     public function createOrUpdateModule()
     {
-        if ($this->id) {
-            $module = Module::find($this->id);
+        if ($this->structure['id']) {
+            $module = Module::find($this->structure['id']);
         } else {
-            $module = new Module();
+            $module = Module::firstOrNew([
+                'name' => $this->structure['name']
+            ]);
         }
 
-        $module->name = $this->name;
+        $module->name = $this->structure['name'];
         $module->icon = null; //TODO:complete
-        $module->model_class = 'App\\'.Str::studly($this->name);
+        $module->model_class = 'App\\'.Str::studly($this->structure['name']);
         $module->data = null;
         $module->save();
 
-        $this->id = $module->id;
+        $this->structure['id'] = $module->id;
 
         return $module;
     }

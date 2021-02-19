@@ -5,15 +5,10 @@ namespace Uccello\ModuleDesigner\Support\Traits;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Field;
-use Uccello\Core\Models\Module;
 
 trait TableCreator
 {
-    private $tableName;
-    private $lastTableName;
-
     public function createOrUpdateTable()
     {
         $this->retrieveTableName();
@@ -31,28 +26,28 @@ trait TableCreator
 
     private function retrieveTableName()
     {
-        $this->tableName = Str::plural($this->name);
+        $this->structure['table'] = Str::plural($this->structure['name']);
     }
 
     private function mustTableBeRenamed()
     {
-        return !empty($this->lastTableName) && $this->tableName !== $this->lastTableName;
+        return !empty($this->structure['lastTable']) && $this->structure['table'] !== $this->structure['lastTable'];
     }
 
     private function renameTable()
     {
-        Schema::rename($this->lastTableName, $this->tableName);
-        $this->lastTableName = $this->tableName;
+        Schema::rename($this->structure['lastTable'], $this->structure['table']);
+        $this->structure['lastTable'] = $this->structure['table'];
     }
 
     private function tableExists()
     {
-        return Schema::hasTable($this->tableName);
+        return Schema::hasTable($this->structure['table']);
     }
 
     private function createTable()
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create($this->structure['table'], function (Blueprint $table) {
             $table->increments('id');
             foreach ($this->getSortedFields() as $field) {
                 $this->createTableColumn($table, $field); // e.g: $table->string('field_name')->nullable()
@@ -63,7 +58,7 @@ trait TableCreator
 
     private function updateTable()
     {
-        Schema::table($this->tableName, function (Blueprint $table) {
+        Schema::table($this->structure['table'], function (Blueprint $table) {
             foreach ($this->getSortedFields() as $field) {
                 $this->createOrUpdateTableColumn($table, $field); // e.g: $table->string('field_name')->change()
             }
@@ -99,14 +94,14 @@ trait TableCreator
 
     private function createColumnInExistingTable($field)
     {
-        Schema::table($this->tableName, function (Blueprint $table) use ($field) {
+        Schema::table($this->structure['table'], function (Blueprint $table) use ($field) {
             $this->createTableColumn($table, $field);
         });
     }
 
     private function updateColumnInExistingTable($field)
     {
-        Schema::table($this->tableName, function (Blueprint $table) use ($field) {
+        Schema::table($this->structure['table'], function (Blueprint $table) use ($field) {
             $this->updateTableColumn($table, $field);
         });
     }

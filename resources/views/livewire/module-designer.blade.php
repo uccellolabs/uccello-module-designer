@@ -13,11 +13,11 @@
                 <div class="">
                     <div class="mb-2 text-sm">Nom du modèle de données</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                        <input type="text" wire:model="label" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
+                        <input type="text" wire:model="structure.label" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
                     </div>
                     <div class="mt-8 mb-2 text-sm">Nom affiché dans l'URL</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                        <input type="text" wire:model="name" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
+                        <input type="text" wire:model="structure.name" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
             <div class="mb-2 text-sm">Ajoutez vos colonnes</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <ul class="grid grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
-                    @foreach($fields->sortBy('sequence') as $index => $field)
-                    @php ($field = (object) $field)
+                    @foreach($fields as $index => $field)
+                    @php($field = (object) $field)
                     <li class="outline-none" wire:sortable.item="{{ $field->name }}" wire:key="field-{{ $field->name }}">
                         <x-md-column-tag :field="$field" :index="$index"></x-md-column-tag>
                     </li>
@@ -58,7 +58,7 @@
                         <i class="text-base material-icons">search</i>
                     </div>
                     <div class="flex flex-row flex-grow overflow-y-auto">
-                        @forelse($fields->sortBy('sequence') as $field)
+                        @forelse($fields as $field)
                             @continue(!((object) $field)->isDisplayedInListView)
                             <x-md-column :field="$field"></x-md-column>
                         @empty
@@ -102,7 +102,7 @@
     <x-md-vertical-step-card title="Configurez la fiche détaillée">
         <div class="p-6">
             {{-- Block --}}
-            @foreach ($blocks as $block)
+            @foreach ($this->blocks as $block)
                 <x-md-block :block="$block" :fields="$fields" :areAvailableFields="$areAvailableFields"></x-md-block>
             @endforeach
 

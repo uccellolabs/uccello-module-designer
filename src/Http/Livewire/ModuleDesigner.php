@@ -8,6 +8,7 @@ use Uccello\ModuleDesigner\Support\Traits\HasField;
 use Uccello\ModuleDesigner\Support\Traits\HasStep;
 use Uccello\ModuleDesigner\Support\Traits\HasUitype;
 use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
+use Uccello\ModuleDesigner\Support\Traits\StructureAdapter;
 use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 use Uccello\ModuleDesignerCore\Models\DesignedModule;
 
@@ -16,6 +17,7 @@ class ModuleDesigner extends Component
     use HasField;
     use HasStep;
     use HasUitype;
+    use StructureAdapter;
     use ModuleInstaller;
     use TableCreator;
 
@@ -23,15 +25,13 @@ class ModuleDesigner extends Component
 
     public $currentUitype;
 
-    public $designedModule;
-    public $name;
-    public $label;
-    public $icon;
+    public $structure;
+
+    private $designedModule;
 
     public function __construct()
     {
-        $this->fields = collect();
-        $this->blocks = collect();
+        $this->structure = [];
 
         $this->loadLastDesignedModule();
     }
@@ -52,9 +52,11 @@ class ModuleDesigner extends Component
         $this->saveDesignedModule();
     }
 
-    public function updatedLabel()
+    public function updated()
     {
-        $this->name = Str::slug($this->label);
+        if ($this->isConfiguringModuleName()) {
+            $this->structure['name'] = Str::slug($this->structure['label']);
+        }
     }
 
     public function createOrUpdateTableAndModule()
@@ -63,128 +65,123 @@ class ModuleDesigner extends Component
         $this->createOrUpdateModule();
     }
 
+    public function render()
+    {
+        return view('module-designer::livewire.module-designer');
+    }
+
     private function loadLastDesignedModule()
     {
         $designedModule = DesignedModule::orderBy('created_at', 'desc')->first();
 
         if (!$designedModule) {
-            $generalBlock = [
-                'uuid' => Str::uuid(),
-                'label' => 'block.general',
-                'translation' => 'General',
-                'icon' => 'info',
-                'sequence' => 0,
-            ];
-
-            $systemBlock = [
-                'uuid' => Str::uuid(),
-                'label' => 'block.system',
-                'translation' => 'Settings',
-                'icon' => 'settings',
-                'sequence' => 1,
-            ];
-
-
             $designedModule = DesignedModule::create([
                 'name' => Str::uuid(),
                 'data' => [
                     'id' => '',
                     'label' => '',
                     'name' => '',
+                    'lastName' => '',
                     'icon' => '',
                     'table' => '',
-                    'fields' => [
+                    'lastTable' => '',
+                    'step' => 0,
+                    'tabs' => [
                         [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Assigned to',
-                            'name' => 'assigned_to',
-                            'color' => $this->colors[2],
-                            'isMandatory' => true,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => true,
-                            'uitype' => 'assigned_user',
-                            'displaytype' => 'everywhere',
-                            'sequence' => 0,
-                            'options' => []
-                        ],
-                        [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Domain',
-                            'name' => 'domain',
-                            'color' => $this->colors[3],
-                            'isMandatory' => false,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => false,
-                            'uitype' => 'entity',
-                            'displaytype' => 'detail',
-                            'data' => ['module' => 'domain'],
-                            'sequence' => 1,
-                            'options' => []
-                        ],
-                        [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Created at',
-                            'name' => 'created_at',
-                            'color' => $this->colors[0],
-                            'isMandatory' => false,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => true,
-                            'uitype' => 'datetime',
-                            'displaytype' => 'detail',
-                            'sequence' => 2,
-                            'options' => []
-                        ],
-                        [
-                            'block_uuid' => $systemBlock['uuid'],
-                            'label' => 'Updated at',
-                            'name' => 'updated_at',
-                            'color' => $this->colors[1],
-                            'isMandatory' => false,
-                            'isLarge' => false,
-                            'isDisplayedInListView' => true,
-                            'uitype' => 'datetime',
-                            'displaytype' => 'detail',
-                            'sequence' => 3,
-                            'options' => []
+                            'uuid' => Str::uuid(),
+                            'label' => 'tab.main',
+                            'translation' => 'Detail',
+                            'icon' => '',
+                            'blocks' => [
+                                [
+                                    'uuid' => Str::uuid(),
+                                    'label' => 'block.general',
+                                    'translation' => 'General',
+                                    'icon' => 'info',
+                                    'sequence' => 0,
+                                    'fields' => []
+                                ],
+                                [
+                                    'uuid' => Str::uuid(),
+                                    'label' => 'block.system',
+                                    'translation' => 'Settings',
+                                    'icon' => 'settings',
+                                    'sequence' => 1,
+                                    'fields' => [
+                                        [
+                                            // 'block_uuid' => $systemBlock['uuid'],
+                                            'label' => 'Assigned to',
+                                            'name' => 'assigned_to',
+                                            'color' => $this->colors[2],
+                                            'isMandatory' => true,
+                                            'isLarge' => false,
+                                            'isDisplayedInListView' => true,
+                                            'uitype' => 'assigned_user',
+                                            'displaytype' => 'everywhere',
+                                            'sequence' => 0,
+                                            'options' => []
+                                        ],
+                                        [
+                                            // 'block_uuid' => $systemBlock['uuid'],
+                                            'label' => 'Domain',
+                                            'name' => 'domain',
+                                            'color' => $this->colors[3],
+                                            'isMandatory' => false,
+                                            'isLarge' => false,
+                                            'isDisplayedInListView' => false,
+                                            'uitype' => 'entity',
+                                            'displaytype' => 'detail',
+                                            'data' => ['module' => 'domain'],
+                                            'sequence' => 1,
+                                            'options' => []
+                                        ],
+                                        [
+                                            // 'block_uuid' => $systemBlock['uuid'],
+                                            'label' => 'Created at',
+                                            'name' => 'created_at',
+                                            'color' => $this->colors[0],
+                                            'isMandatory' => false,
+                                            'isLarge' => false,
+                                            'isDisplayedInListView' => true,
+                                            'uitype' => 'datetime',
+                                            'displaytype' => 'detail',
+                                            'sequence' => 2,
+                                            'options' => []
+                                        ],
+                                        [
+                                            // 'block_uuid' => $systemBlock['uuid'],
+                                            'label' => 'Updated at',
+                                            'name' => 'updated_at',
+                                            'color' => $this->colors[1],
+                                            'isMandatory' => false,
+                                            'isLarge' => false,
+                                            'isDisplayedInListView' => true,
+                                            'uitype' => 'datetime',
+                                            'displaytype' => 'detail',
+                                            'sequence' => 3,
+                                            'options' => []
+                                        ]
+                                    ]
+                                ]
+                            ]
                         ]
-                    ],
-                    'blocks' => [
-                        $generalBlock,
-                        $systemBlock,
                     ]
                 ]
             ]);
         }
 
         $this->designedModule = $designedModule;
-        $this->id = $designedModule->data->id;
-        $this->name = $designedModule->data->name;
-        $this->lastName = $designedModule->data->name;
-        $this->tableName = $designedModule->data->table;
-        $this->lastTableName = $designedModule->data->table;
-        $this->label = $designedModule->data->label;
-        $this->icon = $designedModule->data->icon;
-        $this->fields = collect($designedModule->data->fields);
-        $this->blocks = collect($designedModule->data->blocks);
+
+        $this->structure = $this->toArray($designedModule->data);
+
+        $this->buildOptimizedStructure();
+
         $this->checkIfThereAreAvailableFields();
     }
 
     private function saveDesignedModule()
     {
-        $this->designedModule->data = [
-            'id' => $this->id,
-            'label' => $this->label,
-            'name' => $this->name,
-            'icon' => $this->icon,
-            'table' => $this->tableName,
-            'fields' => $this->fields,
-            'blocks' => $this->blocks,
-        ];
+        $this->designedModule->data = $this->buildDesignedModuleStructure();
         $this->designedModule->save();
-    }
-
-    public function render()
-    {
-        return view('module-designer::livewire.module-designer');
     }
 }
