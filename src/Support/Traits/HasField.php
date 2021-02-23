@@ -38,6 +38,7 @@ trait HasField
             'isDisplayedInListView' => true,
             'uitype' => 'text',
             'displaytype' => 'everywhere',
+            'filterSequence' => $this->fields->count(),
             'sequence' => $this->fields->count(),
             'options' => []
         ]);
@@ -57,6 +58,45 @@ trait HasField
             'icon' => null,
             'sequence' => $this->blocks->count(),
         ]);
+    }
+
+    public function deleteBlock($index)
+    {
+        $blockUuid = $this->blocks[$index]['uuid'];
+
+        $this->mapFields(function ($field) use ($blockUuid) {
+            if ($field['block_uuid'] === $blockUuid) {
+                $field['block_uuid'] = null;
+            }
+
+            return $field;
+        });
+
+        unset($this->blocks[$index]);
+
+        $this->checkIfThereAreAvailableFields();
+    }
+
+    public function toggleIsDisplayedInListView($fieldName)
+    {
+        $this->mapFields(function ($field) use ($fieldName) {
+            if ($this->isSameFieldName($field, $fieldName)) {
+                $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
+            }
+
+            return $field;
+        });
+    }
+
+    public function toggleLarge($fieldName)
+    {
+        $this->mapFields(function ($field) use ($fieldName) {
+            if ($this->isSameFieldName($field, $fieldName)) {
+                $field['isLarge'] = !$field['isLarge'];
+            }
+
+            return $field;
+        });
     }
 
     private function getFirstBlockUuid()
@@ -79,11 +119,40 @@ trait HasField
         foreach ($sortedFields as $sortedField) {
             $this->mapFields(function ($field) use ($sortedField) {
                 if ($field['name'] === $sortedField['value']) {
-                    $field['sequence'] = $sortedField['order'] - 1;
+                    $field['filterSequence'] = $sortedField['order'] - 1;
                 }
                 return $field;
             });
         }
+    }
+
+    public function updateBlockOrder($sortedBlocks)
+    {
+        foreach ($sortedBlocks as $sortedBlock) {
+            $this->blocks = $this->blocks->map(function ($block) use ($sortedBlock) {
+                if ($block['uuid'] === $sortedBlock['value']) {
+                    $block['sequence'] = $sortedBlock['order'] - 1;
+                }
+                return $block;
+            });
+        }
+    }
+
+    public function updateBlockFieldOrder($sortedBlocks)
+    {
+        foreach ($sortedBlocks as $sortedBlock) {
+            foreach ($sortedBlock['items'] as $sortedField) {
+                $this->mapFields(function ($field) use ($sortedBlock, $sortedField) {
+                    if ($field['name'] === $sortedField['value']) {
+                        $field['sequence'] = $sortedField['order'] - 1;
+                        $field['block_uuid'] = $sortedBlock['value'];
+                    }
+                    return $field;
+                });
+            }
+        }
+
+        // dd($this->fields);
     }
 
     public function removeFieldFromBlock($fieldName)

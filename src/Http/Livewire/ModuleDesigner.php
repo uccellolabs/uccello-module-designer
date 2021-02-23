@@ -121,6 +121,7 @@ class ModuleDesigner extends Component
                                             'uitype' => 'assigned_user',
                                             'displaytype' => 'everywhere',
                                             'sequence' => 0,
+                                            "filterSequence" => 0,
                                             'options' => []
                                         ],
                                         [
@@ -135,6 +136,7 @@ class ModuleDesigner extends Component
                                             'displaytype' => 'detail',
                                             'data' => ['module' => 'domain'],
                                             'sequence' => 1,
+                                            "filterSequence" => 1,
                                             'options' => []
                                         ],
                                         [
@@ -144,10 +146,11 @@ class ModuleDesigner extends Component
                                             'color' => $this->colors[0],
                                             'isRequired' => false,
                                             'isLarge' => false,
-                                            'isDisplayedInListView' => true,
+                                            'isDisplayedInListView' => false,
                                             'uitype' => 'datetime',
                                             'displaytype' => 'detail',
                                             'sequence' => 2,
+                                            "filterSequence" => 2,
                                             'options' => []
                                         ],
                                         [
@@ -157,10 +160,11 @@ class ModuleDesigner extends Component
                                             'color' => $this->colors[1],
                                             'isRequired' => false,
                                             'isLarge' => false,
-                                            'isDisplayedInListView' => true,
+                                            'isDisplayedInListView' => false,
                                             'uitype' => 'datetime',
                                             'displaytype' => 'detail',
                                             'sequence' => 3,
+                                            "filterSequence" => 3,
                                             'options' => []
                                         ]
                                     ]

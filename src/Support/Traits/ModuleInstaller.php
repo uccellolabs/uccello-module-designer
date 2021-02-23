@@ -159,7 +159,7 @@ trait ModuleInstaller
     private function getDefaultFilterColumns()
     {
         $columns = [];
-        foreach ($this->fields->sortBy('sequence') as $field) {
+        foreach ($this->fields->sortBy('filterSequence') as $field) {
             $field = (object) $field;
             if ($field->isDisplayedInListView) {
                 $columns[] = $field->name;

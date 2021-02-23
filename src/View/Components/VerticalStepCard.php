@@ -7,6 +7,7 @@ use Illuminate\View\Component;
 class VerticalStepCard extends Component
 {
     public $title;
+    public $step;
     public $after;
 
     /**
@@ -14,9 +15,10 @@ class VerticalStepCard extends Component
      *
      * @return void
      */
-    public function __construct($title, $after = null)
+    public function __construct($title, $step, $after = null)
     {
         $this->title = $title;
+        $this->step = $step;
         $this->after = $after;
     }
 

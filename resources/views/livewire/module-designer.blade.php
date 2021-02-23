@@ -1,5 +1,5 @@
 <div>
-    <x-md-vertical-step-card title="Choisissez le nom de votre modèle de données">
+    <x-md-vertical-step-card title="Choisissez le nom de votre modèle de données" step="0">
         <div class="flex p-12 @if($step > 0)hidden @endif">
             {{-- Left column --}}
             <div class="w-2/6 mr-4">
@@ -33,12 +33,12 @@
     </x-md-vertical-step-card>
 
     @if ($step > 0)
-    <x-md-vertical-step-card title="Créez vos colonnes">
+    <x-md-vertical-step-card title="Créez vos colonnes" step="1">
         <div class="col-span-6 p-12 @if($step > 1)hidden @endif">
             <div class="mb-2 text-sm">Ajoutez vos colonnes</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <ul class="grid grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
-                    @foreach($fields->sortBy('sequence') as $index => $field)
+                    @foreach($fields->sortBy('filterSequence') as $index => $field)
                     @php($field = (object) $field)
                     <li class="outline-none" wire:sortable.item="{{ $field->name }}" wire:key="field-{{ $field->name }}">
                         <x-md-column-tag :field="$field" :index="$index"></x-md-column-tag>
@@ -58,7 +58,7 @@
                         <i class="text-base material-icons">search</i>
                     </div>
                     <div class="flex flex-row flex-grow overflow-y-auto">
-                        @forelse($fields->sortBy('sequence') as $field)
+                        @forelse($fields->sortBy('filterSequence') as $field)
                             @continue(!((object) $field)->isDisplayedInListView)
                             <x-md-column :field="$field"></x-md-column>
                         @empty
@@ -78,7 +78,7 @@
         @if ($step === 2)
         <x-slot name="after">
             <div class="@if ($step < 2)border-t @endif border-gray-200 border-solid justify-self-center">
-                <x-md-vertical-step-card-title title="Configurez vos colonnes" close="true"></x-vertical-step-card-title>
+                <x-md-vertical-step-card-title title="Configurez vos colonnes" close="true" step="2"></x-vertical-step-card-title>
             </div>
             <div class="p-6">
                 @foreach($fields->sortBy('sequence') as $index => $field)
@@ -99,12 +99,14 @@
     @endif
 
     @if ($step > 2)
-    <x-md-vertical-step-card title="Configurez la fiche détaillée">
+    <x-md-vertical-step-card title="Configurez la fiche détaillée" step="3">
         <div class="p-6">
             {{-- Block --}}
-            @foreach ($this->blocks as $block)
-                <x-md-block :block="$block" :fields="$fields" :areAvailableFields="$areAvailableFields"></x-md-block>
-            @endforeach
+            <div wire:sortable="updateBlockOrder" wire:sortable-group="updateBlockFieldOrder">
+                @foreach ($this->blocks->sortBy('sequence') as $index => $block)
+                    <x-md-block :block="$block" :fields="$fields" :index="$index" :areAvailableFields="$areAvailableFields"></x-md-block>
+                @endforeach
+            </div>
 
             {{-- Add block --}}
             <div class="grid p-4 mt-6 text-center border-2 border-gray-300 border-dashed rounded-lg">

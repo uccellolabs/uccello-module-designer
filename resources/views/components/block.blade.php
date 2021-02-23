@@ -1,13 +1,17 @@
-<div class="p-4 mb-6 border border-gray-200 border-solid rounded-lg shadow-md">
+<div class="p-4 mb-6 border border-gray-200 border-solid rounded-lg shadow-md" x-data="{edit: false}" wire:key="block-{{ $block->uuid }}" wire:sortable.item="{{ $block->uuid }}">
     <div class="flex items-center mb-4">
         <div class="flex-grow text-sm font-semibold">
-            {{ $block->translation }}
+            {{-- Label --}}
+            <span x-show="!edit" class="mr-2" wire:sortable.handle>{{ $block->translation }}</span>
+            <input type="text" x-show="edit" class="font-bold outline-none browser-default" wire:model="blocks.{{ $index }}.translation" @click.away="edit=false">
+            {{-- Edit icon --}}
+            <i class="text-base cursor-pointer material-icons" x-show="!edit" @click="edit=true">create</i>
         </div>
         <div>
-            <i class="float-right text-2xl material-icons">expand_less</i>
+            <i class="float-right text-lg cursor-pointer material-icons" wire:click="deleteBlock({{ $index }})">close</i>
         </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-4 p-2" wire:sortable-group.item-group="{{ $block->uuid }}">
         @foreach($fields->sortBy('sequence') as $index => $field)
             @continue(((object) $field)->block_uuid !== $block->uuid)
             <x-md-detailed-field :field="$field" :index="$index"></x-md-detailed-field>

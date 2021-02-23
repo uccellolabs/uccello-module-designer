@@ -23,7 +23,7 @@ trait HasStep
 
     public function changeStep($step)
     {
-        $this->step === $step;
+        $this->step = $step;
     }
 
     private function isConfiguringModuleName()
@@ -38,6 +38,6 @@ trait HasStep
 
     private function isConfiguringFields()
     {
-        return $this->step === 2;
+        return $this->step === 2 || $this->step === 3;
     }
 }

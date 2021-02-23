@@ -4,13 +4,13 @@
         <div class="rounded-full h-3 w-3 mr-2 {{ $field->color }}"></div>
         {{-- Label --}}
         <span class="mr-1 text-sm font-semibold" x-show="!edit">{{ $field->label }}</span>
-        <input type="text" x-show="edit" class="browser-default" @click.away="edit=false">
+        <input type="text" x-show="edit" x-ref="field_{{ $field->name }}" class="text-sm font-semibold outline-none browser-default" wire:model="fields.{{ $index }}.label" @click.away="edit=false">
         {{-- Edit icon --}}
-        <i class="text-base cursor-pointer material-icons" x-show="!edit" @click="edit=true">create</i>
+        <i class="text-base cursor-pointer material-icons" x-show="!edit" x-on:click="edit=true; $refs['field_{{ $field->name }}'].select();">create</i>
         {{-- Line --}}
         <div class="flex-grow h-1 mx-3 border-b border-gray-400 border-solid"></div>
         {{--Less/More icon --}}
-        <div class="flex items-center justify-center w-4 h-4 text-white rounded-full cursor-pointer primary" @click="open=!open">
+        <div class="flex items-center justify-center w-4 h-4 text-white rounded-full cursor-pointer primary" x-on:click="open=!open">
             <i class="text-xs material-icons" x-show="open">expand_less</i>
             <i class="text-xs material-icons" x-show="!open">expand_more</i>
         </div>
