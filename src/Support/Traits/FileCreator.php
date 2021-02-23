@@ -2,50 +2,17 @@
 
 namespace Uccello\ModuleDesigner\Support\Traits;
 
-use Illuminate\Support\Facades\File;
-
 trait FileCreator
 {
+    use ModelFileCreator;
+    use LanguageFileCreator;
+
     private function createOrUpdateModuleFiles()
     {
         $this->createOrUpdateModelFile();
         $this->createOrUpdateLanguageFile();
-        $this->createOrUpdateMigrationFile();
-        $this->createOrUpdateUccelloManifestFile();
-    }
-
-    private function createOrUpdateModelFile()
-    {
-        if (!$this->modelFileExists()) {
-            $this->createModelFile();
-        } else {
-            $this->updateModelFile();
-        }
-    }
-
-    private function modelFileExists()
-    {
-        return File::exists($this->getModelFilePath());
-    }
-
-    private function getModelFilePath()
-    {
-        $packagePath = $this->getPackagePath();
-        $modelFileName = $this->getModelFileName();
-
-        return "$packagePath/src/Models/$modelFileName";
-    }
-
-    private function getPackagePath()
-    {
-        if ($this->isModulePartsOfLocalApplication()) {
-            $path = '';
-        } else {
-            $packageName = $this->getPackageName();
-            $path = $this->getPackagesBaseDirectory() . '/' .$packageName;
-        }
-
-        return base_path($path);
+        // $this->createOrUpdateMigrationFile(); // TODO: Add
+        // $this->createOrUpdateUccelloManifestFile(); // TODO: Add
     }
 
     private function getPackagesBaseDirectory()
@@ -53,103 +20,53 @@ trait FileCreator
         return rtrim(config('module-designer.packages_directory'), '/');
     }
 
-    private function getModelFileName()
+    private function getFileDiffContent($currentContent, $newContent)
     {
-        return $this->getModelClassFromModuleName().'.php';
-    }
-
-    private function createModelFile()
-    {
-        $filePath = $this->getModelFilePath();
-        $fileContent = $this->generateModelContent();
-
-        File::put($filePath, $fileContent);
-    }
-
-    private function generateModelContent()
-    {
-        $stubContent = $this->getModelStubContent();
-
-        $namespace = $this->getPackageNamespace();
-
-        $content = str_replace(
-            [
-                '// %namespace%',
-                'ClassName',
-                '%table_name%',
-                '// %relations%'
-            ],
-            [
-                "namespace $namespace;",
-                $this->getModelClassFromModuleName(),
-                $this->getModuleTableName(),
-                '', // TODO: generate relations
-            ],
-            $stubContent
-        );
-
-        return $content;
-    }
-
-    private function getModelStubContent()
-    {
-        $stubFilePath = realpath(__DIR__.'/../../../resources/stubs/model.stub');
-
-        // dd(__DIR__.'/../../../resources/stubs/model.stub');
-
-        return File::get($stubFilePath);
-    }
-
-    private function getModuleTableName()
-    {
-        return $this->structure['table'];
-    }
-
-    private function updateModelFile()
-    {
-        $filePath = $this->getModelFilePath();
-        $fileContent = $this->getModelFileDiffContent();
-
-        File::put($filePath, $fileContent);
-    }
-
-    private function getModelFileDiffContent()
-    {
-        $currentModelContent = $this->getCurrentModelContent();
-        $newModelContent = $this->generateModelContent();
-
-        preg_match('`// MODULE DESIGNER - START(.+?)// MODULE DESIGNER - END`s', $newModelContent, $matches);
+        preg_match('`// MODULE DESIGNER - START(.+?)// MODULE DESIGNER - END`s', $newContent, $matches);
 
         $generatedContentToKeep = $matches[0];
 
         $diffContent = preg_replace(
             '`// MODULE DESIGNER - START(.+?)// MODULE DESIGNER - END`s',
             $generatedContentToKeep,
-            $currentModelContent
+            $currentContent
         );
 
         return $diffContent;
-    }
-
-    private function getCurrentModelContent()
+    }private function arrayReadableEncode($in, $indent = 0, $from_array = false)
     {
-        $filePath = $this->getModelFilePath();
+        $_escape = function ($str) {
+            return preg_replace("!([\b\t\n\r\f\"\\'])!", "\\\\\\1", $str);
+        };
 
-        return File::get($filePath);
-    }
+        $out = '';
 
-    private function createOrUpdateLanguageFile()
-    {
-        //
-    }
+        foreach ($in as $key => $value) {
+            $out .= str_repeat("    ", $indent + 1);
+            $out .= "'".$_escape((string)$key)."' => ";
 
-    private function createOrUpdateMigrationFile()
-    {
-        //
-    }
+            if (is_object($value) || is_array($value)) {
+                $out .= $this->arrayReadableEncode($value, $indent + 1);
+            } elseif (is_bool($value)) {
+                $out .= $value ? 'true' : 'false';
+            } elseif (is_null($value)) {
+                $out .= 'null';
+            } elseif (is_string($value)) {
+                $out .= "'" . $_escape($value) ."'";
+            } else {
+                $out .= $value;
+            }
 
-    private function createOrUpdateUccelloManifestFile()
-    {
-        //
+            $out .= ",\n";
+        }
+
+        if (!empty($out)) {
+            $out = substr($out, 0, -2);
+        }
+
+        $out = "[\n" . $out;
+        $out .= "\n" . str_repeat("    ", $indent) . "]";
+
+        return $out;
     }
 }

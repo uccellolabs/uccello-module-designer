@@ -74,7 +74,7 @@ trait ModuleInstaller
         $packageNamespace = $this->getPackageNamespace();
         $modelClass = $this->getModelClassFromModuleName();
 
-        return "$packageNamespace\\$modelClass";
+        return "$packageNamespace\\Models\\$modelClass";
     }
 
     private function getPackageNamespace()
