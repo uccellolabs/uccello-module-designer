@@ -15,7 +15,7 @@ trait HasStep
         } elseif ($this->isCreatingColumns()) {
             $this->createOrUpdateFilter();
         } elseif ($this->isConfiguringFields()) {
-            // $this->updateBlocksAndFields();
+            $this->updateBlocksAndFields();
         }
 
         $this->step++;

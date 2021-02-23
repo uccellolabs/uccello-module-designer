@@ -44,7 +44,7 @@
             <div class="mb-2 text-sm">Obligatoire</div>
             <div class="h-10 pt-1 switch">
                 <label>
-                  <input type="checkbox" @if ($field->isMandatory)checked="true"@endif wire:model="fields.{{ $index }}.isMandatory">
+                  <input type="checkbox" @if ($field->isRequired)checked="true"@endif wire:model="fields.{{ $index }}.isRequired">
                   <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
                   Oui
                 </label>

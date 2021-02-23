@@ -3,8 +3,11 @@
 namespace Uccello\ModuleDesigner\Support\Traits;
 
 use Illuminate\Support\Str;
+use Uccello\Core\Models\Block;
 use Uccello\Core\Models\Domain;
+use Uccello\Core\Models\Field;
 use Uccello\Core\Models\Module;
+use Uccello\Core\Models\Tab;
 
 trait ModuleInstaller
 {
@@ -25,12 +28,19 @@ trait ModuleInstaller
         $this->createOrRetrieveModuleDefaultFilter();
     }
 
+    protected function updateBlocksAndFields()
+    {
+        $this->retrieveModuleByIdDefinedInStructure();
+        $this->deleteModuleFieldsStructure();
+        $this->createModuleFieldsStructure();
+    }
+
     private function createOrRetrieveModuleFromStructure()
     {
         if ($this->isModuleIdDefinedInStructure()) {
-            $this->retriveModuleByIdDefinedInStructure();
+            $this->retrieveModuleByIdDefinedInStructure();
         } else {
-            $this->createModuleFromStructure();
+            $this->createModuleFromStructureAndActivateOnDomains();
         }
     }
 
@@ -39,7 +49,7 @@ trait ModuleInstaller
         return $this->structure['id'];
     }
 
-    private function retriveModuleByIdDefinedInStructure()
+    private function retrieveModuleByIdDefinedInStructure()
     {
         $this->module = Module::find($this->structure['id']);
     }
@@ -167,5 +177,95 @@ trait ModuleInstaller
     private function isModulePartsOfCustomPackage()
     {
         return !$this->isModulePartsOfLocalApplication();
+    }
+
+    /**
+     * Deletes all module's tabs.
+     * When a tab is delete, all blocks and fields are deleted too thanks to onDelete Cascade.
+     *
+     * @return void
+     */
+    private function deleteModuleFieldsStructure()
+    {
+        $this->module->tabs()->delete();
+    }
+
+    private function createModuleFieldsStructure()
+    {
+        $structure = (object) $this->buildDesignedModuleStructure();
+
+        foreach ($structure->tabs as $tab) {
+            $tab = (object) $tab;
+            $tabId = $this->createUccelloTab($tab);
+
+            foreach ($tab->blocks as $block) {
+                $block = (object) $block;
+                $block->tab_id = $tabId;
+                $blockId = $this->createUccelloBlock($block);
+
+                foreach ($block->fields as $field) {
+                    $field = (object) $field;
+                    $field->block_id = $blockId;
+
+                    $this->createUccelloField($field);
+                }
+            }
+        }
+    }
+
+    private function createUccelloTab($data)
+    {
+        $tab = Tab::create([
+            'module_id' => $this->module->id,
+            'label' => $data->label,
+            'icon' => $data->icon,
+            'sequence' => 0
+        ]);
+
+        return $tab->id;
+    }
+
+    private function createUccelloBlock($data)
+    {
+        $block = Block::create([
+            'module_id' => $this->module->id,
+            'tab_id' => $data->tab_id,
+            'label' => $data->label,
+            'icon' => $data->icon,
+            'sequence' => $data->sequence
+        ]);
+
+        return $block->id;
+    }
+
+    private function createUccelloField($data)
+    {
+        $fieldData = !empty($data->data) ? (object) $data->data : new \stdClass;
+
+        if ($data->isRequired) {
+            $fieldData->rules = 'required';
+        }
+
+        if ($data->isLarge) {
+            $fieldData->large = true;
+        }
+
+        if (count(get_object_vars($fieldData)) === 0) {
+            $fieldData = null;
+        }
+
+        $field = Field::create([
+            'module_id' => $this->module->id,
+            'block_id' => $data->block_id,
+            'uitype_id' => uitype($data->uitype)->id,
+            'displaytype_id' => displaytype($data->displaytype)->id,
+            'name' => $data->name,
+            'data' => $fieldData,
+            'sequence' => $data->sequence
+        ]);
+
+
+
+        return $field->id;
     }
 }

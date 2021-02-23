@@ -33,7 +33,7 @@ trait HasField
             'name' => Str::slug($this->column, '_'),
             'lastName' => null,
             'color' => $this->getColor(),
-            'isMandatory' => false,
+            'isRequired' => false,
             'isLarge' => false,
             'isDisplayedInListView' => true,
             'uitype' => 'text',
