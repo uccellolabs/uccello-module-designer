@@ -238,34 +238,36 @@ trait ModuleInstaller
         return $block->id;
     }
 
-    private function createUccelloField($data)
+    private function createUccelloField($field)
     {
-        $fieldData = !empty($data->data) ? (object) $data->data : new \stdClass;
-
-        if ($data->isRequired) {
-            $fieldData->rules = 'required';
-        }
-
-        if ($data->isLarge) {
-            $fieldData->large = true;
-        }
-
-        if (count(get_object_vars($fieldData)) === 0) {
-            $fieldData = null;
-        }
-
-        $field = Field::create([
+        $uccelloField = Field::create([
             'module_id' => $this->module->id,
-            'block_id' => $data->block_id,
-            'uitype_id' => uitype($data->uitype)->id,
-            'displaytype_id' => displaytype($data->displaytype)->id,
-            'name' => $data->name,
-            'data' => $fieldData,
-            'sequence' => $data->sequence
+            'block_id' => $field->block_id,
+            'uitype_id' => uitype($field->uitype)->id,
+            'displaytype_id' => displaytype($field->displaytype)->id,
+            'name' => $field->name,
+            'data' => $this->getFormattedFieldData($field),
+            'sequence' => $field->sequence
         ]);
 
+        return $uccelloField->id;
+    }
 
+    private function getFormattedFieldData($field)
+    {
+        if ($field->isRequired) {
+            $field->data['rules'] = 'required';
+        }
 
-        return $field->id;
+        if ($field->isLarge) {
+            $field->data['large'] = true;
+        }
+
+        $bundle = $this->makeBundle($field);
+        $uitype = $this->getFieldUitype($this->toArray($field));
+
+        $formattedFieldData = (new ($uitype->class))->getFormattedFieldDataAndTranslationFromOptions($bundle);
+
+        return !empty($formattedFieldData['data']) ? $formattedFieldData['data'] : null;
     }
 }

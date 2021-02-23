@@ -124,9 +124,25 @@ trait LanguageFileCreator
         foreach ($this->fields as $field) {
             $field = (object) $field;
             $translations['field'][$field->name] = $field->label;
+
+            $translationsGeneratedByUitype = $this->getTranslationsGeneratedByUitype($field);
+
+            if ($translationsGeneratedByUitype) {
+                $translations = array_merge($translations, $translationsGeneratedByUitype);
+            }
         }
 
         return $translations;
+    }
+
+    private function getTranslationsGeneratedByUitype($field)
+    {
+        $bundle = $this->makeBundle($field);
+        $uitype = $this->getFieldUitype($this->toArray($field));
+
+        $formattedFieldData = (new ($uitype->class))->getFormattedFieldDataAndTranslationFromOptions($bundle);
+
+        return !empty($formattedFieldData['translation']) ? $formattedFieldData['translation'] : null;
     }
 
     private function getRelatedlistTranslations()
