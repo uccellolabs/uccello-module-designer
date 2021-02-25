@@ -131,10 +131,6 @@ class ModuleDesigner extends Component
 
     private function loadDesignedModules()
     {
-        // $this->designedModules = DesignedModule::all()->map(function ($designedModule) {
-        //     $designedModule->label = !empty($designedModule->data->label) ? $designedModule->data->label : trans('module-designer::ui.block.choose_action.name_not_defined');
-        //     return $designedModule;
-        // });
         $this->designedModules = DesignedModule::all();
     }
 
@@ -142,7 +138,7 @@ class ModuleDesigner extends Component
     {
         $this->moduleLabel = '';
 
-        return DesignedModule::create([
+        $designedModule = DesignedModule::create([
             'name' => Str::uuid(),
             'data' => [
                 'id' => null,
@@ -243,6 +239,10 @@ class ModuleDesigner extends Component
                 ]
             ]
         ]);
+
+        $this->editedDesignedModuleId = $designedModule->id;
+
+        $this->continueDesignedModule();
     }
 
     private function saveDesignedModule()

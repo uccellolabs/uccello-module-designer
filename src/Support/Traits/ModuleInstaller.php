@@ -46,7 +46,7 @@ trait ModuleInstaller
 
     private function isModuleIdDefinedInStructure()
     {
-        return $this->structure['id'];
+        return !empty($this->structure['id']);
     }
 
     private function retrieveModuleByIdDefinedInStructure()
@@ -65,7 +65,7 @@ trait ModuleInstaller
     {
         $this->module = Module::create([
             'name' => $this->structure['name'],
-            'icon' => $this->structure['icon'],
+            'icon' => $this->structure['icon'] ?? null,
             'model_class' => $this->getModelClass(),
             'data' => $this->getModuleData()
         ]);

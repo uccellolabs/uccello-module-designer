@@ -140,6 +140,7 @@ trait HasField
             $this->mapFields(function ($field) use ($sortedField) {
                 if ($field['name'] === $sortedField['value']) {
                     $field['filterSequence'] = $sortedField['order'] - 1;
+                    $field['sequence'] = $sortedField['order'] - 1;
                 }
                 return $field;
             });
