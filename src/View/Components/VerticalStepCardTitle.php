@@ -9,18 +9,18 @@ class VerticalStepCardTitle extends Component
 
     public $title;
     public $step;
-    public $close;
+    public $closed;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($title, $step, $close = false)
+    public function __construct($title, $step, $closed = false)
     {
         $this->title = $title;
         $this->step = $step;
-        $this->close = $close;
+        $this->closed = $closed;
     }
 
     /**

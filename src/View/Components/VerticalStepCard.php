@@ -8,6 +8,7 @@ class VerticalStepCard extends Component
 {
     public $title;
     public $step;
+    public $closed;
     public $after;
 
     /**
@@ -15,10 +16,11 @@ class VerticalStepCard extends Component
      *
      * @return void
      */
-    public function __construct($title, $step, $after = null)
+    public function __construct($title, $step, $closed = false, $after = null)
     {
         $this->title = $title;
         $this->step = $step;
+        $this->closed = $closed;
         $this->after = $after;
     }
 
