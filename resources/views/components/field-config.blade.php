@@ -18,12 +18,12 @@
     <div class="flex items-center my-3" x-show="open">
         {{-- Icon --}}
         <div class="flex flex-col">
-            <div class="mb-2 text-sm">Icône</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.icon') }}</div>
             <x-md-icon-selector></x-md-icon-selector>
         </div>
         {{-- Uitype --}}
         <div class="flex flex-col ml-4">
-            <div class="mb-2 text-sm">Type de champ</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.uitype') }}</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')">
                     @foreach ($uitypes as $uitype)
@@ -34,19 +34,19 @@
         </div>
         {{-- Name --}}
         <div class="flex flex-col ml-4">
-            <div class="mb-2 text-sm">Nom système</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.name') }}</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $field->name }}">
             </div>
         </div>
         {{-- Mandatory --}}
         <div class="flex flex-col ml-4">
-            <div class="mb-2 text-sm">Obligatoire</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.required') }}</div>
             <div class="h-10 pt-1 switch">
                 <label>
                   <input type="checkbox" @if ($field->isRequired)checked="true"@endif wire:model="fields.{{ $index }}.isRequired">
                   <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
-                  Oui
+                  {{ trans('module-designer::ui.block.config_columns.yes') }}
                 </label>
               </div>
         </div>
@@ -73,7 +73,7 @@
                         <label>
                         <input type="checkbox" wire:model="fields.{{ $index }}.data.{{ $option->key }}">
                         <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
-                        Oui
+                        {{ trans('module-designer::ui.block.config_columns.yes') }}
                         </label>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                 @php ($fieldData = (array) $field->data)
                 @foreach ($fieldData[$option->key] as $rowIndex => $row)
                     <div class="flex flex-col ml-4">
-                        <div class="mb-2 text-sm">Valeur</div>
+                        <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_value') }}</div>
                         <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                             <input type="text"
                                 class="w-full px-3 py-2 bg-transparent browser-default"
@@ -105,7 +105,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col ml-4">
-                        <div class="mb-2 text-sm">Label</div>
+                        <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_label') }}</div>
                         <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                             <input type="text"
                                 class="w-full px-3 py-2 bg-transparent browser-default"
@@ -128,6 +128,6 @@
         @endforeach
     </div>
     <div class="mt-3 mb-6 text-sm text-right underline" x-show="open">
-        Paramètres avancées
+        {{ trans('module-designer::ui.block.config_columns.advanced_params') }}
     </div>
 </div>

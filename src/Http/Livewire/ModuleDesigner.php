@@ -92,13 +92,13 @@ class ModuleDesigner extends Component
                         [
                             'uuid' => Str::uuid(),
                             'label' => 'tab.main',
-                            'translation' => 'Detail',
+                            'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
                             'icon' => '',
                             'blocks' => [
                                 [
                                     'uuid' => Str::uuid(),
                                     'label' => 'block.general',
-                                    'translation' => 'General',
+                                    'translation' => trans('module-designer::ui.block.config_detail.block_general'),
                                     'icon' => 'info',
                                     'sequence' => 0,
                                     'fields' => []
@@ -106,13 +106,13 @@ class ModuleDesigner extends Component
                                 [
                                     'uuid' => Str::uuid(),
                                     'label' => 'block.system',
-                                    'translation' => 'Settings',
+                                    'translation' => trans('module-designer::ui.block.config_detail.block_system'),
                                     'icon' => 'settings',
                                     'sequence' => 1,
                                     'fields' => [
                                         [
                                             // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => 'Assigned to',
+                                            'label' => trans('module-designer::ui.field.assigned_to'),
                                             'name' => 'assigned_to',
                                             'color' => $this->colors[2],
                                             'isRequired' => true,
@@ -126,7 +126,7 @@ class ModuleDesigner extends Component
                                         ],
                                         [
                                             // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => 'Domain',
+                                            'label' => trans('module-designer::ui.field.domain'),
                                             'name' => 'domain',
                                             'color' => $this->colors[3],
                                             'isRequired' => false,
@@ -141,7 +141,7 @@ class ModuleDesigner extends Component
                                         ],
                                         [
                                             // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => 'Created at',
+                                            'label' => trans('module-designer::ui.field.created_at'),
                                             'name' => 'created_at',
                                             'color' => $this->colors[0],
                                             'isRequired' => false,
@@ -155,7 +155,7 @@ class ModuleDesigner extends Component
                                         ],
                                         [
                                             // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => 'Updated at',
+                                            'label' => trans('module-designer::ui.field.updated_at'),
                                             'name' => 'updated_at',
                                             'color' => $this->colors[1],
                                             'isRequired' => false,

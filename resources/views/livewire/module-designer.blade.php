@@ -1,9 +1,9 @@
 <div>
-    <x-md-vertical-step-card title="Choisissez le nom de votre modèle de données" step="0">
+    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_module.title') }}" step="0">
         <div class="flex p-12 @if($step > 0)hidden @endif">
             {{-- Left column --}}
             <div class="w-2/6 mr-4">
-                <div class="mb-2 mr-10 text-sm text-right">Icône</div>
+                <div class="mb-2 mr-10 text-sm text-right">{{ trans('module-designer::ui.block.create_module.icon') }}</div>
                 <div class="float-right">
                     <x-md-icon-selector></x-md-icon-selector>
                 </div>
@@ -11,11 +11,11 @@
             {{-- Right column --}}
             <div class="w-3/6">
                 <div class="">
-                    <div class="mb-2 text-sm">Nom du modèle de données</div>
+                    <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.module_name') }}</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                         <input type="text" wire:model="structure.label" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
                     </div>
-                    <div class="mt-8 mb-2 text-sm">Nom affiché dans l'URL</div>
+                    <div class="mt-8 mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.slug') }}</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                         <input type="text" wire:model="structure.name" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
                     </div>
@@ -33,9 +33,9 @@
     </x-md-vertical-step-card>
 
     @if ($step > 0)
-    <x-md-vertical-step-card title="Créez vos colonnes" step="1">
+    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_columns.title') }}" step="1">
         <div class="col-span-6 p-12 @if($step > 1)hidden @endif">
-            <div class="mb-2 text-sm">Ajoutez vos colonnes</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_columns.add_columns') }}</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <ul class="grid grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
                     @foreach($fields->sortBy('filterSequence') as $index => $field)
@@ -46,12 +46,12 @@
                     @endforeach
 
                     <div>
-                        <input type="text" wire:model="column" placeholder="Nom de la colonne" class="w-full px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="createField()">
+                        <input type="text" wire:model="column" placeholder="{{ trans('module-designer::ui.block.create_columns.column_name') }}" class="w-full px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="createField()">
                     </div>
                 </ul>
             </div>
 
-            <div class="mb-2 text-sm">Rendu liste</div>
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_columns.list_preview') }}</div>
             <div class="p-4 border border-gray-200 border-solid rounded-lg shadow-md">
                 <div class="flex">
                     <div class="pt-3">
@@ -78,7 +78,7 @@
         @if ($step === 2)
         <x-slot name="after">
             <div class="@if ($step < 2)border-t @endif border-gray-200 border-solid justify-self-center">
-                <x-md-vertical-step-card-title title="Configurez vos colonnes" close="true" step="2"></x-vertical-step-card-title>
+                <x-md-vertical-step-card-title title="{{ trans('module-designer::ui.block.config_columns.title') }}" close="true" step="2"></x-vertical-step-card-title>
             </div>
             <div class="p-6">
                 @foreach($fields->sortBy('sequence') as $index => $field)
@@ -99,7 +99,7 @@
     @endif
 
     @if ($step > 2)
-    <x-md-vertical-step-card title="Configurez la fiche détaillée" step="3">
+    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.config_detail.title') }}" step="3">
         <div class="p-6">
             {{-- Block --}}
             <div wire:sortable="updateBlockOrder" wire:sortable-group="updateBlockFieldOrder">
@@ -111,7 +111,7 @@
             {{-- Add block --}}
             <div class="grid p-4 mt-6 text-center border-2 border-gray-300 border-dashed rounded-lg">
                 <a class="flex items-center px-2 py-1 text-sm text-white rounded-lg cursor-pointer justify-self-center primary" wire:click="createBlock()">
-                    Ajouter un bloc
+                    {{ trans('module-designer::ui.block.config_detail.add_block') }}
                     <i class="ml-1 text-sm material-icons">add</i>
                 </a>
             </div>
