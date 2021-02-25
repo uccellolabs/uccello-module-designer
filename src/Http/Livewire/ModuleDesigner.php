@@ -4,6 +4,7 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FileCreator;
 use Uccello\ModuleDesigner\Support\Traits\HasField;
 use Uccello\ModuleDesigner\Support\Traits\HasStep;
@@ -25,6 +26,14 @@ class ModuleDesigner extends Component
 
     public $column = '';
     public $moduleLabel = '';
+    public $action = null;
+
+    public $crudModules = [];
+    public $designedModules = [];
+
+    public $editedModuleId;
+    public $editedDesignedModuleId;
+    public $canDesignModule = false;
 
     public $currentUitype;
 
@@ -36,7 +45,10 @@ class ModuleDesigner extends Component
     {
         $this->structure = [];
 
-        $this->loadLastDesignedModule();
+        // dd('test', $this->editedDesignedModuleId);
+        if ($this->editedDesignedModuleId) {
+            $this->designedModule = DesignedModule::find($this->editedDesignedModuleId);
+        }
     }
 
     // public function update()
@@ -67,132 +79,180 @@ class ModuleDesigner extends Component
         $this->createOrUpdateModule();
     }
 
+    public function changeAction($action)
+    {
+        $this->initActionVariables();
+
+        $this->canDesignModule = false;
+
+        if ($action === 'create') {
+            $this->canDesignModule = true;
+        } if ($action === 'edit') {
+            $this->loadCrudModules();
+        } elseif ($action === 'continue') {
+            $this->loadDesignedModules();
+        }
+
+        $this->action = $action;
+    }
+
+    public function selectModuleToEdit($moduleId)
+    {
+        $this->editedModuleId = $moduleId;
+        $this->canDesignModule = true;
+    }
+
+    public function selectDesignedModuleToEdit($designedModuleId)
+    {
+        $this->editedDesignedModuleId = $designedModuleId;
+        $this->canDesignModule = true;
+    }
+
     public function render()
     {
         return view('module-designer::livewire.module-designer');
     }
 
-    private function loadLastDesignedModule()
+    private function initActionVariables()
     {
-        $designedModule = DesignedModule::orderBy('created_at', 'desc')->first();
+        $this->editedModuleId = null;
+        $this->editedDesignedModuleId = null;
+        $this->crudModules = [];
+        $this->designedModules = [];
+    }
 
-        if (!$designedModule) {
-            $designedModule = DesignedModule::create([
-                'name' => Str::uuid(),
-                'data' => [
-                    'id' => null,
-                    'label' => '',
-                    'name' => '',
-                    'lastName' => '',
-                    'icon' => null,
-                    'table' => '',
-                    'lastTable' => '',
-                    'step' => 0,
-                    'tabs' => [
-                        [
-                            'uuid' => Str::uuid(),
-                            'label' => 'tab.main',
-                            'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
-                            'icon' => '',
-                            'blocks' => [
-                                [
-                                    'uuid' => Str::uuid(),
-                                    'label' => 'block.general',
-                                    'translation' => trans('module-designer::ui.block.config_detail.block_general'),
-                                    'icon' => 'info',
-                                    'sequence' => 0,
-                                    'fields' => []
-                                ],
-                                [
-                                    'uuid' => Str::uuid(),
-                                    'label' => 'block.system',
-                                    'translation' => trans('module-designer::ui.block.config_detail.block_system'),
-                                    'icon' => 'settings',
-                                    'sequence' => 1,
-                                    'fields' => [
-                                        [
-                                            // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => trans('module-designer::ui.field.assigned_to'),
-                                            'name' => 'assigned_to',
-                                            'color' => $this->colors[2],
-                                            'isRequired' => true,
-                                            'isLarge' => false,
-                                            'isDisplayedInListView' => true,
-                                            'uitype' => 'assigned_user',
-                                            'displaytype' => 'everywhere',
-                                            'sequence' => 0,
-                                            'filterSequence' => 0,
-                                            'sortOrder' => null,
-                                            'options' => []
-                                        ],
-                                        [
-                                            // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => trans('module-designer::ui.field.domain'),
-                                            'name' => 'domain',
-                                            'color' => $this->colors[3],
-                                            'isRequired' => false,
-                                            'isLarge' => false,
-                                            'isDisplayedInListView' => false,
-                                            'uitype' => 'entity',
-                                            'displaytype' => 'detail',
-                                            'data' => ['module' => 'domain'],
-                                            'sequence' => 1,
-                                            'filterSequence' => 1,
-                                            'sortOrder' => null,
-                                            'options' => []
-                                        ],
-                                        [
-                                            // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => trans('module-designer::ui.field.created_at'),
-                                            'name' => 'created_at',
-                                            'color' => $this->colors[0],
-                                            'isRequired' => false,
-                                            'isLarge' => false,
-                                            'isDisplayedInListView' => false,
-                                            'uitype' => 'datetime',
-                                            'displaytype' => 'detail',
-                                            'sequence' => 2,
-                                            'filterSequence' => 2,
-                                            'sortOrder' => 'desc',
-                                            'options' => []
-                                        ],
-                                        [
-                                            // 'block_uuid' => $systemBlock['uuid'],
-                                            'label' => trans('module-designer::ui.field.updated_at'),
-                                            'name' => 'updated_at',
-                                            'color' => $this->colors[1],
-                                            'isRequired' => false,
-                                            'isLarge' => false,
-                                            'isDisplayedInListView' => false,
-                                            'uitype' => 'datetime',
-                                            'displaytype' => 'detail',
-                                            'sequence' => 3,
-                                            'filterSequence' => 3,
-                                            'sortOrder' => null,
-                                            'options' => []
-                                        ]
+    private function loadCrudModules()
+    {
+        $this->crudModules = Module::whereNotNull('model_class')->get()->map(function ($module) {
+            $module->label = uctrans($module->name, $module);
+            return $this->toArray($module);
+        });
+    }
+
+    private function loadDesignedModules()
+    {
+        // $this->designedModules = DesignedModule::all()->map(function ($designedModule) {
+        //     $designedModule->label = !empty($designedModule->data->label) ? $designedModule->data->label : trans('module-designer::ui.block.choose_action.name_not_defined');
+        //     return $designedModule;
+        // });
+        $this->designedModules = DesignedModule::all();
+    }
+
+    private function createDesignedModule()
+    {
+        $this->moduleLabel = '';
+
+        return DesignedModule::create([
+            'name' => Str::uuid(),
+            'data' => [
+                'id' => null,
+                'label' => '',
+                'name' => '',
+                'lastName' => '',
+                'icon' => null,
+                'table' => '',
+                'lastTable' => '',
+                'step' => 0,
+                'tabs' => [
+                    [
+                        'uuid' => Str::uuid(),
+                        'label' => 'tab.main',
+                        'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
+                        'icon' => '',
+                        'blocks' => [
+                            [
+                                'uuid' => Str::uuid(),
+                                'label' => 'block.general',
+                                'translation' => trans('module-designer::ui.block.config_detail.block_general'),
+                                'icon' => 'info',
+                                'sequence' => 0,
+                                'fields' => []
+                            ],
+                            [
+                                'uuid' => Str::uuid(),
+                                'label' => 'block.system',
+                                'translation' => trans('module-designer::ui.block.config_detail.block_system'),
+                                'icon' => 'settings',
+                                'sequence' => 1,
+                                'fields' => [
+                                    [
+                                        // 'block_uuid' => $systemBlock['uuid'],
+                                        'label' => trans('module-designer::ui.field.assigned_to'),
+                                        'name' => 'assigned_to',
+                                        'color' => $this->colors[2],
+                                        'isRequired' => true,
+                                        'isLarge' => false,
+                                        'isDisplayedInListView' => true,
+                                        'uitype' => 'assigned_user',
+                                        'displaytype' => 'everywhere',
+                                        'sequence' => 0,
+                                        'filterSequence' => 0,
+                                        'sortOrder' => null,
+                                        'options' => []
+                                    ],
+                                    [
+                                        // 'block_uuid' => $systemBlock['uuid'],
+                                        'label' => trans('module-designer::ui.field.domain'),
+                                        'name' => 'domain',
+                                        'color' => $this->colors[3],
+                                        'isRequired' => false,
+                                        'isLarge' => false,
+                                        'isDisplayedInListView' => false,
+                                        'uitype' => 'entity',
+                                        'displaytype' => 'detail',
+                                        'data' => ['module' => 'domain'],
+                                        'sequence' => 1,
+                                        'filterSequence' => 1,
+                                        'sortOrder' => null,
+                                        'options' => []
+                                    ],
+                                    [
+                                        // 'block_uuid' => $systemBlock['uuid'],
+                                        'label' => trans('module-designer::ui.field.created_at'),
+                                        'name' => 'created_at',
+                                        'color' => $this->colors[0],
+                                        'isRequired' => false,
+                                        'isLarge' => false,
+                                        'isDisplayedInListView' => false,
+                                        'uitype' => 'datetime',
+                                        'displaytype' => 'detail',
+                                        'sequence' => 2,
+                                        'filterSequence' => 2,
+                                        'sortOrder' => 'desc',
+                                        'options' => []
+                                    ],
+                                    [
+                                        // 'block_uuid' => $systemBlock['uuid'],
+                                        'label' => trans('module-designer::ui.field.updated_at'),
+                                        'name' => 'updated_at',
+                                        'color' => $this->colors[1],
+                                        'isRequired' => false,
+                                        'isLarge' => false,
+                                        'isDisplayedInListView' => false,
+                                        'uitype' => 'datetime',
+                                        'displaytype' => 'detail',
+                                        'sequence' => 3,
+                                        'filterSequence' => 3,
+                                        'sortOrder' => null,
+                                        'options' => []
                                     ]
                                 ]
                             ]
                         ]
                     ]
                 ]
-            ]);
-        }
-
-        $this->designedModule = $designedModule;
-
-        $this->structure = $this->toArray($designedModule->data);
-        $this->moduleLabel = $this->structure['label'];
-
-        $this->buildOptimizedStructure();
-
-        $this->checkIfThereAreAvailableFields();
+            ]
+        ]);
     }
 
     private function saveDesignedModule()
     {
-        $this->designedModule->data = $this->buildDesignedModuleStructure();
-        $this->designedModule->save();
+        if (!$this->editedDesignedModuleId || $this->isChoosingAction()) {
+            return;
+        }
+
+        DesignedModule::find($this->editedDesignedModuleId)->update([
+            'data' => $this->buildDesignedModuleStructure()
+        ]);
     }
 }

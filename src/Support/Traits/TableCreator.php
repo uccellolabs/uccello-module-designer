@@ -47,6 +47,10 @@ trait TableCreator
 
     private function createTable()
     {
+        if ($this->tableNameNotDefined()) {
+            return;
+        }
+
         Schema::create($this->structure['table'], function (Blueprint $table) {
             $table->increments('id');
             foreach ($this->getSortedFields() as $field) {
@@ -54,6 +58,11 @@ trait TableCreator
             }
             $table->softDeletes();
         });
+    }
+
+    private function tableNameNotDefined()
+    {
+        return empty($this->structure['table']);
     }
 
     private function updateTable()

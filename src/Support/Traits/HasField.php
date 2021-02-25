@@ -38,6 +38,7 @@ trait HasField
             'isDisplayedInListView' => true,
             'uitype' => 'text',
             'displaytype' => 'everywhere',
+            'sortOrder' => null,
             'filterSequence' => $this->fields->count(),
             'sequence' => $this->fields->count(),
             'options' => []

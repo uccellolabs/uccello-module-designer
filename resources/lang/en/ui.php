@@ -3,6 +3,16 @@
 return [
     'module-designer' => 'Module Designer',
     'block' => [
+        'choose_action' => [
+            'title' => 'Choose an action',
+            'choose_action' => 'What do you want to do?',
+            'create_module' => 'Create a module',
+            'edit_module' => 'Edit a module',
+            'continue_creation' => 'Continue a creation',
+            'select_module' => 'Select the module to edit:',
+            'select_designed_module' => 'Select the module to continue with:',
+            'name_not_defined' => '(Empty name)',
+        ],
         'create_module' => [
             'title' => 'Choose the name of your module',
             'icon' => 'Icon',
