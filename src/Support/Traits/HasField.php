@@ -88,6 +88,25 @@ trait HasField
         });
     }
 
+    public function toggleFilterSortOrder($fieldName)
+    {
+        $this->mapFields(function ($field) use ($fieldName) {
+            if ($this->isSameFieldName($field, $fieldName)) {
+                if ($field['sortOrder'] === 'asc') {
+                    $field['sortOrder'] = 'desc';
+                } elseif ($field['sortOrder'] === 'desc') {
+                    $field['sortOrder'] = null;
+                } else {
+                    $field['sortOrder'] = 'asc';
+                }
+            } else {
+                $field['sortOrder'] = null;
+            }
+
+            return $field;
+        });
+    }
+
     public function toggleLarge($fieldName)
     {
         $this->mapFields(function ($field) use ($fieldName) {

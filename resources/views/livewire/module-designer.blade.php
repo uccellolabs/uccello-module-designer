@@ -1,5 +1,5 @@
 <div>
-    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_module.title') }}" step="0">
+    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_module.title') }}" step="0" closed="{{ $step > 0 }}">
         <div class="flex p-12 @if($step > 0)hidden @endif">
             {{-- Left column --}}
             <div class="w-2/6 mr-4">
@@ -13,7 +13,7 @@
                 <div class="">
                     <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.module_name') }}</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                        <input type="text" wire:model="structure.label" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
+                        <input type="text" wire:model="moduleLabel" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
                     </div>
                     <div class="mt-8 mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.slug') }}</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
@@ -33,7 +33,7 @@
     </x-md-vertical-step-card>
 
     @if ($step > 0)
-    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_columns.title') }}" step="1">
+    <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_columns.title') }}" step="1" closed="{{ $step > 1 }}">
         <div class="col-span-6 p-12 @if($step > 1)hidden @endif">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_columns.add_columns') }}</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
@@ -78,7 +78,7 @@
         @if ($step === 2)
         <x-slot name="after">
             <div class="@if ($step < 2)border-t @endif border-gray-200 border-solid justify-self-center">
-                <x-md-vertical-step-card-title title="{{ trans('module-designer::ui.block.config_columns.title') }}" close="true" step="2"></x-vertical-step-card-title>
+                <x-md-vertical-step-card-title title="{{ trans('module-designer::ui.block.config_columns.title') }}" :closed="false" step="2"></x-vertical-step-card-title>
             </div>
             <div class="p-6">
                 @foreach($fields->sortBy('sequence') as $index => $field)

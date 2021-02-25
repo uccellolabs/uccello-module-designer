@@ -153,6 +153,7 @@ trait ModuleInstaller
         ]);
 
         $filter->columns = $this->getDefaultFilterColumns();
+        $filter->order = $this->getDefaultSortOrder();
         $filter->save();
     }
 
@@ -167,6 +168,39 @@ trait ModuleInstaller
         }
 
         return $columns;
+    }
+
+    private function getDefaultSortOrder()
+    {
+        $sortOrder = null;
+        foreach ($this->fields as $field) {
+            $field = (object) $field;
+            if ($field->sortOrder) {
+                $databaseColumn = $this->getFieldDatabaseColumn($field);
+                $sortOrder = [
+                    $databaseColumn => $field->sortOrder
+                ];
+                break;
+            }
+        }
+
+        return $sortOrder;
+    }
+
+    private function getFieldDatabaseColumn($field)
+    {
+        // Create an uccello field object to be able get default database column name.
+        $uccelloField = new Field();
+        $uccelloField->module_id = $this->module->id;
+        $uccelloField->name = $field->name;
+        $uccelloField->uitype_id = uitype($field->uitype)->id;
+        $uccelloField->displaytype_id = displaytype($field->displaytype)->id;
+        $uccelloField->data = $this->getFormattedFieldData($field);
+        $uccelloField->sequence = $field->sequence;
+
+        $uitypeInstance = $this->getUitypeInstance($this->toArray($field));
+
+        return $uitypeInstance->getDefaultDatabaseColumn($uccelloField);
     }
 
     private function isModulePartsOfLocalApplication()

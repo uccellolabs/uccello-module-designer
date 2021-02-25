@@ -24,6 +24,7 @@ class ModuleDesigner extends Component
     use FileCreator;
 
     public $column = '';
+    public $moduleLabel = '';
 
     public $currentUitype;
 
@@ -54,11 +55,10 @@ class ModuleDesigner extends Component
         $this->saveDesignedModule();
     }
 
-    public function updated()
+    public function updatedModuleLabel()
     {
-        if ($this->isConfiguringModuleName()) {
-            $this->structure['name'] = Str::slug($this->structure['label']);
-        }
+        $this->structure['label'] = $this->moduleLabel;
+        $this->structure['name'] = Str::slug(Str::singular($this->moduleLabel));
     }
 
     public function createOrUpdateTableAndModule()
@@ -121,7 +121,8 @@ class ModuleDesigner extends Component
                                             'uitype' => 'assigned_user',
                                             'displaytype' => 'everywhere',
                                             'sequence' => 0,
-                                            "filterSequence" => 0,
+                                            'filterSequence' => 0,
+                                            'sortOrder' => null,
                                             'options' => []
                                         ],
                                         [
@@ -136,7 +137,8 @@ class ModuleDesigner extends Component
                                             'displaytype' => 'detail',
                                             'data' => ['module' => 'domain'],
                                             'sequence' => 1,
-                                            "filterSequence" => 1,
+                                            'filterSequence' => 1,
+                                            'sortOrder' => null,
                                             'options' => []
                                         ],
                                         [
@@ -150,7 +152,8 @@ class ModuleDesigner extends Component
                                             'uitype' => 'datetime',
                                             'displaytype' => 'detail',
                                             'sequence' => 2,
-                                            "filterSequence" => 2,
+                                            'filterSequence' => 2,
+                                            'sortOrder' => 'desc',
                                             'options' => []
                                         ],
                                         [
@@ -164,7 +167,8 @@ class ModuleDesigner extends Component
                                             'uitype' => 'datetime',
                                             'displaytype' => 'detail',
                                             'sequence' => 3,
-                                            "filterSequence" => 3,
+                                            'filterSequence' => 3,
+                                            'sortOrder' => null,
                                             'options' => []
                                         ]
                                     ]
@@ -179,6 +183,7 @@ class ModuleDesigner extends Component
         $this->designedModule = $designedModule;
 
         $this->structure = $this->toArray($designedModule->data);
+        $this->moduleLabel = $this->structure['label'];
 
         $this->buildOptimizedStructure();
 

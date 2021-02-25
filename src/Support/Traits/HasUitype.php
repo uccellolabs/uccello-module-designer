@@ -77,9 +77,9 @@ trait HasUitype
     private function getFieldOptionsAccordingToUitype($field)
     {
         $bundle = $this->makeBundle($field);
-        $uitype = $this->getFieldUitype($field);
+        $uitypeInstance = $this->getUitypeInstance($field);
 
-        return (new ($uitype->class))->getFieldOptions($bundle);
+        return $uitypeInstance->getFieldOptions($bundle);
     }
 
     private function makeBundle($field)
@@ -89,6 +89,13 @@ trait HasUitype
         $bundle->inputFields = collect($this->fields);
 
         return $bundle;
+    }
+
+    private function getUitypeInstance($field)
+    {
+        $uitype = $this->getFieldUitype($field);
+
+        return (new ($uitype->class));
     }
 
     private function getFieldUitype($field)
