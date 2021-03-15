@@ -26,7 +26,7 @@ trait TableCreator
 
     private function retrieveTableName()
     {
-        $this->structure['table'] = Str::plural($this->structure['name']);
+        $this->structure['table'] = Str::plural(str_replace('-', '_', $this->structure['name']));
     }
 
     private function mustTableBeRenamed()
