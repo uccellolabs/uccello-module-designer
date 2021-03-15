@@ -7,6 +7,7 @@ use Livewire\Component;
 use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FileCreator;
 use Uccello\ModuleDesigner\Support\Traits\HasField;
+use Uccello\ModuleDesigner\Support\Traits\HasIcon;
 use Uccello\ModuleDesigner\Support\Traits\HasStep;
 use Uccello\ModuleDesigner\Support\Traits\HasUitype;
 use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
@@ -19,6 +20,7 @@ class ModuleDesigner extends Component
     use HasField;
     use HasStep;
     use HasUitype;
+    use HasIcon;
     use StructureAdapter;
     use ModuleInstaller;
     use TableCreator;
@@ -40,6 +42,8 @@ class ModuleDesigner extends Component
     public $structure;
 
     private $designedModule;
+
+    protected $listeners = ['iconSelected'];
 
     public function __construct()
     {
@@ -106,6 +110,13 @@ class ModuleDesigner extends Component
     {
         $this->editedDesignedModuleId = $designedModuleId;
         $this->canDesignModule = true;
+    }
+
+    public function iconSelected($icon, $target)
+    {
+        if ($target === 'module') {
+            $this->structure['icon'] = $icon;
+        }
     }
 
     public function render()
@@ -184,6 +195,8 @@ class ModuleDesigner extends Component
                                         'sequence' => 0,
                                         'filterSequence' => 0,
                                         'sortOrder' => null,
+                                        'default' => '',
+                                        'isEditable' => false,
                                         'options' => []
                                     ],
                                     [
@@ -200,6 +213,8 @@ class ModuleDesigner extends Component
                                         'sequence' => 1,
                                         'filterSequence' => 1,
                                         'sortOrder' => null,
+                                        'default' => '',
+                                        'isEditable' => false,
                                         'options' => []
                                     ],
                                     [
@@ -215,6 +230,8 @@ class ModuleDesigner extends Component
                                         'sequence' => 2,
                                         'filterSequence' => 2,
                                         'sortOrder' => 'desc',
+                                        'default' => '',
+                                        'isEditable' => false,
                                         'options' => []
                                     ],
                                     [
@@ -230,6 +247,8 @@ class ModuleDesigner extends Component
                                         'sequence' => 3,
                                         'filterSequence' => 3,
                                         'sortOrder' => null,
+                                        'default' => '',
+                                        'isEditable' => false,
                                         'options' => []
                                     ]
                                 ]

@@ -20,5 +20,10 @@
             <i class="far fa-eye-slash"></i>
         @endif
     </a>
+    @if ($field->isEditable !== false)
+    <a class="ml-1 text-sm text-gray-400 cursor-pointer hover:text-blue-400" wire:click="deleteField('{{ $field->name }}')">
+        <i class="fas fa-times"></i>
+    </a>
+    @endif
 
 </div>

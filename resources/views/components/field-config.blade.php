@@ -1,4 +1,4 @@
-<div x-data="{open: true, edit: false}">
+<div x-data="{open: @if($field->isEditable)true @else false @endif, edit: false}">
     <div class="flex items-center">
         {{-- Color --}}
         <div class="rounded-full h-3 w-3 mr-2 {{ $field->color }}"></div>
@@ -17,15 +17,15 @@
     </div>
     <div class="flex items-center my-3" x-show="open">
         {{-- Icon --}}
-        <div class="flex flex-col">
+        {{-- <div class="flex flex-col">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.icon') }}</div>
             <x-md-icon-selector></x-md-icon-selector>
-        </div>
+        </div> --}}
         {{-- Uitype --}}
         <div class="flex flex-col ml-4">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.uitype') }}</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')">
+                <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')" @if(!$field->isEditable)disabled="disabled"@endif>
                     @foreach ($uitypes as $uitype)
                     <option value="{{ $uitype->name }}">{{ $uitype->label }}</option>
                     @endforeach
@@ -36,7 +36,14 @@
         <div class="flex flex-col ml-4">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.name') }}</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $field->name }}">
+                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $field->name }}" @if(!$field->isEditable)disabled="disabled"@endif>
+            </div>
+        </div>
+        {{-- Default --}}
+        <div class="flex flex-col ml-4">
+            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.default') }}</div>
+            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" wire:model="fields.{{ $index }}.default" @if(!$field->isEditable)disabled="disabled"@endif>
             </div>
         </div>
         {{-- Mandatory --}}
@@ -44,14 +51,14 @@
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.required') }}</div>
             <div class="h-10 pt-1 switch">
                 <label>
-                  <input type="checkbox" @if ($field->isRequired)checked="true"@endif wire:model="fields.{{ $index }}.isRequired">
+                  <input type="checkbox" @if ($field->isRequired)checked="true"@endif wire:model="fields.{{ $index }}.isRequired" @if(!$field->isEditable)disabled="disabled"@endif>
                   <span class="lever" style="margin-left: 0; margin-right: 8px"></span>
                   {{ trans('module-designer::ui.block.config_columns.yes') }}
                 </label>
               </div>
         </div>
     </div>
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-3 mb-3">
         @foreach ($field->options as $option)
             @php($option = (object) $option)
 
@@ -127,7 +134,7 @@
             @endif
         @endforeach
     </div>
-    <div class="mt-3 mb-6 text-sm text-right underline" x-show="open">
+    {{-- <div class="mt-3 mb-6 text-sm text-right underline" x-show="open">
         {{ trans('module-designer::ui.block.config_columns.advanced_params') }}
-    </div>
+    </div> --}}
 </div>

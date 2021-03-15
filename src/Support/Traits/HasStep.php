@@ -31,7 +31,7 @@ trait HasStep
         if ($this->isChoosingAction()) {
             $this->chooseAction();
         } elseif ($this->isConfiguringModuleName()) {
-            //
+            $this->updateModuleFromStructure();
         } elseif ($this->isCreatingColumns()) {
             $this->createOrUpdateFilter();
         } elseif ($this->isConfiguringFields()) {

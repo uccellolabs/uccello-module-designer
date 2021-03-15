@@ -31,6 +31,7 @@ return [
             'uitype' => 'Type de champ',
             'name' => 'Nom système',
             'required' => 'Obligatoire',
+            'default' => 'Valeur par défaut',
             'yes' => 'Oui',
             'array_value' => 'Valeur',
             'array_label' => 'Libellé',

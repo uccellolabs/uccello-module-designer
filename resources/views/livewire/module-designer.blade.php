@@ -97,7 +97,7 @@
             <div class="w-2/6 mr-4">
                 <div class="mb-2 mr-10 text-sm text-right">{{ trans('module-designer::ui.block.create_module.icon') }}</div>
                 <div class="float-right">
-                    <x-md-icon-selector></x-md-icon-selector>
+                    @livewire('icon-selector', ['target' => 'module', 'icon' => $structure['icon']])
                 </div>
             </div>
             {{-- Right column --}}
@@ -130,7 +130,7 @@
         <div class="col-span-6 p-12 @if($step > 2)hidden @endif">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_columns.add_columns') }}</div>
             <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <ul class="grid grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
+                <ul class="grid grid-cols-3 gap-2 outline-none" wire:sortable="updateColumnsOrder">
                     @foreach($fields->sortBy('filterSequence') as $index => $field)
                     @php($field = (object) $field)
                     <li class="outline-none" wire:sortable.item="{{ $field->name }}" wire:key="field-{{ $field->name }}">

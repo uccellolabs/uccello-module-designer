@@ -31,6 +31,7 @@ return [
             'uitype' => 'Field type',
             'name' => 'System name',
             'required' => 'Required',
+            'default' => 'Valeur par défaut',
             'yes' => 'Yes',
             'array_value' => 'Value',
             'array_label' => 'Label',

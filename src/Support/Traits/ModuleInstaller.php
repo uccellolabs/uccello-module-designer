@@ -7,6 +7,7 @@ use Uccello\Core\Models\Block;
 use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Field;
 use Uccello\Core\Models\Module;
+use Uccello\Core\Models\Relatedlist;
 use Uccello\Core\Models\Tab;
 
 trait ModuleInstaller
@@ -26,6 +27,13 @@ trait ModuleInstaller
     {
         $this->createOrRetrieveModuleFromStructure();
         $this->createOrRetrieveModuleDefaultFilter();
+    }
+
+    protected function updateModuleFromStructure()
+    {
+        $this->module->name = $this->structure['name'];
+        $this->module->icon = $this->structure['icon'];
+        $this->module->save();
     }
 
     protected function updateBlocksAndFields()
@@ -284,6 +292,23 @@ trait ModuleInstaller
             'sequence' => $field->sequence
         ]);
 
+        if ($field->data['relatedlist'] ?? false) {
+            $sourceModule = Module::where('name', $field->data["module"])->first();
+
+            Relatedlist::firstOrCreate([
+                'module_id' => $sourceModule->id,
+                'related_module_id' => $this->module->id,
+                'related_field_id' => $uccelloField->id
+            ], [
+                'tab_id' => null,
+                'label' => $this->structure['label'],
+                'type' => 'n-1',
+                'method' => 'getDependentList',
+                'sequence' => $sourceModule->relatedlists()->count(),
+                'data' => [ 'actions' => [ 'add' ] ]
+            ]);
+        }
+
         return $uccelloField->id;
     }
 
@@ -295,6 +320,10 @@ trait ModuleInstaller
 
         if ($field->isLarge) {
             $field->data['large'] = true;
+        }
+
+        if ($field->default) {
+            $field->data['default'] = $field->default;
         }
 
         $bundle = $this->makeBundle($field);

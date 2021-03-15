@@ -27,6 +27,8 @@ trait HasField
 
     public function createField()
     {
+        //FIXME: If column exists, display error or offer to link to the column
+
         $this->addField([
             'block_uuid' => $this->getFirstBlockUuid(),
             'label' => $this->column,
@@ -35,6 +37,8 @@ trait HasField
             'color' => $this->getColor(),
             'isRequired' => false,
             'isLarge' => false,
+            'isEditable' => true,
+            'default' => '',
             'isDisplayedInListView' => true,
             'uitype' => 'text',
             'displaytype' => 'everywhere',
@@ -116,6 +120,15 @@ trait HasField
             }
 
             return $field;
+        });
+    }
+
+    public function deleteField($fieldName)
+    {
+        $this->fields = $this->fields->filter(function ($field) use ($fieldName) {
+            if (!$this->isSameFieldName($field, $fieldName)) {
+                return $field;
+            }
         });
     }
 
