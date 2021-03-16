@@ -229,6 +229,27 @@ trait ModuleInstaller
      */
     private function deleteModuleFieldsStructure()
     {
+        $this->deleteRelatedlistsInRelatedModules();
+        $this->deleteTabs();
+    }
+
+    private function deleteRelatedlistsInRelatedModules()
+    {
+        foreach ($this->module->fields() as $field) {
+            if ($field->uitype_id === uitype('entity')->id) {
+                $relatedModuleName = $field->data->module ?? null;
+                if ($relatedModuleName) {
+                    $relatedModule = Module::where('name', $relatedModuleName)->first();
+                    if ($relatedModule) {
+                        $relatedModule->relatedlists()->where('related_field_id', $field->id)->delete();
+                    }
+                }
+            }
+        }
+    }
+
+    private function deleteTabs()
+    {
         $this->module->tabs()->delete();
     }
 
