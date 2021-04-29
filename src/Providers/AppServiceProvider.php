@@ -6,8 +6,11 @@ use BladeUI\Icons\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Uccello\ModuleDesigner\Http\Livewire\ActionSelection;
+use Uccello\ModuleDesigner\Http\Livewire\ColumnsCreation;
 use Uccello\ModuleDesigner\Http\Livewire\ModuleDesigner;
 use Uccello\ModuleDesigner\Http\Livewire\IconSelector;
+use Uccello\ModuleDesigner\Http\Livewire\ModuleDescription;
 use Uccello\ModuleDesigner\View\Components\Block;
 use Uccello\ModuleDesigner\View\Components\Column;
 use Uccello\ModuleDesigner\View\Components\ColumnTag;
@@ -66,6 +69,9 @@ class AppServiceProvider extends ServiceProvider
         ], 'md');
 
         Livewire::component('module-designer', ModuleDesigner::class);
+        Livewire::component('md-action-selection', ActionSelection::class);
+        Livewire::component('md-module-description', ModuleDescription::class);
+        Livewire::component('md-columns-creation', ColumnsCreation::class);
         Livewire::component('icon-selector', IconSelector::class);
     }
 

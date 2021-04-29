@@ -20,7 +20,7 @@ return [
             'slug' => 'Nom affiché dans l\'URL',
         ],
         'create_columns' => [
-            'title' => 'Crééez vos colonnes',
+            'title' => 'Créez vos colonnes',
             'add_columns' => 'Ajoutez vos colonnes',
             'column_name' => 'Nom de la colonne',
             'list_preview' => 'Rendu liste',

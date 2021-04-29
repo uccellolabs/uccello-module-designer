@@ -12,7 +12,8 @@
     "require": {
         "blade-ui-kit/blade-icons": "^0.5",
         "livewire/livewire": "^2.3",
-        "uccello/module-designer-core": "^2.0"
+        "uccello/module-designer-core": "^2.0",
+        "uccello/webflow-connector": "dev-master"
     },
     "autoload": {
         "psr-4": {

@@ -246,9 +246,13 @@ trait HasField
     private function createOrUpdateColumnInExistingTable($field)
     {
         if ($this->wasFieldNameChanged($field)) {
-            $this->updateColumnInExistingTable($field);
+            if (method_exists($this, 'updateColumnInExistingTable')) {
+                $this->updateColumnInExistingTable($field);
+            }
         } else {
-            $this->createColumnInExistingTable($field);
+            if (method_exists($this, 'createColumnInExistingTable')) {
+                $this->createColumnInExistingTable($field);
+            }
         }
     }
 
