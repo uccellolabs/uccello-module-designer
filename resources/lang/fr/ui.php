@@ -19,7 +19,7 @@ return [
             'module_name_plural' => 'Nom du module (pluriel)',
             'module_name_singular' => 'Nom du module (singulier)',
             'category' => 'Categorie',
-            'slug' => 'Slug',
+            'name' => 'Slug',
         ],
         'config_module' => [
             'title' => 'Configuration avancée',
@@ -29,6 +29,9 @@ return [
             'private' => 'Privé',
             'public_description' => 'Tous les utilisateurs ayant accès à ce module dans ce workspace.',
             'private_description' => '- Ajout d\'un champ "Assigné à" dans vos colonnes<br>- Auront accès aux données : les administrateurs, les supérieurs hiérarchiques et tout utilisateur ou équipe assigné',
+            'error' => [
+                'name_alreay_used' => 'Nom déjà utilisé',
+            ],
         ],
         'create_columns' => [
             'title' => 'Créez vos colonnes',

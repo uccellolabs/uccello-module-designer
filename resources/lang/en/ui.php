@@ -19,7 +19,7 @@ return [
             'module_name_plural' => 'Module name (plural)',
             'module_name_singular' => 'Module name (singular)',
             'category' => 'Category',
-            'slug' => 'Slug',
+            'name' => 'Slug',
         ],
         'config_module' => [
             'title' => 'Advanced configuration',
@@ -29,6 +29,9 @@ return [
             'private' => 'Private',
             'public_description' => 'All users with access to this module in this workspace will be able to see the records.',
             'private_description' => '- Add an "Assigned to" field in your columns<br>- Will have access to the data: administrators, supervisors and any assigned user or team',
+            'error' => [
+                'name_alreay_used' => 'Name already used',
+            ],
         ],
         'create_columns' => [
             'title' => 'Create your columns',
