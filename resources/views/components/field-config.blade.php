@@ -1,4 +1,4 @@
-<div x-data="{open: @if($field->isEditable)true @else false @endif, edit: false}">
+<div x-data="{open: @if($field->isEditable)true @else false @endif, edit: false, advanced: false}">
     <div class="flex items-center">
         {{-- Color --}}
         <div class="rounded-full h-3 w-3 mr-2 {{ $field->color }}"></div>
@@ -134,7 +134,17 @@
             @endif
         @endforeach
     </div>
-    {{-- <div class="mt-3 mb-6 text-sm text-right underline" x-show="open">
-        {{ trans('module-designer::ui.block.config_columns.advanced_params') }}
-    </div> --}}
+    <div class="mt-3 mb-6 text-sm" x-show="open" x-on:click="advanced=true">
+        <div class="text-right underline">
+            {{ trans('module-designer::ui.block.config_columns.advanced_params') }}
+        </div>
+
+        <div x-show="advanced">
+            <select class="browser-default" wire:model="fields.{{ $index }}.displaytype">
+                @foreach ($displaytypes as $displaytype)
+                <option value="{{ $displaytype->name }}">{{ $displaytype->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
 </div>

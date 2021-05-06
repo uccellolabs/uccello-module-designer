@@ -21,4 +21,13 @@ class ModuleDescription extends Component
     {
         $this->structure['icon'] = $icon;
     }
+
+    public function changeModuleVisibility($visibility)
+    {
+        if ($visibility === 'private') {
+            $this->structure['private'] = true;
+        } else {
+            unset($this->structure['private']);
+        }
+    }
 }

@@ -8,9 +8,11 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Uccello\ModuleDesigner\Http\Livewire\ActionSelection;
 use Uccello\ModuleDesigner\Http\Livewire\ColumnsCreation;
+use Uccello\ModuleDesigner\Http\Livewire\FieldsDisposition;
 use Uccello\ModuleDesigner\Http\Livewire\ModuleDesigner;
 use Uccello\ModuleDesigner\Http\Livewire\IconSelector;
 use Uccello\ModuleDesigner\Http\Livewire\ModuleDescription;
+use Uccello\ModuleDesigner\Http\Livewire\RelatedlistsCreation;
 use Uccello\ModuleDesigner\View\Components\Block;
 use Uccello\ModuleDesigner\View\Components\Column;
 use Uccello\ModuleDesigner\View\Components\ColumnTag;
@@ -72,6 +74,8 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('md-action-selection', ActionSelection::class);
         Livewire::component('md-module-description', ModuleDescription::class);
         Livewire::component('md-columns-creation', ColumnsCreation::class);
+        Livewire::component('md-fields-disposition', FieldsDisposition::class);
+        Livewire::component('md-relatedlists-creation', RelatedlistsCreation::class);
         Livewire::component('icon-selector', IconSelector::class);
     }
 

@@ -5,7 +5,6 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Uccello\ModuleDesigner\Support\Traits\FieldColors;
-use Uccello\ModuleDesigner\Support\Traits\HasField;
 use Uccello\ModuleDesigner\Support\Traits\StepManager;
 use Uccello\ModuleDesigner\Support\Traits\StructureManager;
 
@@ -26,6 +25,13 @@ class ColumnsCreation extends Component
     public function render()
     {
         return view('module-designer::livewire.columns-creation');
+    }
+
+    public function addSystemField($label)
+    {
+        $this->newColumn = $label;
+
+        $this->createField();
     }
 
     public function createField()

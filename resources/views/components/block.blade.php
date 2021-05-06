@@ -13,7 +13,6 @@
     </div>
     <div class="grid grid-cols-2 gap-4 p-2" wire:sortable-group.item-group="{{ $block->uuid }}">
         @foreach($fields->sortBy('sequence') as $index => $field)
-            @continue(((object) $field)->block_uuid !== $block->uuid)
             <x-md-detailed-field :field="$field" :index="$index"></x-md-detailed-field>
         @endforeach
     </div>

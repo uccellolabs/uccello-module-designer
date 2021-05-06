@@ -155,7 +155,7 @@ class ActionSelection extends Component
                                     'options' => []
                                 ],
                                 [
-                                    'label' => trans('module-designer::ui.field.domain'),
+                                    'label' => trans('module-designer::ui.field.workspace'),
                                     'name' => 'domain',
                                     'color' => $this->colors[3],
                                     'isRequired' => false,
