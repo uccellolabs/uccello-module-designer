@@ -13,7 +13,10 @@ class FieldsDisposition extends Component
 
     public $blocks;
 
-    protected $listeners = ['stepChanged', 'structureChanged'];
+    protected $listeners = [
+        'stepChanged' => 'onStepChanged',
+        'structureChanged' => 'onStructureChanged'
+    ];
 
     public function mount()
     {
@@ -25,7 +28,7 @@ class FieldsDisposition extends Component
         return view('module-designer::livewire.fields-disposition');
     }
 
-    public function structureChanged($structure)
+    public function onStructureChanged($structure)
     {
         $this->structure = $structure;
 

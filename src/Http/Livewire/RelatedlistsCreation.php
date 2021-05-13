@@ -10,7 +10,10 @@ class RelatedlistsCreation extends Component
 {
     use StepManager, StructureManager;
 
-    protected $listeners = ['stepChanged', 'structureChanged'];
+    protected $listeners = [
+        'stepChanged' => 'onStepChanged',
+        'structureChanged' => 'onStructureChanged'
+    ];
 
     public function render()
     {

@@ -45,6 +45,9 @@ return [
                 'updated_at' => 'Mis à jour le',
                 'workspace' => 'Workspace',
             ],
+            'error' => [
+                'column_already_exists' => 'La colonne :column existe déjà',
+            ],
         ],
         'config_columns' => [
             'title' => 'Configurez vos colonnes',

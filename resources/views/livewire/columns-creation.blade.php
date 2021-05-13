@@ -33,7 +33,7 @@
             </div>
 
             {{-- Columns list --}}
-            <div class="p-2 mb-6 bg-gray-100 border border-gray-200 border-solid rounded-lg">
+            <div class="p-2 mb-1 bg-gray-100 border border-gray-200 border-solid rounded-lg">
                 <ul class="grid items-center grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
                     @foreach($fields->sortBy('filterSequence') as $index => $field)
                         @php($field = (object) $field)
@@ -47,6 +47,13 @@
                     </li>
                 </ul>
             </div>
+
+            <div class="mb-5">
+                @if ($columnNameExists)
+                <span class="text-sm text-red-500">{{ trans('module-designer::ui.block.create_columns.error.column_already_exists', ['column' => $newColumn]) }}</span>
+                @endif
+            </div>
+
 
             {{-- Preview --}}
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.create_columns.list_preview') }}</div>

@@ -6,12 +6,12 @@ trait StructureManager
 {
     public $structure;
 
-    public function changeStructure($structure)
+    public function emitStructureChangedEvent($structure)
     {
         $this->emit('structureChanged', $structure);
     }
 
-    public function structureChanged($structure)
+    public function onStructureChanged($structure)
     {
         $this->structure = $structure;
     }

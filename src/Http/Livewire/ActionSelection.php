@@ -23,7 +23,9 @@ class ActionSelection extends Component
 
     private $structure;
 
-    protected $listeners = ['stepChanged'];
+    protected $listeners = [
+        'stepChanged' => 'onStepChanged'
+    ];
 
     public function render()
     {
@@ -116,93 +118,98 @@ class ActionSelection extends Component
             'table' => '',
             'lastTable' => '',
             'step' => 0,
-            'tabs' => [
-                [
-                    'uuid' => Str::uuid(),
-                    'label' => 'tab.main',
-                    'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
-                    'icon' => '',
-                    'blocks' => [
-                        [
-                            'uuid' => Str::uuid(),
-                            'label' => 'block.general',
-                            'translation' => trans('module-designer::ui.block.config_detail.block_general'),
-                            'icon' => 'info',
-                            'sequence' => 0,
-                            'fields' => []
-                        ],
-                        [
-                            'uuid' => Str::uuid(),
-                            'label' => 'block.system',
-                            'translation' => trans('module-designer::ui.block.config_detail.block_system'),
-                            'icon' => 'settings',
-                            'sequence' => 1,
-                            'fields' => [
-                                [
-                                    'label' => trans('module-designer::ui.field.assigned_to'),
-                                    'name' => 'assigned_to',
-                                    'color' => $this->colors[2],
-                                    'isRequired' => true,
-                                    'isLarge' => false,
-                                    'isDisplayedInListView' => true,
-                                    'uitype' => 'assigned_user',
-                                    'displaytype' => 'everywhere',
-                                    'sequence' => 0,
-                                    'filterSequence' => 0,
-                                    'sortOrder' => null,
-                                    'default' => '',
-                                    'isEditable' => false,
-                                    'options' => []
-                                ],
-                                [
-                                    'label' => trans('module-designer::ui.field.workspace'),
-                                    'name' => 'domain',
-                                    'color' => $this->colors[3],
-                                    'isRequired' => false,
-                                    'isLarge' => false,
-                                    'isDisplayedInListView' => false,
-                                    'uitype' => 'entity',
-                                    'displaytype' => 'detail',
-                                    'data' => ['module' => 'domain'],
-                                    'sequence' => 1,
-                                    'filterSequence' => 1,
-                                    'sortOrder' => null,
-                                    'default' => '',
-                                    'isEditable' => false,
-                                    'options' => []
-                                ],
-                                [
-                                    'label' => trans('module-designer::ui.field.created_at'),
-                                    'name' => 'created_at',
-                                    'color' => $this->colors[0],
-                                    'isRequired' => false,
-                                    'isLarge' => false,
-                                    'isDisplayedInListView' => false,
-                                    'uitype' => 'datetime',
-                                    'displaytype' => 'detail',
-                                    'sequence' => 2,
-                                    'filterSequence' => 2,
-                                    'sortOrder' => 'desc',
-                                    'default' => '',
-                                    'isEditable' => false,
-                                    'options' => []
-                                ],
-                                [
-                                    'label' => trans('module-designer::ui.field.updated_at'),
-                                    'name' => 'updated_at',
-                                    'color' => $this->colors[1],
-                                    'isRequired' => false,
-                                    'isLarge' => false,
-                                    'isDisplayedInListView' => false,
-                                    'uitype' => 'datetime',
-                                    'displaytype' => 'detail',
-                                    'sequence' => 3,
-                                    'filterSequence' => 3,
-                                    'sortOrder' => null,
-                                    'default' => '',
-                                    'isEditable' => false,
-                                    'options' => []
-                                ]
+            'tabs' => $this->getDefaultTabs()
+        ];
+    }
+
+    private function getDefaultTabs()
+    {
+        return [
+            [
+                'uuid' => Str::uuid(),
+                'label' => 'tab.main',
+                'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
+                'icon' => '',
+                'blocks' => [
+                    [
+                        'uuid' => Str::uuid(),
+                        'label' => 'block.general',
+                        'translation' => trans('module-designer::ui.block.config_detail.block_general'),
+                        'icon' => 'info',
+                        'sequence' => 0,
+                        'fields' => []
+                    ],
+                    [
+                        'uuid' => Str::uuid(),
+                        'label' => 'block.system',
+                        'translation' => trans('module-designer::ui.block.config_detail.block_system'),
+                        'icon' => 'settings',
+                        'sequence' => 1,
+                        'fields' => [
+                            [
+                                'label' => trans('module-designer::ui.field.assigned_to'),
+                                'name' => 'assigned_to',
+                                'color' => $this->colors[2],
+                                'isRequired' => true,
+                                'isLarge' => false,
+                                'isDisplayedInListView' => true,
+                                'uitype' => 'assigned_user',
+                                'displaytype' => 'everywhere',
+                                'sequence' => 0,
+                                'filterSequence' => 0,
+                                'sortOrder' => null,
+                                'default' => '',
+                                'isEditable' => false,
+                                'options' => []
+                            ],
+                            [
+                                'label' => trans('module-designer::ui.field.workspace'),
+                                'name' => 'domain',
+                                'color' => $this->colors[3],
+                                'isRequired' => false,
+                                'isLarge' => false,
+                                'isDisplayedInListView' => false,
+                                'uitype' => 'entity',
+                                'displaytype' => 'detail',
+                                'data' => ['module' => 'domain'],
+                                'sequence' => 1,
+                                'filterSequence' => 1,
+                                'sortOrder' => null,
+                                'default' => '',
+                                'isEditable' => false,
+                                'options' => []
+                            ],
+                            [
+                                'label' => trans('module-designer::ui.field.created_at'),
+                                'name' => 'created_at',
+                                'color' => $this->colors[0],
+                                'isRequired' => false,
+                                'isLarge' => false,
+                                'isDisplayedInListView' => false,
+                                'uitype' => 'datetime',
+                                'displaytype' => 'detail',
+                                'sequence' => 2,
+                                'filterSequence' => 2,
+                                'sortOrder' => 'desc',
+                                'default' => '',
+                                'isEditable' => false,
+                                'options' => []
+                            ],
+                            [
+                                'label' => trans('module-designer::ui.field.updated_at'),
+                                'name' => 'updated_at',
+                                'color' => $this->colors[1],
+                                'isRequired' => false,
+                                'isLarge' => false,
+                                'isDisplayedInListView' => false,
+                                'uitype' => 'datetime',
+                                'displaytype' => 'detail',
+                                'sequence' => 3,
+                                'filterSequence' => 3,
+                                'sortOrder' => null,
+                                'default' => '',
+                                'isEditable' => false,
+                                'options' => []
                             ]
                         ]
                     ]
@@ -220,11 +227,14 @@ class ActionSelection extends Component
         $this->structure = [
             'id' => $module->id,
             'label' => uctrans($module->name, $module),
+            'label_singular' => uctrans($module->name.'_singular', $module),
             'name' => $module->name,
             'lastName' => $module->name,
             'icon' => $module->icon,
             'table' => $model->getTable(),
             'lastTable' => $model->getTable(),
+            'admin' => $module->data->admin ?? false,
+            'private' => $module->data->private ?? false,
             'step' => 0,
             'tabs' => $this->buildTabsStructure($module)
         ];
@@ -234,14 +244,18 @@ class ActionSelection extends Component
     {
         $tabs = [];
 
-        foreach ($module->tabs->sortBy('sequence') as $tab) {
-            $tabs[] = [
-                'uuid' => Str::uuid(),
-                'label' => $tab->label,
-                'translation' => uctrans($tab->label, $module),
-                'icon' => $tab->icon,
-                'blocks' => $this->buildBlocksStructure($module, $tab)
-            ];
+        if ($module->tabs->count() > 0) {
+            foreach ($module->tabs->sortBy('sequence') as $tab) {
+                $tabs[] = [
+                    'uuid' => Str::uuid(),
+                    'label' => $tab->label,
+                    'translation' => uctrans($tab->label, $module),
+                    'icon' => $tab->icon,
+                    'blocks' => $this->buildBlocksStructure($module, $tab)
+                ];
+            }
+        } else {
+            $tabs = $this->getDefaultTabs();
         }
 
         return $tabs;
@@ -270,7 +284,7 @@ class ActionSelection extends Component
         $fields = [];
 
         foreach ($block->fields->sortBy('sequence') as $field) {
-            $fields[] = [
+            $field = [
                 'label' => uctrans('field.'.$field->name, $module),
                 'name' => $field->name,
                 'color' => $this->colors[2], // FIXME: Set automatic color
@@ -286,6 +300,8 @@ class ActionSelection extends Component
                 'isEditable' => true,
                 'options' => []
             ];
+
+            $fields[] = $field;
         }
 
         return $fields;

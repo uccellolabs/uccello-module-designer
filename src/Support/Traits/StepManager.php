@@ -16,8 +16,18 @@ trait StepManager
         $this->changeStep($this->step + 1);
     }
 
-    public function stepChanged($step)
+    public function onStepChanged($step)
     {
         $this->step = $step;
+    }
+
+    private function isSettingModuleDescription()
+    {
+        return $this->step === 1;
+    }
+
+    private function isSettingModuleAdvancedConfig()
+    {
+        return $this->step === 2;
     }
 }

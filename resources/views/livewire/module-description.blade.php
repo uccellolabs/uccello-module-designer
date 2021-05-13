@@ -1,4 +1,4 @@
-<form @if ($step < 1)class="hidden"@endif wire:submit.prevent="updateModuleStructure">
+<form @if ($step < 1)class="hidden"@endif wire:submit.prevent="saveModule">
     <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_module.title') }}" step="1" closed="{{ $step > 0 }}">
         <div class="flex p-12 @if($step > 1)hidden @endif">
             <div class="grid grid-cols-4">
@@ -29,11 +29,11 @@
                     @error('label_singular') <span class="text-sm text-red-500">{{ $message }}</span> @enderror
 
                     {{-- Category --}}
-                    <div class="mt-2 mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.category') }}</div>
+                    {{-- <div class="mt-2 mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.category') }}</div>
                     <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
                         <input type="text" wire:model="category" class="w-full px-3 py-2 bg-transparent outline-none browser-default" autocomplete="off">
                     </div>
-                    @error('category') <span class="text-sm text-red-500">{{ $message }}</span> @enderror
+                    @error('category') <span class="text-sm text-red-500">{{ $message }}</span> @enderror --}}
 
                     {{-- Name --}}
                     <div class="mt-2 mb-2 text-sm">{{ trans('module-designer::ui.block.create_module.name') }}</div>

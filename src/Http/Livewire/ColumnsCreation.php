@@ -14,12 +14,21 @@ class ColumnsCreation extends Component
 
     public $fields;
     public $newColumn;
+    public $columnNameExists;
 
-    protected $listeners = ['stepChanged', 'structureChanged'];
+    protected $listeners = [
+        'stepChanged' => 'onStepChanged',
+        'structureChanged' => 'onStructureChanged'
+    ];
 
     public function mount()
     {
         $this->fields = collect();
+    }
+
+    public function updatedNewColumn()
+    {
+        $this->columnNameExists = false;
     }
 
     public function render()
@@ -36,12 +45,21 @@ class ColumnsCreation extends Component
 
     public function createField()
     {
-        //FIXME: If column exists, display error or offer to link to the column
+        if (empty($this->newColumn)) {
+            return;
+        }
+
+        $fieldName = Str::slug($this->newColumn, '_');
+
+        if ($this->fields->where('name', $fieldName)->count() > 0) {
+            $this->columnNameExists = true;
+            return;
+        }
 
         $this->fields[] = [
             'block_uuid' => $this->getFirstBlockUuid(),
             'label' => $this->newColumn,
-            'name' => Str::slug($this->newColumn, '_'),
+            'name' => $fieldName,
             'lastName' => null,
             'color' => $this->getColor(count($this->fields)),
             'isRequired' => false,
@@ -110,6 +128,8 @@ class ColumnsCreation extends Component
                 return $field;
             }
         });
+
+        // TODO: Delete column from database
     }
 
     private function getFirstBlockUuid()
