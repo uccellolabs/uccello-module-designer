@@ -15,6 +15,14 @@ trait LanguageFileCreator
         }
     }
 
+    private function deleteLanguageFile()
+    {
+        $filePath = $this->getLanguageFilePath();
+        if ($this->languageFileExists()) {
+            unlink($filePath);
+        }
+    }
+
     private function languageFileExists()
     {
         return File::exists($this->getLanguageFilePath());

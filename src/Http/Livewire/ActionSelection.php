@@ -6,12 +6,14 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FieldColors;
+use Uccello\ModuleDesigner\Support\Traits\FileCreator;
+use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
 use Uccello\ModuleDesigner\Support\Traits\StepManager;
 use Uccello\ModuleDesignerCore\Models\DesignedModule;
 
 class ActionSelection extends Component
 {
-    use StepManager, FieldColors;
+    use StepManager, FieldColors, FileCreator, ModuleInstaller;
 
     public $action = 'create';
     public $canDesignModule = true;
@@ -19,7 +21,7 @@ class ActionSelection extends Component
     public $crudModules = [];
     public $designedModules = [];
     public $editedModuleId;
-    public $editedDesignedModuleId;
+    public $deletedModuleId;
 
     private $structure;
 
@@ -42,8 +44,8 @@ class ActionSelection extends Component
             $this->canDesignModule = true;
         } if ($action === 'edit') {
             $this->loadCrudModules();
-        } elseif ($action === 'continue') {
-            $this->loadDesignedModules();
+        } elseif ($action === 'delete') {
+            $this->loadCrudModules();
         }
 
         $this->action = $action;
@@ -55,9 +57,9 @@ class ActionSelection extends Component
         $this->canDesignModule = true;
     }
 
-    public function selectDesignedModuleToEdit($editedDesignedModuleId)
+    public function selectModuleToDelete($deletedModuleId)
     {
-        $this->editedDesignedModuleId = $editedDesignedModuleId;
+        $this->deletedModuleId = $deletedModuleId;
         $this->canDesignModule = true;
     }
 
@@ -65,15 +67,18 @@ class ActionSelection extends Component
     {
         if ($this->canDesignModule) {
             $this->buildModuleStructure();
-            $this->noticeModuleStructureChanged();
-            $this->incrementStep();
+
+            if ($this->action !== 'delete') {
+                $this->noticeModuleStructureChanged();
+                $this->incrementStep();
+            }
         }
     }
 
     private function initActionVariables()
     {
         $this->editedModuleId = null;
-        $this->editedDesignedModuleId = null;
+        $this->deletedModuleId = null;
         $this->crudModules = [];
         $this->designedModules = [];
     }
@@ -101,9 +106,10 @@ class ActionSelection extends Component
         if ($this->action === 'create') {
             $this->buildNewStructure();
         } elseif ($this->action === 'edit') {
-            $this->buildStructureFromModule();
-        } elseif ($this->action === 'continue') {
-            $this->retrieveStructureFromDesignedModule();
+            $this->buildStructureFromModule($this->editedModuleId);
+        } elseif ($this->action === 'delete') {
+            $this->buildStructureFromModule($this->deletedModuleId);
+            $this->deleteModule();
         }
     }
 
@@ -218,9 +224,9 @@ class ActionSelection extends Component
         ];
     }
 
-    private function buildStructureFromModule()
+    private function buildStructureFromModule($moduleId)
     {
-        $module = Module::find($this->editedModuleId);
+        $module = Module::find($moduleId);
         $modelClass = $module->model_class;
         $model = new $modelClass;
 
@@ -307,10 +313,14 @@ class ActionSelection extends Component
         return $fields;
     }
 
-    private function retrieveStructureFromDesignedModule()
+    private function deleteModule()
     {
-        $designedModule = DesignedModule::find($this->editedDesignedModuleId);
-        $this->structure = $designedModule->data;
+        $this->deleteModuleFiles();
+
+        $module = Module::find($this->deletedModuleId);
+        $module->delete();
+
+        $this->loadCrudModules();
     }
 
     private function noticeModuleStructureChanged()

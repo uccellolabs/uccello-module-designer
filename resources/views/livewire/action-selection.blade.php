@@ -25,14 +25,14 @@
                     <span class="pr-1 ml-2 text-base font-semibold">{{ trans('module-designer::ui.block.choose_action.edit_module') }}</span>
                 </div>
 
-                {{-- Continue --}}
-                <div class="flex flex-row items-center px-2 py-2 bg-white border border-gray-200 border-solid rounded-lg shadow cursor-pointer hover:bg-gray-50" wire:click="changeAction('continue')">
-                    @if($action === 'continue')
+                {{-- Delete --}}
+                <div class="flex flex-row items-center px-2 py-2 bg-white border border-gray-200 border-solid rounded-lg shadow cursor-pointer hover:bg-gray-50" wire:click="changeAction('delete')">
+                    @if($action === 'delete')
                         <i class="ml-2 text-green-500 fas fa-check"></i>
                     @else
-                        <i class="ml-2 fas fa-redo  @if(!$action)text-red-500 @else text-gray-300 @endif"></i>
+                        <i class="ml-2 fas fa-trash  @if(!$action)text-red-500 @else text-gray-300 @endif"></i>
                     @endif
-                    <span class="pr-1 ml-2 text-base font-semibold">{{ trans('module-designer::ui.block.choose_action.continue_creation') }}</span>
+                    <span class="pr-1 ml-2 text-base font-semibold">{{ trans('module-designer::ui.block.choose_action.delete_module') }}</span>
                 </div>
             </div>
 
@@ -49,24 +49,25 @@
                                     {{ $crudModule['label'] }}
                                 @else
                                     {{ trans('module-designer::ui.block.choose_action.name_not_defined') }}
-                                @endif</span>
+                                @endif
+                            </span>
                         </div>
                     @endforeach
                 </div>
             </div>
         @endif
 
-        {{-- Continue creation --}}
-        @if($action === 'continue')
+        {{-- Delete module --}}
+        @if($action === 'delete')
             <div class="mt-6">
-                {{ trans('module-designer::ui.block.choose_action.select_designed_module') }}
+                {{ trans('module-designer::ui.block.choose_action.select_module_to_delete') }}
                 <div class="grid grid-cols-4 mt-3 gap-2 p-6 bg-gray-100 border border-gray-200 border-solid rounded-lg @if($step > 0)hidden @endif">
-                    @foreach($designedModules->sortBy('data.label') as $designedModule)
-                        <div class="flex flex-row items-center px-2 py-1 bg-white border border-gray-200 border-solid rounded-lg shadow cursor-pointer hover:bg-gray-50" wire:click="selectDesignedModuleToEdit({{ $designedModule->id }})">
-                            @if($editedDesignedModuleId == $designedModule->id)<i class="mr-2 text-green-500 fas fa-check"></i>@endif
+                    @foreach($crudModules->sortBy('label') as $crudModule)
+                        <div class="flex flex-row items-center px-2 py-1 bg-white border border-gray-200 border-solid rounded-lg shadow cursor-pointer hover:bg-gray-50" wire:click="selectModuleToDelete({{ $crudModule['id'] }})">
+                            @if($deletedModuleId == $crudModule['id'])<i class="mr-2 text-green-500 fas fa-check"></i>@endif
                             <span class="pr-1 text-sm font-semibold">
-                                @if(!empty($designedModule->data->label))
-                                    {{ $designedModule->data->label }}
+                                @if(!empty($crudModule['label']))
+                                    {{ $crudModule['label'] }}
                                 @else
                                     {{ trans('module-designer::ui.block.choose_action.name_not_defined') }}
                                 @endif

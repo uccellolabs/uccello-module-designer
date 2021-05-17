@@ -15,6 +15,14 @@ trait ModelFileCreator
         }
     }
 
+    private function deleteModelFile()
+    {
+        $filePath = $this->getModelFilePath();
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
     private function modelFileExists()
     {
         return File::exists($this->getModelFilePath());

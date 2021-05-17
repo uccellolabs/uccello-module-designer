@@ -8,9 +8,9 @@ return [
             'choose_action' => 'What do you want to do?',
             'create_module' => 'Create a module',
             'edit_module' => 'Edit a module',
-            'continue_creation' => 'Continue a creation',
+            'delete_module' => 'Delete a module',
             'select_module' => 'Select the module to edit:',
-            'select_designed_module' => 'Select the module to continue with:',
+            'select_module_to_delete' => 'Select the module to delete:',
             'name_not_defined' => '(Empty name)',
         ],
         'create_module' => [

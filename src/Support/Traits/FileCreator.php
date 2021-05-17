@@ -15,6 +15,12 @@ trait FileCreator
         // $this->createOrUpdateUccelloManifestFile(); // TODO: Add
     }
 
+    private function deleteModuleFiles()
+    {
+        $this->deleteModelFile();
+        $this->deleteLanguageFile();
+    }
+
     private function getPackagesBaseDirectory()
     {
         return rtrim(config('module-designer.packages_directory'), '/');
