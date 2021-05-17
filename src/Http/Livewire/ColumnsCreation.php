@@ -5,12 +5,15 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Uccello\ModuleDesigner\Support\Traits\FieldColors;
+use Uccello\ModuleDesigner\Support\Traits\HasUitype;
+use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
 use Uccello\ModuleDesigner\Support\Traits\StepManager;
 use Uccello\ModuleDesigner\Support\Traits\StructureManager;
+use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 
 class ColumnsCreation extends Component
 {
-    use StepManager, StructureManager, FieldColors;
+    use StepManager, StructureManager, FieldColors, HasUitype, ModuleInstaller;
 
     public $fields;
     public $newColumn;
@@ -130,6 +133,16 @@ class ColumnsCreation extends Component
         });
 
         // TODO: Delete column from database
+    }
+
+    public function incrementStep()
+    {
+        if ($this->isConfiguringFields()) {
+            $this->createOrUpdateModule();
+            // $this->createOrUpdateTable();
+        }
+
+        $this->changeStep($this->step + 1);
     }
 
     private function getFirstBlockUuid()

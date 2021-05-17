@@ -30,4 +30,14 @@ trait StepManager
     {
         return $this->step === 2;
     }
+
+    private function isCreatingColumns()
+    {
+        return $this->step === 3;
+    }
+
+    private function isConfiguringFields()
+    {
+        return $this->step === 4;
+    }
 }

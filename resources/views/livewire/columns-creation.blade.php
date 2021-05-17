@@ -1,4 +1,4 @@
-<div @if ($step < 3)class="hidden"@endif>
+<div @if ($step < 3)class="hidden"@endif wire:submit.prevent="submit">
     <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_columns.title') }}" step="3" closed="{{ $step !== 3 }}">
         @if ($step === 3)
         <div class="col-span-6 p-12 border-b border-gray-200 border-solid">
