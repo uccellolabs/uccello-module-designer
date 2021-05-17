@@ -12,7 +12,7 @@ use Uccello\Core\Models\Tab;
 
 trait ModuleInstaller
 {
-    use FileCreator;
+    use FileCreator, StructureAdapter;
 
     protected $module;
 

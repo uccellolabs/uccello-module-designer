@@ -18,10 +18,10 @@ class FieldsDisposition extends Component
         'structureChanged' => 'onStructureChanged'
     ];
 
-    public function mount()
-    {
-        $this->blocks = collect();
-    }
+    // public function mount()
+    // {
+    //     $this->blocks = collect();
+    // }
 
     public function render()
     {
@@ -32,9 +32,15 @@ class FieldsDisposition extends Component
     {
         $this->structure = $structure;
 
+        $this->blocks = collect();
+        $this->fields = collect();
         foreach ($structure['tabs'] as $tab) {
             foreach ($tab['blocks'] as $block) {
                 $this->blocks[] = $block;
+
+                foreach ($block['fields'] as $field) {
+                    $this->fields[] = $field;
+                }
             }
         }
     }

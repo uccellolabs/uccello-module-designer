@@ -13,8 +13,9 @@ use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 
 class ColumnsCreation extends Component
 {
-    use StepManager, StructureManager, FieldColors, HasUitype, ModuleInstaller;
+    use StepManager, StructureManager, FieldColors, HasUitype, ModuleInstaller, TableCreator;
 
+    public $blocks;
     public $fields;
     public $newColumn;
     public $columnNameExists;
@@ -34,6 +35,23 @@ class ColumnsCreation extends Component
         $this->columnNameExists = false;
     }
 
+    public function onStructureChanged($structure)
+    {
+        $this->structure = $structure;
+
+        $this->blocks = collect();
+        $this->fields = collect();
+        foreach ($structure['tabs'] as $tab) {
+            foreach ($tab['blocks'] as $block) {
+                $this->blocks[] = $block;
+
+                foreach ($block['fields'] as $field) {
+                    $this->fields[] = $field;
+                }
+            }
+        }
+    }
+
     public function render()
     {
         return view('module-designer::livewire.columns-creation');
@@ -43,12 +61,12 @@ class ColumnsCreation extends Component
     {
         $this->newColumn = $label;
 
-        $this->createField();
+        $this->createField(true);
     }
 
-    public function createField()
+    public function createField($systemField = false)
     {
-        if (empty($this->newColumn)) {
+        if (!$systemField && empty($this->newColumn)) {
             return;
         }
 
@@ -59,8 +77,8 @@ class ColumnsCreation extends Component
             return;
         }
 
-        $this->fields[] = [
-            'block_uuid' => $this->getFirstBlockUuid(),
+        $field = [
+            'block_uuid' => $systemField === true ? $this->getSystemBlockUuid() : $this->getFirstBlockUuid(),
             'label' => $this->newColumn,
             'name' => $fieldName,
             'lastName' => null,
@@ -78,7 +96,12 @@ class ColumnsCreation extends Component
             'options' => []
         ];
 
+        $this->fields[] = $field;
+        $this->structure['tabs'][0]['blocks'][0]['fields'][] = $field;
+
         $this->clearNewColumnField();
+
+        $this->emitStructureChangedEvent($this->structure);
     }
 
     public function updateColumnsOrder($sortedFields)
@@ -137,17 +160,34 @@ class ColumnsCreation extends Component
 
     public function incrementStep()
     {
-        if ($this->isConfiguringFields()) {
+        // if ($this->isConfiguringFields()) {
             $this->createOrUpdateModule();
-            // $this->createOrUpdateTable();
-        }
+            $this->updateBlocksAndFields();
+            $this->createOrUpdateTable();
+        // }
 
         $this->changeStep($this->step + 1);
     }
 
+    private function getSystemBlockUuid()
+    {
+        $uuid = null;
+
+        foreach ($this->structure['tabs'] as $tab) {
+            foreach ($tab['blocks'] as $block) {
+                if ($block['label'] === 'block.system') {
+                    $uuid = $block['uuid'];
+                    break;
+                }
+            }
+        }
+
+        return $uuid;
+    }
+
     private function getFirstBlockUuid()
     {
-        $this->structure['tabs'][0]['blocks'][0];
+        return $this->structure['tabs'][0]['blocks'][0]['uuid'];
     }
 
     private function clearNewColumnField()

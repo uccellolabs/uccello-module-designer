@@ -130,15 +130,20 @@ class ActionSelection extends Component
 
     private function getDefaultTabs()
     {
+        $tabUuid = Str::uuid();
+        $generalBlockUuid = Str::uuid();
+        $systemBlockUuid = Str::uuid();
+
         return [
             [
-                'uuid' => Str::uuid(),
+                'uuid' => $tabUuid,
                 'label' => 'tab.main',
                 'translation' => trans('module-designer::ui.block.config_detail.tab_main'),
                 'icon' => '',
                 'blocks' => [
                     [
-                        'uuid' => Str::uuid(),
+                        'tab_uuid' => $tabUuid,
+                        'uuid' => $generalBlockUuid,
                         'label' => 'block.general',
                         'translation' => trans('module-designer::ui.block.config_detail.block_general'),
                         'icon' => 'info',
@@ -146,77 +151,82 @@ class ActionSelection extends Component
                         'fields' => []
                     ],
                     [
-                        'uuid' => Str::uuid(),
+                        'tab_uuid' => $tabUuid,
+                        'uuid' => $systemBlockUuid,
                         'label' => 'block.system',
                         'translation' => trans('module-designer::ui.block.config_detail.block_system'),
                         'icon' => 'settings',
                         'sequence' => 1,
                         'fields' => [
-                            [
-                                'label' => trans('module-designer::ui.field.assigned_to'),
-                                'name' => 'assigned_to',
-                                'color' => $this->colors[2],
-                                'isRequired' => true,
-                                'isLarge' => false,
-                                'isDisplayedInListView' => true,
-                                'uitype' => 'assigned_user',
-                                'displaytype' => 'everywhere',
-                                'sequence' => 0,
-                                'filterSequence' => 0,
-                                'sortOrder' => null,
-                                'default' => '',
-                                'isEditable' => false,
-                                'options' => []
-                            ],
-                            [
-                                'label' => trans('module-designer::ui.field.workspace'),
-                                'name' => 'domain',
-                                'color' => $this->colors[3],
-                                'isRequired' => false,
-                                'isLarge' => false,
-                                'isDisplayedInListView' => false,
-                                'uitype' => 'entity',
-                                'displaytype' => 'detail',
-                                'data' => ['module' => 'domain'],
-                                'sequence' => 1,
-                                'filterSequence' => 1,
-                                'sortOrder' => null,
-                                'default' => '',
-                                'isEditable' => false,
-                                'options' => []
-                            ],
-                            [
-                                'label' => trans('module-designer::ui.field.created_at'),
-                                'name' => 'created_at',
-                                'color' => $this->colors[0],
-                                'isRequired' => false,
-                                'isLarge' => false,
-                                'isDisplayedInListView' => false,
-                                'uitype' => 'datetime',
-                                'displaytype' => 'detail',
-                                'sequence' => 2,
-                                'filterSequence' => 2,
-                                'sortOrder' => 'desc',
-                                'default' => '',
-                                'isEditable' => false,
-                                'options' => []
-                            ],
-                            [
-                                'label' => trans('module-designer::ui.field.updated_at'),
-                                'name' => 'updated_at',
-                                'color' => $this->colors[1],
-                                'isRequired' => false,
-                                'isLarge' => false,
-                                'isDisplayedInListView' => false,
-                                'uitype' => 'datetime',
-                                'displaytype' => 'detail',
-                                'sequence' => 3,
-                                'filterSequence' => 3,
-                                'sortOrder' => null,
-                                'default' => '',
-                                'isEditable' => false,
-                                'options' => []
-                            ]
+                            // [
+                            //     'block_uuid' => $systemBlockUuid,
+                            //     'label' => trans('module-designer::ui.field.assigned_to'),
+                            //     'name' => 'assigned_to',
+                            //     'color' => $this->colors[2],
+                            //     'isRequired' => true,
+                            //     'isLarge' => false,
+                            //     'isDisplayedInListView' => true,
+                            //     'uitype' => 'assigned_user',
+                            //     'displaytype' => 'everywhere',
+                            //     'sequence' => 0,
+                            //     'filterSequence' => 0,
+                            //     'sortOrder' => null,
+                            //     'default' => '',
+                            //     'isEditable' => false,
+                            //     'options' => []
+                            // ],
+                            // [
+                            //     'block_uuid' => $systemBlockUuid,
+                            //     'label' => trans('module-designer::ui.field.workspace'),
+                            //     'name' => 'domain',
+                            //     'color' => $this->colors[3],
+                            //     'isRequired' => false,
+                            //     'isLarge' => false,
+                            //     'isDisplayedInListView' => false,
+                            //     'uitype' => 'entity',
+                            //     'displaytype' => 'detail',
+                            //     'data' => ['module' => 'domain'],
+                            //     'sequence' => 1,
+                            //     'filterSequence' => 1,
+                            //     'sortOrder' => null,
+                            //     'default' => '',
+                            //     'isEditable' => false,
+                            //     'options' => []
+                            // ],
+                            // [
+                            //     'block_uuid' => $systemBlockUuid,
+                            //     'label' => trans('module-designer::ui.field.created_at'),
+                            //     'name' => 'created_at',
+                            //     'color' => $this->colors[0],
+                            //     'isRequired' => false,
+                            //     'isLarge' => false,
+                            //     'isDisplayedInListView' => false,
+                            //     'uitype' => 'datetime',
+                            //     'displaytype' => 'detail',
+                            //     'sequence' => 2,
+                            //     'filterSequence' => 2,
+                            //     'sortOrder' => 'desc',
+                            //     'default' => '',
+                            //     'isEditable' => false,
+                            //     'options' => []
+                            // ],
+                            // [
+                            //     'block_uuid' => $systemBlockUuid,
+                            //     'label' => trans('module-designer::ui.field.updated_at'),
+                            //     'name' => 'updated_at',
+                            //     'color' => $this->colors[1],
+                            //     'isRequired' => false,
+                            //     'isLarge' => false,
+                            //     'isDisplayedInListView' => false,
+                            //     'uitype' => 'datetime',
+                            //     'displaytype' => 'detail',
+                            //     'sequence' => 3,
+                            //     'filterSequence' => 3,
+                            //     'sortOrder' => null,
+                            //     'default' => '',
+                            //     'isEditable' => false,
+                            //     'options' => []
+                            // ]
                         ]
                     ]
                 ]
@@ -252,12 +262,14 @@ class ActionSelection extends Component
 
         if ($module->tabs->count() > 0) {
             foreach ($module->tabs->sortBy('sequence') as $tab) {
+                $tabUuid = Str::uuid();
+
                 $tabs[] = [
-                    'uuid' => Str::uuid(),
+                    'uuid' => $tabUuid,
                     'label' => $tab->label,
                     'translation' => uctrans($tab->label, $module),
                     'icon' => $tab->icon,
-                    'blocks' => $this->buildBlocksStructure($module, $tab)
+                    'blocks' => $this->buildBlocksStructure($module, $tab, $tabUuid)
                 ];
             }
         } else {
@@ -267,30 +279,34 @@ class ActionSelection extends Component
         return $tabs;
     }
 
-    private function buildBlocksStructure(Module $module, $tab)
+    private function buildBlocksStructure(Module $module, $tab, $tabUuid)
     {
         $blocks = [];
 
         foreach ($tab->blocks->sortBy('sequence') as $block) {
+            $blockUuid = Str::uuid();
+
             $blocks[] = [
-                'uuid' => Str::uuid(),
+                'tab_uuid' => $tabUuid,
+                'uuid' => $blockUuid,
                 'label' => $block->label,
                 'translation' => uctrans($block->label, $module),
                 'icon' => $block->icon,
                 'sequence' => $block->sequence,
-                'fields' => $this->buildFieldsStructure($module, $block)
+                'fields' => $this->buildFieldsStructure($module, $block, $blockUuid)
             ];
         }
 
         return $blocks;
     }
 
-    private function buildFieldsStructure(Module $module, $block)
+    private function buildFieldsStructure(Module $module, $block, $blockUuid)
     {
         $fields = [];
 
         foreach ($block->fields->sortBy('sequence') as $field) {
             $field = [
+                'block_uuid' => $blockUuid,
                 'label' => uctrans('field.'.$field->name, $module),
                 'name' => $field->name,
                 'color' => $this->colors[2], // FIXME: Set automatic color
@@ -319,6 +335,8 @@ class ActionSelection extends Component
 
         $module = Module::find($this->deletedModuleId);
         $module->delete();
+
+        //TODO: Delete table
 
         $this->loadCrudModules();
     }

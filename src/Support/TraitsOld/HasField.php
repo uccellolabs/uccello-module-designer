@@ -185,8 +185,6 @@ trait HasField
                 });
             }
         }
-
-        // dd($this->fields);
     }
 
     public function removeFieldFromBlock($fieldName)
