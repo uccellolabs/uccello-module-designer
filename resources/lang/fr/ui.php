@@ -47,6 +47,7 @@ return [
             ],
             'error' => [
                 'column_already_exists' => 'La colonne :column existe déjà',
+                'column_name_reserved' => '":column" est un nom réservé. Vous ne pouvez pas l\'utiliser.',
             ],
         ],
         'config_columns' => [
@@ -68,7 +69,7 @@ return [
         'config_detail' => [
             'title' => 'Configurez la vue détaillée',
             'add_block' => 'Ajouter un bloc',
-            'tab_main' => 'Pricipal',
+            'tab_main' => 'Principal',
             'block_general' => 'Général',
             'block_system' => 'Système',
         ],
@@ -77,9 +78,9 @@ return [
         ],
     ],
     'field' => [
-        'assigned_to' => 'Assigné à',
+        'created_by' => 'Créé par',
+        'created_at' => 'Créé le',
+        'updated_at' => 'Modifié le',
         'workspace' => 'Workspace',
-        'created_at' => 'Création',
-        'updated_at' => 'Mise à jour',
     ],
 ];

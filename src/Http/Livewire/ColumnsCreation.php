@@ -4,7 +4,9 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FieldColors;
+use Uccello\ModuleDesigner\Support\Traits\FileCreator;
 use Uccello\ModuleDesigner\Support\Traits\HasUitype;
 use Uccello\ModuleDesigner\Support\Traits\ModuleInstaller;
 use Uccello\ModuleDesigner\Support\Traits\StepManager;
@@ -13,12 +15,13 @@ use Uccello\ModuleDesigner\Support\Traits\TableCreator;
 
 class ColumnsCreation extends Component
 {
-    use StepManager, StructureManager, FieldColors, HasUitype, ModuleInstaller, TableCreator;
+    use StepManager, StructureManager, FieldColors, HasUitype, FileCreator, ModuleInstaller, TableCreator;
 
     public $blocks;
     public $fields;
     public $newColumn;
-    public $columnNameExists;
+    public $fieldNameReserved;
+    public $fieldNameUsed;
 
     protected $listeners = [
         'stepChanged' => 'onStepChanged',
@@ -32,7 +35,8 @@ class ColumnsCreation extends Component
 
     public function updatedNewColumn()
     {
-        $this->columnNameExists = false;
+        $this->fieldNameReserved = false;
+        $this->fieldNameUsed = false;
     }
 
     public function onStructureChanged($structure)
@@ -41,6 +45,7 @@ class ColumnsCreation extends Component
 
         $this->blocks = collect();
         $this->fields = collect();
+
         foreach ($structure['tabs'] as $tab) {
             foreach ($tab['blocks'] as $block) {
                 $this->blocks[] = $block;
@@ -57,51 +62,111 @@ class ColumnsCreation extends Component
         return view('module-designer::livewire.columns-creation');
     }
 
-    public function addSystemField($label)
-    {
-        $this->newColumn = $label;
+    // A la validation de l'étape : mettre à jour le filtre
 
-        $this->createField(true);
+    public function addField()
+    {
+        if ($this->isFieldNameValid() && $this->isFieldNameAvailable()) {
+            $this->createField([
+                'block_uuid' => $this->getFirstBlockUuid(),
+                'label' => $this->newColumn,
+                'name' => $this->getFieldName(),
+                'color' => $this->getColor(count($this->fields)),
+                'isRequired' => false,
+                'isLarge' => false,
+                'isEditable' => true,
+                'isFullyEditable' => true,
+                'isSystemField' => false,
+                'isDisplayedInListView' => true,
+                'uitype' => 'text',
+                'displaytype' => 'everywhere',
+                'default' => '',
+                'sortOrder' => null,
+                'filterSequence' => $this->fields->count(),
+                'sequence' => $this->fields->count(),
+                'options' => []
+            ]);
+
+            $this->clearNewColumnField();
+        }
     }
 
-    public function createField($systemField = false)
+    private function createField($field)
     {
-        if (!$systemField && empty($this->newColumn)) {
-            return;
-        }
-
-        $fieldName = Str::slug($this->newColumn, '_');
-
-        if ($this->fields->where('name', $fieldName)->count() > 0) {
-            $this->columnNameExists = true;
-            return;
-        }
-
-        $field = [
-            'block_uuid' => $systemField === true ? $this->getSystemBlockUuid() : $this->getFirstBlockUuid(),
-            'label' => $this->newColumn,
-            'name' => $fieldName,
-            'lastName' => null,
-            'color' => $this->getColor(count($this->fields)),
-            'isRequired' => false,
-            'isLarge' => false,
-            'isEditable' => true,
-            'default' => '',
-            'isDisplayedInListView' => true,
-            'uitype' => 'text',
-            'displaytype' => 'everywhere',
-            'sortOrder' => null,
-            'filterSequence' => $this->fields->count(),
-            'sequence' => $this->fields->count(),
-            'options' => []
-        ];
-
         $this->fields[] = $field;
-        $this->structure['tabs'][0]['blocks'][0]['fields'][] = $field;
+    }
 
-        $this->clearNewColumnField();
+    /**
+     * Check if the field name is valid
+     *
+     * @return boolean
+     */
+    private function isFieldNameValid()
+    {
+        return !empty($this->newColumn);
+    }
 
-        $this->emitStructureChangedEvent($this->structure);
+    /**
+     * Check if the field name is not reserved and not already used,
+     * else display an error message.
+     *
+     * @return boolean
+     */
+    private function isFieldNameAvailable()
+    {
+        $available = false;
+
+        if ($this->isFieldNameReserved()) {
+            $this->fieldNameReserved = true;
+        } elseif ($this->isFieldNameAlreadyUsed()) {
+            $this->fieldNameUsed = true;
+        } else {
+            $available = true;
+        }
+
+        return $available;
+    }
+
+    /**
+     * Check if the field name is reserved
+     *
+     * @return boolean
+     */
+    private function isFieldNameReserved()
+    {
+        $fieldName = $this->getFieldName();
+
+        return in_array($fieldName, [
+            'id',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'record_label',
+            'domain',
+            'created_by'
+        ]);
+    }
+
+    /**
+     * Use slug method to genrate field name
+     *
+     * @return string
+     */
+    private function getFieldName()
+    {
+        return Str::slug($this->newColumn, '_');
+    }
+
+    /**
+     * Check if the field name is already used
+     *
+     * @return boolean
+     */
+    private function isFieldNameAlreadyUsed()
+    {
+        return $this->fields->filter(function ($field) {
+            return $field['name'] === $this->getFieldName();
+        })->count() > 0;
     }
 
     public function updateColumnsOrder($sortedFields)
@@ -160,24 +225,72 @@ class ColumnsCreation extends Component
 
     public function incrementStep()
     {
-        // if ($this->isConfiguringFields()) {
-            $this->createOrUpdateModule();
+        if ($this->isCreatingColumns()) {
+            // Recréer la structure des blocks et champs
+            $this->updateStructureWithFields();
+
+            // Recréer tous les champs
             $this->updateBlocksAndFields();
+
+            // Recréer le filtre all
+            $this->createOrUpdateFilter();
+
+            // Mettre à jour le fichier de traduction
+            $this->createOrUpdateLanguageFile();
+
+        } elseif ($this->isConfiguringFields()) {
+            // Recréer la structure des blocks et champs
+            $this->updateStructureWithFields();
+
+            // Recréer tous les champs
+            $this->updateBlocksAndFields();
+
+            // Créer les related list 1-N
+            // Mettre à jour le modèle avec les relations et les clès étrangères
+            // Faire en sorte qu'on ne puis plus modifier le slug et type de champ dès qu'il est créé en base de données
+            // TODO: A faire
+
+            // Mettre à jour le fichier de traduction
+            $this->createOrUpdateModuleFiles();
+
+            // Créer la table
             $this->createOrUpdateTable();
-        // }
+
+            // Activer le module sur tous les domaines
+            $this->activateModuleInAllDomains();
+        }
 
         $this->changeStep($this->step + 1);
+    }
+
+    private function updateStructureWithFields()
+    {
+        if (!empty($this->structure['tabs'])) {
+            foreach ($this->structure['tabs'] as &$tab) {
+                foreach ($tab['blocks'] as &$block) {
+                    $block['fields'] = $this->fields->filter(function ($field) use ($block) {
+                        if ($field['block_uuid'] === $block['uuid']) {
+                            return $field;
+                        };
+                    });
+                }
+            }
+
+            $this->emitStructureChangedEvent($this->structure);
+        }
     }
 
     private function getSystemBlockUuid()
     {
         $uuid = null;
 
-        foreach ($this->structure['tabs'] as $tab) {
-            foreach ($tab['blocks'] as $block) {
-                if ($block['label'] === 'block.system') {
-                    $uuid = $block['uuid'];
-                    break;
+        if (!empty($this->structure['tabs'])) {
+            foreach ($this->structure['tabs'] as $tab) {
+                foreach ($tab['blocks'] as $block) {
+                    if ($block['label'] === 'block.system') {
+                        $uuid = $block['uuid'];
+                        break;
+                    }
                 }
             }
         }
@@ -198,5 +311,13 @@ class ColumnsCreation extends Component
     private function isSameFieldName($field, $fieldName)
     {
         return $field['name'] === $fieldName;
+    }
+
+    private function activateModuleInAllDomains()
+    {
+        // $domains = Domain::all();
+        // foreach ($domains as $domain) {
+        //     $domain->modules()->attach($this->module);
+        // }
     }
 }

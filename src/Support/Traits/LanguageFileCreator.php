@@ -94,9 +94,9 @@ trait LanguageFileCreator
     private function getTranslations()
     {
         $moduleTranslations = $this->getModuleTranslations();
-        $blockTranslations = []; //$this->getBlockTranslations();
-        $fieldTranslations = []; //$this->getFieldTranslations();
-        $relatedlistTranslations = []; //$this->getRelatedlistTranslations();
+        $blockTranslations = $this->getBlockTranslations();
+        $fieldTranslations = $this->getFieldTranslations();
+        $relatedlistTranslations = $this->getRelatedlistTranslations();
 
         return array_merge($moduleTranslations, $blockTranslations, $fieldTranslations, $relatedlistTranslations);
     }
@@ -115,10 +115,12 @@ trait LanguageFileCreator
             'block' => []
         ];
 
-        foreach ($this->blocks as $block) {
-            $block = (object) $block;
-            $key = str_replace('block.', '', $block->label);
-            $translations['block'][$key] = $block->translation;
+        if (!empty($this->blocks)) {
+            foreach ($this->blocks as $block) {
+                $block = (object) $block;
+                $key = str_replace('block.', '', $block->label);
+                $translations['block'][$key] = $block->translation;
+            }
         }
 
         return $translations;
@@ -130,14 +132,16 @@ trait LanguageFileCreator
             'field' => []
         ];
 
-        foreach ($this->fields as $field) {
-            $field = (object) $field;
-            $translations['field'][$field->name] = $field->label;
+        if (!empty($this->fields)) {
+            foreach ($this->fields as $field) {
+                $field = (object) $field;
+                $translations['field'][$field->name] = $field->label;
 
-            $translationsGeneratedByUitype = $this->getTranslationsGeneratedByUitype($field);
+                $translationsGeneratedByUitype = $this->getTranslationsGeneratedByUitype($field);
 
-            if ($translationsGeneratedByUitype) {
-                $translations = array_merge($translations, $translationsGeneratedByUitype);
+                if ($translationsGeneratedByUitype) {
+                    $translations = array_merge($translations, $translationsGeneratedByUitype);
+                }
             }
         }
 

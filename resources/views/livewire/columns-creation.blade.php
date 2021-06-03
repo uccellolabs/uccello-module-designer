@@ -1,4 +1,4 @@
-<div @if ($step < 3)class="hidden"@endif wire:submit.prevent="submit">
+<div @if ($step < 3)class="hidden"@endif>
     <x-md-vertical-step-card title="{{ trans('module-designer::ui.block.create_columns.title') }}" step="3" closed="{{ $step !== 3 }}">
         @if ($step === 3)
         <div class="col-span-6 p-12 border-b border-gray-200 border-solid">
@@ -15,18 +15,14 @@
 
                     <div class="absolute p-2 bg-white rounded-md shadow-md -right-2 top-8" x-show="open">
                         <div class="flex flex-col">
-                            <a class="flex flex-row px-4 py-2 align-middle" wire:click="addSystemField('{{ trans('module-designer::ui.block.create_columns.system_field.created_at') }}')">
-                                {{ trans('module-designer::ui.block.create_columns.system_field.created_at') }}
-                            </a>
-                            <a class="flex flex-row px-4 py-2 align-middle" wire:click="addSystemField('{{ trans('module-designer::ui.block.create_columns.system_field.created_by') }}')">
-                                {{ trans('module-designer::ui.block.create_columns.system_field.created_by') }}
-                            </a>
-                            <a class="flex flex-row px-4 py-2 align-middle" wire:click="addSystemField('{{ trans('module-designer::ui.block.create_columns.system_field.updated_at') }}')">
-                                {{ trans('module-designer::ui.block.create_columns.system_field.updated_at') }}
-                            </a>
-                            <a class="flex flex-row px-4 py-2 align-middle" wire:click="addSystemField('{{ trans('module-designer::ui.block.create_columns.system_field.workspace') }}')">
-                                {{ trans('module-designer::ui.block.create_columns.system_field.workspace') }}
-                            </a>
+                            @foreach ($fields as $field)
+                                @php($field = (object) $field)
+                                @continue(!$field->isSystemField || $field->isDisplayedInListView)
+                                <a class="flex flex-row px-4 py-2 align-middle" wire:click="toggleIsDisplayedInListView('{{ $field->name }}')">
+                                    <div class="rounded-full h-3 w-3 flex items-center justify-center mr-2 {{ $field->color }}">&nbsp;</div>
+                                    {{ $field->label }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -37,20 +33,23 @@
                 <ul class="grid items-center grid-cols-4 gap-2 outline-none" wire:sortable="updateColumnsOrder">
                     @foreach($fields->sortBy('filterSequence') as $index => $field)
                         @php($field = (object) $field)
+                        @continue($field->isSystemField && !$field->isDisplayedInListView)
                         <li class="outline-none" wire:sortable.item="{{ $field->name }}" wire:key="field-{{ $field->name }}">
                             <x-md-column-tag :field="$field" :index="$index"></x-md-column-tag>
                         </li>
                     @endforeach
 
                     <li class="col-span-1">
-                        <input type="text" wire:model="newColumn" placeholder="{{ trans('module-designer::ui.block.create_columns.column_name') }}" class="w-full px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="createField()">
+                        <input type="text" wire:model="newColumn" placeholder="{{ trans('module-designer::ui.block.create_columns.column_name') }}" class="w-full px-2 bg-transparent browser-default focus:outline-none" autocomplete="false" wire:keydown.enter="addField()">
                     </li>
                 </ul>
             </div>
 
             <div class="mb-5">
-                @if ($columnNameExists)
+                @if ($fieldNameUsed)
                 <span class="text-sm text-red-500">{{ trans('module-designer::ui.block.create_columns.error.column_already_exists', ['column' => $newColumn]) }}</span>
+                @elseif ($fieldNameReserved)
+                <span class="text-sm text-red-500">{{ trans('module-designer::ui.block.create_columns.error.column_name_reserved', ['column' => $newColumn]) }}</span>
                 @endif
             </div>
 
@@ -90,6 +89,7 @@
             @if ($step === 4)
             <div class="p-6 border-b border-gray-200 border-solid">
                 @foreach($fields->sortBy('sequence') as $index => $field)
+                    @continue($field['isSystemField'])
                     <x-md-field-config :field="$field" :index="$index"></x-md-field-config>
                 @endforeach
             </div>

@@ -41,7 +41,8 @@
                         <input type="text"
                             wire:model="name"
                             {{-- wire:keyup.debounce.1s="checkModuleNameAvailability()" --}}
-                            class="w-full px-3 py-2 bg-transparent outline-none browser-default @if(!$isModuleNameAvailable) border-b-2 border-red-500 border-solid @endif"
+                            class="w-full px-3 py-2 bg-transparent outline-none browser-default @if(!$isModuleNameAvailable) border-b-2 border-red-500 border-solid @endif @if(optional($structure)['isEditing'])text-gray-400 @endif"
+                            @if(optional($structure)['isEditing'])disabled="disabled"@endif
                             autocomplete="off">
                     </div>
                     @error('name') <span class="text-sm text-red-500">{{ $message }}</span> @enderror

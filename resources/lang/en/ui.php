@@ -47,6 +47,7 @@ return [
             ],
             'error' => [
                 'column_already_exists' => 'Column :column already exists',
+                'column_name_reserved' => '":column" is a reserved name. You cannot use it.',
             ],
         ],
         'config_columns' => [
@@ -77,9 +78,9 @@ return [
         ],
     ],
     'field' => [
-        'assigned_to' => 'Assigned to',
-        'workspace' => 'Workspace',
+        'created_by' => 'Created by',
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',
+        'workspace' => 'Workspace',
     ],
 ];

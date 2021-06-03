@@ -25,9 +25,9 @@
         <div class="flex flex-col ml-4">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.uitype') }}</div>
             <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')" @if(!$field->isEditable)disabled="disabled"@endif>
+                <select class="h-10 px-3 bg-transparent w-52 browser-default" wire:model="fields.{{ $index }}.uitype" wire:change="changeUitype('{{ $field->name }}')" @if(!$field->isFullyEditable)disabled="false"@endif>
                     @foreach ($uitypes as $uitype)
-                    <option value="{{ $uitype->name }}">{{ $uitype->label }}</option>
+                    <option value="{{ $uitype->name }}" @if((!$field->isFullyEditable) && $field->uitype === $uitype->name)selected="selected"@endif>{{ $uitype->label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -35,8 +35,8 @@
         {{-- Name --}}
         <div class="flex flex-col ml-4">
             <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.name') }}</div>
-            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $field->name }}" @if(!$field->isEditable)disabled="disabled"@endif>
+            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg @if(!$field->isFullyEditable)text-gray-400 @endif">
+                <input type="text" class="w-full px-3 py-2 bg-transparent browser-default" value="{{ $field->name }}" @if(!$field->isFullyEditable)disabled="disabled"@endif>
             </div>
         </div>
         {{-- Default --}}

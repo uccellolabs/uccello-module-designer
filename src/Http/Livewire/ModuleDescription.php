@@ -4,6 +4,7 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FileCreator;
 use Uccello\ModuleDesigner\Support\Traits\StepManager;
@@ -26,10 +27,15 @@ class ModuleDescription extends Component
         'iconSelected' => 'onIconSelected'
     ];
 
+    private $module;
+
     public function updatedLabel()
     {
         $this->label_singular = Str::singular($this->label);
-        $this->name = Str::slug(Str::singular($this->label));
+
+        if ($this->isNewModule()) {
+            $this->name = Str::slug(Str::singular($this->label));
+        }
     }
 
     public function updatedName()
@@ -138,14 +144,14 @@ class ModuleDescription extends Component
 
     private function createModuleInDatabase()
     {
-        $module = Module::create([
+        $this->module = Module::create([
             'name' => $this->structure['name'],
             'icon' => $this->structure['icon'] ?? null,
             'model_class' => $this->getModelClass(),
             'data' => $this->getModuleData()
         ]);
 
-        $this->structure['id'] = $module->getKey();
+        $this->structure['id'] = $this->module->getKey();
     }
 
     private function getModelClass()
@@ -246,7 +252,7 @@ class ModuleDescription extends Component
         $this->updateModuleInDatabase();
         $this->createOrUpdateTable();
         $this->createOrUpdateModelFile();
-        $this->createOrUpdateLanguageFile();
+        // $this->createOrUpdateLanguageFile(); //FIXME: When we activate it, it removes tabs, blocks, fields, relatedlist translations
     }
 
     private function updateModuleInDatabase()
@@ -257,5 +263,7 @@ class ModuleDescription extends Component
         $module->model_class = $this->getModelClass();
         $module->data = $this->getModuleData();
         $module->save();
+
+        $this->module = $module;
     }
 }
