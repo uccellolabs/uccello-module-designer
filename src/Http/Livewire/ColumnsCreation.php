@@ -182,11 +182,15 @@ class ColumnsCreation extends Component
         }
     }
 
-    public function toggleIsDisplayedInListView($fieldName)
+    public function toggleIsDisplayedInListView($fieldName, $append = false)
     {
-        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName, $append) {
             if ($this->isSameFieldName($field, $fieldName)) {
                 $field['isDisplayedInListView'] = !$field['isDisplayedInListView'];
+
+                if ($append) {
+                    $field['filterSequence'] = $this->fields->count();
+                }
             }
 
             return $field;

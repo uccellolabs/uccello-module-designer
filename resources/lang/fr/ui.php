@@ -25,6 +25,7 @@ return [
             'title' => 'Configuration avancée',
             'for_admin' => 'Module d\'administration',
             'yes' => 'Oui',
+            'access_mode' => 'Qui aura accès aux données de ce module ?',
             'public' => 'Public',
             'private' => 'Privé',
             'public_description' => 'Tous les utilisateurs ayant accès à ce module dans ce workspace.',
@@ -39,6 +40,10 @@ return [
             'display_system_field' => 'Afficher un champ système',
             'column_name' => 'Nom de la colonne',
             'list_preview' => 'Rendu liste',
+            'sort' => 'Trier',
+            'display_hide' => 'Afficher / Cacher',
+            'delete' => 'Supprimer',
+            'delete_confirm' => 'Vraimer supprimer ?',
             'system_field' => [
                 'created_by' => 'Créé par',
                 'created_at' => 'Créé le',
@@ -82,5 +87,8 @@ return [
         'created_at' => 'Créé le',
         'updated_at' => 'Modifié le',
         'workspace' => 'Workspace',
+    ],
+    'button' => [
+        'continue' => 'Continuer',
     ],
 ];

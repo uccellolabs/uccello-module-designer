@@ -9,9 +9,9 @@
             <i class="fas fa-ellipsis-v"></i>
         </a>
 
-        <div class="absolute p-2 bg-white rounded-md shadow-md -right-2 top-8" x-show="open">
-            <div class="flex flex-col">
-                <a class="flex flex-row px-4 py-2 align-middle" wire:click="toggleFilterSortOrder('{{ $field->name }}')">
+        <div class="absolute z-20 w-48 p-2 bg-white rounded-md shadow-md -right-2 top-8" x-show="open">
+            <div class="flex flex-col text-sm">
+                <a class="flex flex-row items-center px-4 py-2 cursor-pointer hover:bg-gray-100" wire:click="toggleFilterSortOrder('{{ $field->name }}')">
                     @if($field->sortOrder === 'asc')
                         <i class="fas fa-sort-amount-up"></i>
                     @elseif($field->sortOrder === 'desc')
@@ -20,25 +20,27 @@
                         <i class="text-xs fas fa-filter"></i>
                     @endif
 
-                    <span class="ml-2">Sort</span>
+                    <span class="ml-2">{{ trans('module-designer::ui.block.create_columns.sort') }}</span>
                 </a>
-                <a class="flex flex-row px-4 py-2" wire:click="toggleIsDisplayedInListView('{{ $field->name }}')">
+                <a class="flex flex-row items-center px-4 py-2 cursor-pointer hover:bg-gray-100" wire:click="toggleIsDisplayedInListView('{{ $field->name }}')">
                     @if($field->isDisplayedInListView)
                         <i class="far fa-eye"></i>
                     @else
                         <i class="far fa-eye-slash"></i>
                     @endif
 
-                    <span class="ml-2">Display / Hide</span>
+                    <span class="ml-2">{{ trans('module-designer::ui.block.create_columns.display_hide') }}</span>
                 </a>
 
-                <a class="flex flex-row px-4 py-2 text-red-500 cursor-pointer" x-on:click="deleting=true" x-show="!deleting">
-                    <span class="ml-2">Delete</span>
+                @if(!$field->isSystemField)
+                <a class="flex flex-row px-4 py-2 text-red-500 cursor-pointer hover:bg-gray-100" x-on:click="deleting=true" x-show="!deleting">
+                    <span class="ml-2">{{ trans('module-designer::ui.block.create_columns.delete') }}</span>
                 </a>
 
                 <a class="flex flex-row px-4 py-2 text-white bg-red-500 cursor-pointer" x-show="deleting" wire:click="deleteField('{{ $field->name }}')">
-                    <span class="ml-2">Really delete?</span>
+                    <span class="ml-2">{{ trans('module-designer::ui.block.create_columns.delete_confirm') }}</span>
                 </a>
+                @endif
             </div>
         </div>
     </div>

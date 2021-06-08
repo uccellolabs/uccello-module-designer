@@ -86,7 +86,7 @@ class ActionSelection extends Component
 
     private function loadCrudModules()
     {
-        $this->crudModules = Module::whereNotNull('model_class')->get()->map(function ($module) {
+        $this->crudModules = Module::where('model_class', 'like', 'Local%')->get()->map(function ($module) {
             $module->label = uctrans($module->name, $module);
             return $this->toArray($module);
         });

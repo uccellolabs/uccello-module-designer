@@ -25,6 +25,7 @@ return [
             'title' => 'Advanced configuration',
             'for_admin' => 'Administration module',
             'yes' => 'Yes',
+            'access_mode' => 'Who can access to module data?',
             'public' => 'Public',
             'private' => 'Private',
             'public_description' => 'All users with access to this module in this workspace will be able to see the records.',
@@ -39,6 +40,10 @@ return [
             'display_system_field' => 'Display a system field',
             'column_name' => 'Column name',
             'list_preview' => 'List preview',
+            'sort' => 'Sort',
+            'display_hide' => 'Display / Hide',
+            'delete' => 'Delete',
+            'delete_confirm' => 'Realy delete?',
             'system_field' => [
                 'created_by' => 'Created by',
                 'created_at' => 'Created at',
@@ -82,5 +87,8 @@ return [
         'created_at' => 'Created at',
         'updated_at' => 'Updated at',
         'workspace' => 'Workspace',
+    ],
+    'button' => [
+        'continue' => 'Continue',
     ],
 ];

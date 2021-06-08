@@ -48,26 +48,11 @@ class ModuleDescription extends Component
         return view('module-designer::livewire.module-description');
     }
 
-    // public function checkModuleNameAvailability()
-    // {
-    //     $moduleName = $this->structure['name'];
-
-    //     if ($moduleName) {
-    //         $module = Module::where('name', $moduleName)->first();
-
-    //         if ($module && $module->getKey() != $this->structure['id']) { // Is different module (edition)
-    //             $this->isModuleNameAvailable = false;
-    //         } else {
-    //             $this->isModuleNameAvailable = true;
-    //         }
-    //     } else {
-    //         $this->isModuleNameAvailable = true;
-    //     }
-    // }
-
-    public function iconSelected($icon, $target)
+    public function onIconSelected($icon, $target)
     {
-        $this->structure['icon'] = $icon;
+        if ($target === 'module') {
+            $this->structure['icon'] = $icon;
+        }
     }
 
     public function changeModuleVisibility($visibility)
@@ -110,6 +95,11 @@ class ModuleDescription extends Component
         $this->emitStructureChangedEvent($this->structure);
 
         $this->incrementStep();
+    }
+
+    public function toggleIsForAdmin()
+    {
+        $this->structure['admin'] = !$this->structure['admin'];
     }
 
     private function updateStructure()
