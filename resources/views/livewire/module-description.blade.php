@@ -66,12 +66,12 @@
             <div class="p-6">
                 {{-- For administration --}}
                 <div class="mb-2">
-                    <div class="">{{ trans('module-designer::ui.block.config_module.for_admin') }}</div>
+                    {{ trans('module-designer::ui.block.config_module.for_admin') }}
                 </div>
 
                 <div class="flex flex-row mb-3 cursor-pointer" wire:click="toggleIsForAdmin">
                     @php($isForAdmin = isset($structure['admin']) && $structure['admin'] === true)
-                    <div class="flex items-center" x-data="{toggle: @if($isForAdmin) true @else false @endif}">
+                    <div class="flex items-center">
                         <div class="relative flex items-center w-10 h-5 transition duration-200 ease-linear border-2 rounded-full @if($isForAdmin) border-primary-900 @else border-gray-400 @endif">
                             <div class="absolute w-3 h-3 transition duration-100 ease-linear transform rounded-full cursor-pointer left-1 @if($isForAdmin) translate-x-4 bg-primary-900 @else translate-x-0 bg-gray-400 @endif"></div>
                         </div>

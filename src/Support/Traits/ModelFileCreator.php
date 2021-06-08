@@ -129,12 +129,14 @@ trait ModelFileCreator
             foreach ($this->fields as $field) {
                 if ($this->isEntityField($field)) {
                     $modelClass = $this->getRelatedModuleModelClass($field);
-                    $plural = $this->getModuleNamePluralized();
+                    $plural = $this->getRelatedModuleNamePluralized($field);
 
-                    $relations .= "\n    public function $plural()\n".
-                    "    {\n".
-                    "        return \$this->belongsTo(\\$modelClass::class);\n".
-                    "    }\n";
+                    if ($modelClass && $plural) {
+                        $relations .= "\n    public function $plural()\n".
+                        "    {\n".
+                        "        return \$this->belongsTo(\\$modelClass::class);\n".
+                        "    }\n";
+                    }
                 }
             }
         }
@@ -162,9 +164,19 @@ trait ModelFileCreator
         return $modelClass;
     }
 
-    private function getModuleNamePluralized()
+    private function getRelatedModuleNamePluralized($field)
     {
-        return Str::pluralStudly($this->structure['name']);
+        $name = null;
+
+        if (optional($field['data'])['module']) {
+            $module = Module::where('name', $field['data']['module'])->first();
+
+            if ($module) {
+                $name = Str::pluralStudly(Str::slug($field['data']['module'], '_'));
+            }
+        }
+
+        return $name;
     }
 
     private function updateModelFile()

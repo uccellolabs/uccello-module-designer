@@ -91,6 +91,16 @@ class ColumnsCreation extends Component
         }
     }
 
+    public function toggleIsRequired($fieldName)
+    {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
+            if ($this->isSameFieldName($field, $fieldName)) {
+                $field['isRequired'] = !$field['isRequired'];
+            }
+            return $field;
+        });
+    }
+
     private function createField($field)
     {
         $this->fields[] = $field;
