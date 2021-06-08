@@ -258,6 +258,8 @@ class ColumnsCreation extends Component
 
             // Activer le module sur tous les domaines
             $this->activateModuleInAllDomains();
+        } elseif ($this->isConfiguringRecordLabel()) {
+            $this->createOrUpdateModelFile();
         }
 
         $this->changeStep($this->step + 1);

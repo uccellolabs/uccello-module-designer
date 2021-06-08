@@ -102,31 +102,33 @@
             {{-- Array --}}
             @elseif($option->type === 'array')
                 @php ($fieldData = (array) $field->data)
-                @foreach ($fieldData[$option->key] as $rowIndex => $row)
-                    <div class="flex flex-col ml-4">
-                        <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_value') }}</div>
-                        <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                            <input type="text"
-                                class="w-full px-3 py-2 bg-transparent browser-default"
-                                wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.value">
+                @if (!empty($fieldData[$option->key]))
+                    @foreach ($fieldData[$option->key] as $rowIndex => $row)
+                        <div class="flex flex-col ml-4">
+                            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_value') }}</div>
+                            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                                <input type="text"
+                                    class="w-full px-3 py-2 bg-transparent browser-default"
+                                    wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.value">
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-col ml-4">
-                        <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_label') }}</div>
-                        <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                            <input type="text"
-                                class="w-full px-3 py-2 bg-transparent browser-default"
-                                wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.label">
+                        <div class="flex flex-col ml-4">
+                            <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_label') }}</div>
+                            <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
+                                <input type="text"
+                                    class="w-full px-3 py-2 bg-transparent browser-default"
+                                    wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.label">
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center ml-4">
-                        @if (count($fieldData[$option->key]) > 1)
-                        <a class="px-2 py-1 text-center text-white cursor-pointer red rounded-xl" wire:click="deleteRowFromFieldOptionArray('{{ $field->name }}', '{{ $option->key }}', {{ $rowIndex }})">
-                            <i class="text-base material-icons">delete</i>
-                        </a>
-                        @endif
-                    </div>
-                @endforeach
+                        <div class="flex items-center ml-4">
+                            @if (count($fieldData[$option->key]) > 1)
+                            <a class="px-2 py-1 text-center text-white cursor-pointer red rounded-xl" wire:click="deleteRowFromFieldOptionArray('{{ $field->name }}', '{{ $option->key }}', {{ $rowIndex }})">
+                                <i class="text-base material-icons">delete</i>
+                            </a>
+                            @endif
+                        </div>
+                    @endforeach
+                @endif
 
                 <a class="w-12 px-2 py-1 mt-4 ml-4 text-center text-white cursor-pointer primary rounded-xl" wire:click="addRowToFieldOptionArray('{{ $field->name }}', '{{ $option->key }}')">
                     <i class="text-base material-icons">add</i>

@@ -103,9 +103,12 @@
             @if ($step === 5)
             <div class="p-6 border-b border-gray-200 border-solid">
                 <span class="mb-2 text-sm">{{ trans('module-designer::ui.block.define_label.record_label') }}</span>
-                <div class="bg-gray-100 border border-gray-200 border-solid rounded-lg">
-                    <input type="text" wire:model="structure.recordLabel" class="w-full px-3 py-2 bg-transparent browser-default" autocomplete="off">
-                </div>
+                <select class="px-2 py-1 bg-gray-100 border border-gray-200 border-solid rounded-lg browser-default h-9" wire:model="structure.recordLabel">
+                    <option value="id">ID</option>
+                    @foreach ($fields->sortBy('label') as $field)
+                        <option value="{{ $field['name'] }}">{{ $field['label'] }}</option>
+                    @endforeach
+                </select>
             </div>
             @endif
         </x-slot>

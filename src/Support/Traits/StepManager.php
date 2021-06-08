@@ -40,4 +40,9 @@ trait StepManager
     {
         return $this->step === 4;
     }
+
+    private function isConfiguringRecordLabel()
+    {
+        return $this->step === 5;
+    }
 }

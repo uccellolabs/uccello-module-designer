@@ -2,6 +2,7 @@
 
 namespace Uccello\ModuleDesigner\Http\Livewire;
 
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Uccello\Core\Models\Module;
@@ -265,6 +266,9 @@ class ActionSelection extends Component
             'step' => 0,
             'tabs' => $this->buildTabsStructure($module)
         ];
+
+        // getModuleRecordLabel() needs existing structure. So we use it after structure generation
+        $this->structure['recordLabel'] = $this->getModuleRecordLabel();
     }
 
     private function buildTabsStructure(Module $module)
@@ -352,14 +356,24 @@ class ActionSelection extends Component
 
     private function deleteModule()
     {
+        $this->deleteModuleFromDatabase();
         $this->deleteModuleFiles();
-
-        $module = Module::find($this->deletedModuleId);
-        $module->delete();
-
-        //TODO: Delete table
+        $this->deleteModuleTable();
 
         $this->loadCrudModules();
+    }
+
+    private function deleteModuleFromDatabase()
+    {
+        $module = Module::find($this->deletedModuleId);
+        $module->delete();
+    }
+
+    private function deleteModuleTable()
+    {
+        if ($this->structure['table']) {
+            Schema::dropIfExists($this->structure['table']);
+        }
     }
 
     private function noticeModuleStructureChanged()

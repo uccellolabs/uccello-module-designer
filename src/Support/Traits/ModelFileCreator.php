@@ -3,6 +3,8 @@
 namespace Uccello\ModuleDesigner\Support\Traits;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Uccello\Core\Models\Module;
 
 trait ModelFileCreator
 {
@@ -69,16 +71,18 @@ trait ModelFileCreator
 
         $content = str_replace(
             [
-                '// %namespace%',
+                '// {{namespace}}',
                 'ClassName',
-                '%table_name%',
-                '// %relations%'
+                '{{table_name}}',
+                '// {{relations}}',
+                '// {{recordLabel}}'
             ],
             [
                 "namespace $namespace;",
                 $this->getModelClassFromModuleName(),
                 $this->getModuleTableName(),
-                '', // TODO: generate relations
+                $this->getModuleRelations(),
+                $this->getRecordLabelFunction()
             ],
             $stubContent
         );
@@ -96,6 +100,71 @@ trait ModelFileCreator
     private function getModuleTableName()
     {
         return $this->structure['table'];
+    }
+
+    private function getModuleRecordLabel()
+    {
+        $content = $this->getCurrentModelContent();
+
+        preg_match('`// recordLabel:([^\s]+)`', $content, $matches);
+
+        return !empty($matches[1]) ? $matches[1] : 'id';
+    }
+
+    private function getRecordLabelFunction()
+    {
+        $fieldName = $this->structure['recordLabel'] ?? 'id';
+
+        return "    public function getRecordLabelAttribute()\n".
+        "    {\n".
+        "        return \$this->$fieldName; // recordLabel:$fieldName\n".
+        "    }";
+    }
+
+    private function getModuleRelations()
+    {
+        $relations = "";
+
+        if (!empty($this->fields)) {
+            foreach ($this->fields as $field) {
+                if ($this->isEntityField($field)) {
+                    $modelClass = $this->getRelatedModuleModelClass($field);
+                    $plural = $this->getModuleNamePluralized();
+
+                    $relations .= "\n    public function $plural()\n".
+                    "    {\n".
+                    "        return \$this->belongsTo(\\$modelClass::class);\n".
+                    "    }\n";
+                }
+            }
+        }
+
+        return $relations;
+    }
+
+    private function isEntityField($field)
+    {
+        return $field['uitype'] === 'entity';
+    }
+
+    private function getRelatedModuleModelClass($field)
+    {
+        $modelClass = null;
+
+        if (optional($field['data'])['module']) {
+            $module = Module::where('name', $field['data']['module'])->first();
+
+            if ($module) {
+                $modelClass = $module->model_class;
+            }
+        }
+
+        return $modelClass;
+    }
+
+    private function getModuleNamePluralized()
+    {
+        return Str::pluralStudly($this->structure['name']);
     }
 
     private function updateModelFile()
