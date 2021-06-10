@@ -388,6 +388,7 @@ class ColumnsCreation extends Component
         if ($module) {
             $domains = Domain::all();
             foreach ($domains as $domain) {
+                $domain->modules()->detach($module);
                 $domain->modules()->attach($module);
             }
         }

@@ -84,13 +84,14 @@
         </div>
 
         {{-- Separator --}}
-        <div class="absolute z-10 grid w-2/3 -bottom-14" x-data="{deleting: @entangle('isDeleting')}">
+        <div class="absolute z-10 grid w-2/3 -bottom-14" x-data="{deleting: @entangle('isDeleting'), canDelete: @entangle('canDelete')}">
             <img src="{{ ucasset('img/step-link.png', 'uccello/module-designer') }}" width="20" class="justify-self-center">
             @if ($action === 'delete')
                 <div class="absolute z-20 grid -bottom-7 justify-self-center font-semibold cursor-pointer @if($step > 0)hidden @endif">
                     {{-- Delete --}}
                     <button x-show="!deleting" x-on:click="deleting=true"
-                        class="grid @if(!empty($deletedModuleId))bg-white hover:bg-gray-100 text-red-500 border border-red-500  @else bg-gray-300 text-white  @endif w-48 h-12 font-semibold justify-self-center justify-items-center items-center rounded-xl @if($step > 0)hidden @endif">
+                        x-bind:disabled="!canDelete"
+                        class="grid @if($canDelete)bg-white hover:bg-gray-100 text-red-500 border border-red-500  @else bg-gray-300 text-white  @endif w-48 h-12 font-semibold justify-self-center justify-items-center items-center rounded-xl @if($step > 0)hidden @endif">
                         {{ trans('module-designer::ui.button.delete') }}
                     </button>
 

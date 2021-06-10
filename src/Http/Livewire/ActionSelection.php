@@ -116,6 +116,7 @@ class ActionSelection extends Component
         } elseif ($this->action === 'delete') {
             $this->buildStructureFromModule($this->deletedModuleId);
             $this->deleteModule();
+            $this->canDelete = false;
         }
     }
 
