@@ -76,6 +76,10 @@ trait TableCreator
 
     private function getSortedFields()
     {
+        if (empty($this->fields)) {
+            return [];
+        }
+
         return $this->fields->sortBy('sequence')->map(function ($field) {
             return (object) $field;
         });
@@ -149,5 +153,10 @@ trait TableCreator
         $fakeField->displaytype_id = displaytype($field->displaytype)->id;
 
         return $fakeField;
+    }
+
+    private function deleteColumnFromTable($fieldName)
+    {
+
     }
 }

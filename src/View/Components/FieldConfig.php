@@ -3,6 +3,7 @@
 namespace Uccello\ModuleDesigner\View\Components;
 
 use Illuminate\View\Component;
+use Uccello\Core\Models\Displaytype;
 use Uccello\Core\Models\Uitype;
 
 class FieldConfig extends Component
@@ -30,7 +31,9 @@ class FieldConfig extends Component
      */
     public function render()
     {
-        return view('module-designer::components.field-config');
+        return view('module-designer::components.field-config', [
+            'displaytypes' => $this->getDisplaytypes()
+        ]);
     }
 
     private function getUitypes()
@@ -49,5 +52,10 @@ class FieldConfig extends Component
         };
 
         return $uitypes->sortBy('label');
+    }
+
+    private function getDisplaytypes()
+    {
+        return Displaytype::all();
     }
 }

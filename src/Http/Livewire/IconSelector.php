@@ -3,9 +3,12 @@
 namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Livewire\Component;
+use Uccello\ModuleDesigner\Support\Traits\StructureManager;
 
 class IconSelector extends Component
 {
+    use StructureManager;
+
     public $query = '';
     public $target;
     public $icon;
@@ -948,11 +951,14 @@ class IconSelector extends Component
     public $displayedIcons = [
     ];
 
-    public function __construct($target, $icon = null)
+    protected $listeners = [
+        'structureChanged' => 'onStructureChanged'
+    ];
+
+    public function mount($target)
     {
         $this->displayedIcons = $this->icons;
         $this->target = $target;
-        $this->icon = $icon;
     }
 
     public function search()
@@ -971,5 +977,10 @@ class IconSelector extends Component
     public function render()
     {
         return view('module-designer::livewire.icon-selector');
+    }
+
+    public function onStructureChanged($structure)
+    {
+        $this->icon = $structure['icon'];
     }
 }

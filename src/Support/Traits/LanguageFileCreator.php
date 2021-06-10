@@ -15,6 +15,14 @@ trait LanguageFileCreator
         }
     }
 
+    private function deleteLanguageFile()
+    {
+        $filePath = $this->getLanguageFilePath();
+        if ($this->languageFileExists()) {
+            unlink($filePath);
+        }
+    }
+
     private function languageFileExists()
     {
         return File::exists($this->getLanguageFilePath());
@@ -96,7 +104,8 @@ trait LanguageFileCreator
     private function getModuleTranslations()
     {
         return [
-            $this->structure['name'] => $this->structure['label']
+            $this->structure['name'] => $this->structure['label'],
+            $this->structure['name'].'_singular' => $this->structure['label_singular']
         ];
     }
 
@@ -106,10 +115,12 @@ trait LanguageFileCreator
             'block' => []
         ];
 
-        foreach ($this->blocks as $block) {
-            $block = (object) $block;
-            $key = str_replace('block.', '', $block->label);
-            $translations['block'][$key] = $block->translation;
+        if (!empty($this->blocks)) {
+            foreach ($this->blocks as $block) {
+                $block = (object) $block;
+                $key = str_replace('block.', '', $block->label);
+                $translations['block'][$key] = $block->translation;
+            }
         }
 
         return $translations;
@@ -121,14 +132,16 @@ trait LanguageFileCreator
             'field' => []
         ];
 
-        foreach ($this->fields as $field) {
-            $field = (object) $field;
-            $translations['field'][$field->name] = $field->label;
+        if (!empty($this->fields)) {
+            foreach ($this->fields as $field) {
+                $field = (object) $field;
+                $translations['field'][$field->name] = $field->label;
 
-            $translationsGeneratedByUitype = $this->getTranslationsGeneratedByUitype($field);
+                $translationsGeneratedByUitype = $this->getTranslationsGeneratedByUitype($field);
 
-            if ($translationsGeneratedByUitype) {
-                $translations = array_merge($translations, $translationsGeneratedByUitype);
+                if ($translationsGeneratedByUitype) {
+                    $translations = array_merge($translations, $translationsGeneratedByUitype);
+                }
             }
         }
 

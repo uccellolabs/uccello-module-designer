@@ -12,6 +12,8 @@ use Uccello\Core\Models\Tab;
 
 trait ModuleInstaller
 {
+    use FileCreator, StructureAdapter;
+
     protected $module;
 
     protected function createOrUpdateModule()

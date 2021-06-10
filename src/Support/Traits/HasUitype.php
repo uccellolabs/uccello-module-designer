@@ -9,7 +9,7 @@ trait HasUitype
 {
     public function changeUitype($fieldName)
     {
-        $this->mapFields(function ($field) use ($fieldName) {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName) {
             if ($this->isSameFieldName($field, $fieldName)) {
                 $field = $this->getRefreshedField($field);
             }
@@ -19,7 +19,7 @@ trait HasUitype
 
     public function addRowToFieldOptionArray($fieldName, $optionKey)
     {
-        $this->mapFields(function ($field) use ($fieldName, $optionKey) {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey) {
             if ($this->isSameFieldName($field, $fieldName)) {
                 $field['data'][$optionKey][] = ['value' => '', 'label' => ''];
             }
@@ -30,7 +30,7 @@ trait HasUitype
 
     public function deleteRowFromFieldOptionArray($fieldName, $optionKey, $index)
     {
-        $this->mapFields(function ($field) use ($fieldName, $optionKey, $index) {
+        $this->fields = $this->fields->map(function ($field) use ($fieldName, $optionKey, $index) {
             if ($this->isSameFieldName($field, $fieldName)) {
                 unset($field['data'][$optionKey][$index]);
             }

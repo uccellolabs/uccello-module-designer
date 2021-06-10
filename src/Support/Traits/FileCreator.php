@@ -15,6 +15,12 @@ trait FileCreator
         // $this->createOrUpdateUccelloManifestFile(); // TODO: Add
     }
 
+    private function deleteModuleFiles()
+    {
+        $this->deleteModelFile();
+        $this->deleteLanguageFile();
+    }
+
     private function getPackagesBaseDirectory()
     {
         return rtrim(config('module-designer.packages_directory'), '/');
@@ -33,7 +39,9 @@ trait FileCreator
         );
 
         return $diffContent;
-    }private function arrayReadableEncode($in, $indent = 0, $from_array = false)
+    }
+
+    private function arrayReadableEncode($in, $indent = 0, $from_array = false)
     {
         $_escape = function ($str) {
             return preg_replace("!([\b\t\n\r\f\"\\'])!", "\\\\\\1", $str);

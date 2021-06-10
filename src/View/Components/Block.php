@@ -7,8 +7,8 @@ use Illuminate\View\Component;
 class Block extends Component
 {
     public $block;
-    public $index;
     public $fields;
+    public $index;
     public $areAvailableFields;
 
     /**
@@ -16,11 +16,11 @@ class Block extends Component
      *
      * @return void
      */
-    public function __construct($block, $index, $fields = [], $areAvailableFields = false)
+    public function __construct($block, $index, $areAvailableFields = false)
     {
         $this->block = (object) $block;
+        $this->fields = !empty($block['fields']) ? collect($block['fields']) : collect();
         $this->index = $index;
-        $this->fields = collect($fields);
         $this->areAvailableFields = $areAvailableFields;
     }
 
