@@ -12,6 +12,9 @@ return [
             'select_module' => 'Selectionnez le module à éditer :',
             'select_module_to_delete' => 'Selectionnez le module à supprimer :',
             'name_not_defined' => '(Sans nom)',
+            'error' => [
+                'no_modules' => 'Aucun module disponible.<br>Vous devez d\'abord créer un module avec Module Designer.',
+            ],
         ],
         'create_module' => [
             'title' => 'Nommez votre module',
@@ -53,6 +56,7 @@ return [
             'error' => [
                 'column_already_exists' => 'La colonne :column existe déjà',
                 'column_name_reserved' => '":column" est un nom réservé. Vous ne pouvez pas l\'utiliser.',
+                'no_displayed_columns' => 'Vous devez ajouter au moins une colonne',
             ],
         ],
         'config_columns' => [
@@ -66,6 +70,9 @@ return [
             'array_value' => 'Valeur',
             'array_label' => 'Libellé',
             'advanced_params' => 'Paramètres avancés',
+            'error' => [
+                'no_fields_to_config' => 'Aucun champ à configurer',
+            ],
         ],
         'define_label' => [
             'title' => 'Definissez votre libellé',
@@ -90,5 +97,8 @@ return [
     ],
     'button' => [
         'continue' => 'Continuer',
+        'finish' => 'Terminer',
+        'delete' => 'Supprimer',
+        'delete_confirm' => 'Vraiment supprimer ?',
     ],
 ];

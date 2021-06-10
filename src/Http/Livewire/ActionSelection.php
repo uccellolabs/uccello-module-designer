@@ -23,6 +23,8 @@ class ActionSelection extends Component
     public $designedModules = [];
     public $editedModuleId;
     public $deletedModuleId;
+    public $canDelete = false;
+    public $isDeleting = false;
 
     private $structure;
 
@@ -38,6 +40,8 @@ class ActionSelection extends Component
     public function changeAction($action)
     {
         $this->canDesignModule = false;
+        $this->canDelete = false;
+        $this->isDeleting = false;
 
         $this->initActionVariables();
 
@@ -62,6 +66,7 @@ class ActionSelection extends Component
     {
         $this->deletedModuleId = $deletedModuleId;
         $this->canDesignModule = true;
+        $this->canDelete = true;
     }
 
     public function initModuleDesign()
@@ -125,6 +130,7 @@ class ActionSelection extends Component
             'icon' => null,
             'table' => '',
             'lastTable' => '',
+            'admin' => false,
             'step' => 0,
             'tabs' => $this->getDefaultTabs()
         ];
@@ -361,6 +367,8 @@ class ActionSelection extends Component
         $this->deleteModuleTable();
 
         $this->loadCrudModules();
+
+        $this->isDeleting = false;
     }
 
     private function deleteModuleFromDatabase()

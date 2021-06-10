@@ -154,4 +154,9 @@ trait TableCreator
 
         return $fakeField;
     }
+
+    private function deleteColumnFromTable($fieldName)
+    {
+
+    }
 }

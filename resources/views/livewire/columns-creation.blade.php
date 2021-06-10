@@ -80,6 +80,10 @@
                     </div> --}}
                 </div>
             </div>
+
+            @if ($noDisplayedColumns)
+                <div class="mt-6 text-sm text-red-500">{{ trans('module-designer::ui.block.create_columns.error.no_displayed_columns') }}</div>
+            @endif
         </div>
         @endif
 
@@ -92,10 +96,13 @@
 
             @if ($step === 4)
             <div class="p-6 border-b border-gray-200 border-solid">
-                @foreach($fields->sortBy('sequence') as $index => $field)
-                    @continue($field['isSystemField'])
+                @forelse($fields->where('isSystemField', false)->sortBy('sequence') as $index => $field)
                     <x-md-field-config :field="$field" :index="$index"></x-md-field-config>
-                @endforeach
+                @empty
+                    <div class="grid">
+                        <div class="flex col-span-4 text-center text-gray-400 justify-self-center">{{ trans('module-designer::ui.block.config_columns.error.no_fields_to_config') }}</div>
+                    </div>
+                @endforelse
             </div>
             @endif
 
@@ -122,8 +129,30 @@
         <div class="absolute z-10 grid w-2/3 -bottom-14">
             <img src="{{ ucasset('img/step-link.png', 'uccello/module-designer') }}" width="20" class="justify-self-center">
             <div class="absolute z-20 grid w-40 h-12 justify-items-center text-white font-semibold items-center cursor-pointer justify-self-center primary rounded-xl -bottom-7 @if($step > 5)hidden @endif" wire:click="incrementStep">
-                {{ trans('module-designer::ui.button.continue') }}
+                @if ($step === 5)
+                    {{ trans('module-designer::ui.button.finish') }}
+                @else
+                    {{ trans('module-designer::ui.button.continue') }}
+                @endif
             </div>
         </div>
     </x-md-vertical-step-card>
+
+    @if ($step === 5)
+    <div class="flex justify-between w-2/3 m-auto">
+        <div class="flex flex-row items-center w-3/12 p-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:bg-blue-50" wire:click="incrementStep('new')">
+            <div class="relative flex items-center justify-center h-8 rounded-md w-14 bg-primary-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25.417 25.414"><defs><style>.a,.b{fill:none;stroke-linecap:round;stroke-miterlimit:10;stroke-width:1.5px;}.a{stroke:#fff;stroke-linejoin:round;}.b{stroke:#28ca90;}</style></defs><g transform="translate(0.75 0.75)"><path class="a" d="M47.63,427.551H40.49a4.816,4.816,0,0,0-4.818,4.813v14.288a4.814,4.814,0,0,0,4.815,4.813H54.773a4.814,4.814,0,0,0,4.815-4.813v-7.143H47.63Z" transform="translate(-35.672 -427.551)"/><path class="a" d="M47.63,444.059V432.1H35.672" transform="translate(-35.672 -420.145)"/><g transform="translate(16.494 0)"><line class="b" y2="7.422" transform="translate(3.711)"/><line class="b" x1="7.422" transform="translate(0 3.711)"/></g></g></svg>
+            </div>
+            <div class="ml-5 font-semibold leading-4">Terminer et créer un nouveau module</div>
+        </div>
+
+        <div class="flex flex-row items-center w-3/12 p-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:bg-blue-50" wire:click="incrementStep('dashboard')">
+            <div class="relative flex items-center justify-center w-12 h-8 rounded-md bg-primary-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="11" viewBox="0 0 32.442 11.168"><defs><style>.a{fill:none;stroke:#fff;stroke-linecap:round;}.a,.b{stroke-linejoin:round;stroke-miterlimit:10;stroke-width:1.5px;}.b{fill:#22ddac;stroke:#22ddac;}</style></defs><g transform="translate(-0.25 -9.847)"><path class="a" d="M6.746,10.9,1,15.431l5.746,4.531"/><path class="a" d="M23.8,19.962l5.746-4.531L23.8,10.9" transform="translate(2.396)"/><g transform="translate(9.62 13.994)"><circle class="b" cx="1.105" cy="1.105" r="1.105"/><circle class="b" cx="1.105" cy="1.105" r="1.105" transform="translate(5.746)"/><circle class="b" cx="1.105" cy="1.105" r="1.105" transform="translate(11.493)"/></g></g></svg>
+            </div>
+            <div class="ml-5 font-semibold leading-4">Terminer et créer un dashboard</div>
+        </div>
+    </div>
+    @endif
 </div>

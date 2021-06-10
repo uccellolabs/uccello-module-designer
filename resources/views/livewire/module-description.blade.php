@@ -120,7 +120,7 @@
         {{-- Separator --}}
         <div class="absolute z-10 grid w-2/3 -bottom-14">
             <img src="{{ ucasset('img/step-link.png', 'uccello/module-designer') }}" width="20" class="justify-self-center">
-            <div class="absolute z-20 grid w-40 h-12 justify-items-center text-white font-semibold items-center cursor-pointer justify-self-center primary rounded-xl -bottom-7 @if($step > 2)hidden @endif" wire:click="incrementStep">
+            <div class="absolute z-20 grid w-40 h-12 justify-items-center text-white font-semibold items-center cursor-pointer justify-self-center primary rounded-xl -bottom-7 @if($step > 2)hidden @endif" wire:click="saveModule">
                 {{ trans('module-designer::ui.button.continue') }}
             </div>
         </div>

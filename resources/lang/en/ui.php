@@ -12,6 +12,9 @@ return [
             'select_module' => 'Select the module to edit:',
             'select_module_to_delete' => 'Select the module to delete:',
             'name_not_defined' => '(Empty name)',
+            'error' => [
+                'no_modules' => 'No modules are available.<br>You must first create one with Module Designer.',
+            ],
         ],
         'create_module' => [
             'title' => 'Name your module',
@@ -53,6 +56,7 @@ return [
             'error' => [
                 'column_already_exists' => 'Column :column already exists',
                 'column_name_reserved' => '":column" is a reserved name. You cannot use it.',
+                'no_displayed_columns' => 'You must add at least one column',
             ],
         ],
         'config_columns' => [
@@ -66,6 +70,9 @@ return [
             'array_value' => 'Value',
             'array_label' => 'Label',
             'advanced_params' => 'Advanced',
+            'error' => [
+                'no_fields_to_config' => 'No fields to configure',
+            ],
         ],
         'define_label' => [
             'title' => 'Define your label',
@@ -90,5 +97,8 @@ return [
     ],
     'button' => [
         'continue' => 'Continue',
+        'finish' => 'Finish',
+        'delete' => 'Delete',
+        'delete_confirm' => 'Really delete?',
     ],
 ];

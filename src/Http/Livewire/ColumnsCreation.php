@@ -4,6 +4,7 @@ namespace Uccello\ModuleDesigner\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Module;
 use Uccello\ModuleDesigner\Support\Traits\FieldColors;
 use Uccello\ModuleDesigner\Support\Traits\FileCreator;
@@ -22,6 +23,7 @@ class ColumnsCreation extends Component
     public $newColumn;
     public $fieldNameReserved;
     public $fieldNameUsed;
+    public $noDisplayedColumns = false;
 
     protected $listeners = [
         'stepChanged' => 'onStepChanged',
@@ -67,6 +69,8 @@ class ColumnsCreation extends Component
     public function addField()
     {
         if ($this->isFieldNameValid() && $this->isFieldNameAvailable()) {
+            $this->noDisplayedColumns = false;
+
             $this->createField([
                 'block_uuid' => $this->getFirstBlockUuid(),
                 'label' => $this->newColumn,
@@ -99,6 +103,32 @@ class ColumnsCreation extends Component
             }
             return $field;
         });
+    }
+
+    public function finish($type = null)
+    {
+        $domain = request('domain');
+
+        if (empty($domain)) {
+            $domain = Domain::first();
+        }
+
+        if ($type === 'new') {
+            $moduleName = 'module-designer';
+            $viewName = 'uccello.index';
+        } elseif ($type === 'dashboard') {
+            $moduleName = 'home';
+            $viewName = 'uccello.index';
+        } else {
+            $moduleName = $this->structure['name'];
+            $viewName = 'uccello.list';
+        }
+
+        $module = Module::where('name', $moduleName)->first();
+
+        $route = ucroute($viewName, $domain, $module);
+
+        return redirect($route);
     }
 
     private function createField($field)
@@ -201,6 +231,10 @@ class ColumnsCreation extends Component
                 if ($append) {
                     $field['filterSequence'] = $this->fields->count();
                 }
+
+                if ($field['isDisplayedInListView']) {
+                    $this->noDisplayedColumns = false;
+                }
             }
 
             return $field;
@@ -228,18 +262,25 @@ class ColumnsCreation extends Component
 
     public function deleteField($fieldName)
     {
+        // $this->deleteColumnFromTable($fieldName); //TODO: Retrive column thanks to uitype and delete it
+
         $this->fields = $this->fields->filter(function ($field) use ($fieldName) {
             if (!$this->isSameFieldName($field, $fieldName)) {
                 return $field;
             }
         });
-
-        // TODO: Delete column from database
     }
 
-    public function incrementStep()
+    public function incrementStep($type = null)
     {
         if ($this->isCreatingColumns()) {
+            $this->noDisplayedColumns = false;
+
+            if (!$this->isThereDisplayedColumn()) {
+                $this->noDisplayedColumns = true;
+                return;
+            }
+
             // Recréer la structure des blocks et champs
             $this->updateStructureWithFields();
 
@@ -269,14 +310,25 @@ class ColumnsCreation extends Component
 
             // Créer la table
             $this->createOrUpdateTable();
+        } elseif ($this->isConfiguringRecordLabel()) {
+            $this->createOrUpdateModelFile();
 
             // Activer le module sur tous les domaines
             $this->activateModuleInAllDomains();
-        } elseif ($this->isConfiguringRecordLabel()) {
-            $this->createOrUpdateModelFile();
+
+            $this->finish($type);
         }
 
         $this->changeStep($this->step + 1);
+    }
+
+    private function isThereDisplayedColumn()
+    {
+        return $this->fields->filter(function ($field) {
+            if ($field['isDisplayedInListView']) {
+                return $field;
+            }
+        })->count() > 0;
     }
 
     private function updateStructureWithFields()
@@ -331,9 +383,13 @@ class ColumnsCreation extends Component
 
     private function activateModuleInAllDomains()
     {
-        // $domains = Domain::all();
-        // foreach ($domains as $domain) {
-        //     $domain->modules()->attach($this->module);
-        // }
+        $module = Module::where('name', $this->structure['name'])->first();
+
+        if ($module) {
+            $domains = Domain::all();
+            foreach ($domains as $domain) {
+                $domain->modules()->attach($module);
+            }
+        }
     }
 }
