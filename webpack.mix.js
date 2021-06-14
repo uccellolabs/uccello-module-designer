@@ -7,16 +7,13 @@ mix.autoload(autoload)
 
 mix.setPublicPath('public')
 
-mix.js('./resources/js/script.js', 'public/js')
-   .postCss("./resources/css/styles.css", "public/css", [
+mix.postCss("./resources/css/styles.css", "public/css", [
         require("tailwindcss"),
    ])
-//    .version()
+   .version();
 
-// mix.after(() => {
-    // Copy all compiled files into main project (auto publishing)
-    mix.copyDirectory('resources/img', 'public/img');
-    mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer');
-// });
+
+mix.copyDirectory('resources/img', 'public/img');
+// mix.copyDirectory('public', '../../../public/vendor/uccello/module-designer');
 
 

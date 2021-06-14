@@ -42,12 +42,6 @@ class AppServiceProvider extends ServiceProvider
         // Translations
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'module-designer');
 
-        // Migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-
-        // Routes
-        $this->loadRoutesFrom(__DIR__ . '/../Http/routes.php');
-
         // Publish assets
         $this->publishes([
             __DIR__ . '/../../public' => public_path('vendor/uccello/module-designer'),

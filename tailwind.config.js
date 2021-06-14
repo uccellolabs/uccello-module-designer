@@ -1,8 +1,7 @@
 module.exports = {
     purge: [
         './resources/**/*.blade.php',
-        './resources/**/*.js',
-        './resources/**/*.vue',
+        './src/Support/Traits/FieldColors.php'
     ],
     darkMode: false, // or 'media' or 'class'
     theme: {
