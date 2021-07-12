@@ -30,11 +30,13 @@ class CreateModuleDesignerModule extends Migration
 
     protected function createModule()
     {
-        $module = Module::create([
+        $module = Module::firstOrCreate([
             'name' => 'module-designer',
             'icon' => 'design_services',
+        ],
+        [
             'model_class' => null,
-            'data' => json_decode('{"package":"uccello\/module-designer","admin":true,"menu":"uccello.index"}')
+            'data' => json_decode('{"package":"uccello\/module-designer","menu":"uccello.index"}')
         ]);
 
         return $module;
