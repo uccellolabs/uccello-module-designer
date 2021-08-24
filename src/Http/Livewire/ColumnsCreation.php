@@ -54,6 +54,10 @@ class ColumnsCreation extends Component
 
                 foreach ($block['fields'] as $field) {
                     $this->fields[] = $field;
+
+                    if ($this->isCreatingColumns()) {
+                        $this->reloadFieldOptions(count($this->fields) - 1);
+                    }
                 }
             }
         }

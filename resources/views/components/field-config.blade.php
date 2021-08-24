@@ -97,19 +97,19 @@
                     @if (!empty($fieldData[$option->key]))
                         @foreach ($fieldData[$option->key] as $rowIndex => $row)
                             <div class="flex flex-col ml-4">
-                                <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_value') }}</div>
-                                <div class="bg-gray-100 border rounded-md border-primary-500">
-                                    <input type="text"
-                                        class="w-full px-3 py-2 bg-transparent browser-default"
-                                        wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.value">
-                                </div>
-                            </div>
-                            <div class="flex flex-col ml-4">
                                 <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_label') }}</div>
                                 <div class="bg-gray-100 border rounded-md border-primary-500">
                                     <input type="text"
                                         class="w-full px-3 py-2 bg-transparent browser-default"
                                         wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.label">
+                                </div>
+                            </div>
+                            <div class="flex flex-col ml-4">
+                                <div class="mb-2 text-sm">{{ trans('module-designer::ui.block.config_columns.array_value') }}</div>
+                                <div class="bg-gray-100 border rounded-md border-primary-500">
+                                    <input type="text"
+                                        class="w-full px-3 py-2 bg-transparent browser-default"
+                                        wire:model="fields.{{ $index }}.data.{{ $option->key }}.{{ $rowIndex }}.value">
                                 </div>
                             </div>
                             <div class="flex items-center ml-4">

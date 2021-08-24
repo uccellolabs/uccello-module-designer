@@ -2,7 +2,6 @@
 
 namespace Uccello\ModuleDesigner\Support\Traits;
 
-use Illuminate\Support\Str;
 use stdClass;
 
 trait HasUitype
@@ -136,13 +135,27 @@ trait HasUitype
     private function addFirstRowForOptionOfTypeArray($field, $option)
     {
         if ($this->isOptionOfTypeArray($option)) {
-            $defaultRow = new stdClass;
-            $defaultRow->value = '';
-            $defaultRow->label = '';
+            if ($this->hasOptions($field)) {
+                $choices = $field['data'][$option['key']];
 
-            $field['data'][$option['key']] = [
-                $defaultRow
-            ];
+                // Retrieve value and label
+                $field['data'][$option['key']] = [];
+                foreach ($choices as $choice) {
+                    $field['data'][$option['key']][] = [
+                        'value' => str_replace($field['name'].'.', '', $choice),
+                        'label' => uctrans($choice, ucmodule($this->structure['name']))
+                    ];
+                }
+            } else {
+                // Create new row
+                $defaultRow = new stdClass;
+                $defaultRow->value = '';
+                $defaultRow->label = '';
+
+                $field['data'][$option['key']] = [
+                    $defaultRow
+                ];
+            }
         }
 
         return $field;
@@ -151,5 +164,10 @@ trait HasUitype
     private function isOptionOfTypeArray($option)
     {
         return $option['type'] === 'array';
+    }
+
+    private function hasOptions($field)
+    {
+        return !empty($field['data']) && !empty($field['data']['choices']);
     }
 }
