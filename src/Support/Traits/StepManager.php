@@ -21,6 +21,11 @@ trait StepManager
         $this->step = $step;
     }
 
+    private function isChoosingAction()
+    {
+        return $this->step === 0;
+    }
+
     private function isSettingModuleDescription()
     {
         return $this->step === 1;
